@@ -1,2 +1,2 @@
-..\Backend\Core\xml\bin\Unit_test	Unit_test.exe
-..\Backend\Core\bin\unit_test		unit_test.exe
+..\Core\xml\bin\Unit_test	Unit_test.exe
+..\Core\bin\unit_test		unit_test.exe

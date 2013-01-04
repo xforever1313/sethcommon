@@ -9,6 +9,6 @@ Inside of tests.txt, simply add the path to the test executable RELATIVE to THIS
 ../path/to/testFile		testName.exe
 
 ==What the bat file does==
-The bat opens tests.txt, and reads in the path and the file name. It runs the test from the test's executable's point of view, not this directory's.  When all the tests are completed, the program waits 5 seconds for any remaining programs to finish.  It will then print "Press any key to continue."  Pressing any key will then terminate the program.
+The bat opens tests.txt, and reads in the path and the file name. It runs the test from the test's executable's point of view, not this directory's.  When all the tests are completed, the program waits 3 seconds for any remaining programs to finish.  It will then print "Press any key to continue."  Pressing any key will then terminate the program.
 
 This is a temporary solution until a more robust testing platform can be made.
