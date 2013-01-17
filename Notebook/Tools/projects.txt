@@ -1,0 +1,2 @@
+..\Core\xml			NotebookXML.cbp		Unit_Test
+..\NotebookAPI		NotebookAPI.cbp		unit_test
