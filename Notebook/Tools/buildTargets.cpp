@@ -36,6 +36,7 @@ int main()
 		int ret = system(ss.str().c_str());
 		
 		if (ret != 0){
+			cout<<"BUILD FAILED"<<endl;
 			++numFailed;
 		}
 		
