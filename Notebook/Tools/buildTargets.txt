@@ -1,0 +1,4 @@
+..\Core\containers	NotebookXML.cbp		Unit_Test
+..\NotebookAPI		NotebookAPI.cbp		unit_test
+..\Core				Core.cbp			Unit_test
+..\Core				Core.cbp			Debug
