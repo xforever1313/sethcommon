@@ -9,15 +9,20 @@ using namespace std;
 
 using namespace boost::filesystem;
 
+struct projectStruct{
+    std::string projectString;
+    std::string objectPathString;
+};
+
 int main(int argc, char* argv[]){
 
-    vector<std::string> projectVector;
+    vector<projectStruct> projectVector;
     ifstream inFile;
     int retValue = 0;
     if (argc == 1){
-        inFile.open("projects.txt");
+        inFile.open("coverage.txt");
         if (inFile.fail()){
-            cerr<<"Could not open projects.txt"<<endl;
+            cerr<<"Could not open coverage.txt"<<endl;
             return -2;
         }
 
@@ -25,27 +30,38 @@ int main(int argc, char* argv[]){
         while (!inFile.eof()){
             std::string projectString;
             inFile >> projectString;
-            projectVector.push_back(projectString);
+            std::string objectString;
+            inFile >> objectString;
+
+            struct projectStruct theProject;
+            theProject.projectString = projectString;
+            theProject.objectPathString = objectString;
+
+            projectVector.push_back(theProject);
             inFile.peek();
         }
         inFile.close();
     }
+    else if (argc == 3){
+        struct projectStruct theProject;
+        theProject.projectString = argv[1];
+        theProject.objectPathString = argv[2];
+        projectVector.push_back(theProject);
+    }
     else{
-        for (int i = 1; i < argc; ++i){
-            projectVector.push_back(string(argv[1]));
-        }
+        cout << "Usage: codeCoverage projectDir, target"<< endl;
     }
 
     for (unsigned int i = 0; i < projectVector.size(); ++i){
         //Get path to project
-        path projectPath(projectVector[i]);
+        path projectPath(projectVector[i].projectString);
         path textFilePath = projectPath;
         textFilePath /= (path("coverage.txt"));
 
-        path objectPath(projectVector[i]);
-        objectPath /= (path("obj"));
+        path objectPath("obj/");
+        objectPath /= (path(projectVector[i].objectPathString));
 
-        path coveragePath(projectVector[i]);
+        path coveragePath(projectVector[i].projectString);
         coveragePath /=(path("codeCoverage"));
 
         //Create a code coverage director
@@ -82,7 +98,7 @@ int main(int argc, char* argv[]){
 
                 //Run gcov.  This assumes that the directory shifts to the project's code coverage folder
                 stringstream ss;
-                ss << "start /D\"" << coveragePath.string() << "\" /B" << " gcov " << " -s \"../\"" << " -o " << "\"../obj\"" << " ";
+                ss << "start /D\"" << coveragePath.string() << "\" /B" << " gcov " << " -s \"../\"" << " -o " << "\"../" << objectPath.string() << "\" ";
                 for (unsigned int i = 0; i < cppVector.size(); ++i){
                     ss << cppVector[i] << " ";
                 }
