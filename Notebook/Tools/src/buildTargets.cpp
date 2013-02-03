@@ -6,12 +6,27 @@
 
 using namespace std;
 
+/**
+ * Usage:
+ * buildTargets.exe - unclean build of targets in buildTargets.txt
+ * buildTargets.exe clean - clean build of targets in buildTargets.txt
+ * buildTargets.exe projectFile - unclean build of targets in projectFile
+ * buildTargets.exe clean projectFile - clean build of targets in projectFile
+ */
+
 int main(int argc, const char* argv[])
 {
+    std::string fileString = "../../buildTargets.txt";
     std::string buildString = "--build";
 
-    if ((argc == 2) && (std::string(argv[1]) == "clean")){
+    if ((argc >= 2) && (std::string(argv[1]) == "clean")){
         buildString = "--rebuild";
+        if (argc ==3){
+            fileString = argv[2];
+        }
+    }
+    else if ((argc == 2) &&  (std::string(argv[1]) != "clean")){
+        fileString = argv[1];
     }
 
 	int numFailed = 0;
@@ -20,27 +35,29 @@ int main(int argc, const char* argv[])
 
 	ifstream inFile;
 
-	inFile.open("buildTargets.txt");
+	inFile.open(fileString.c_str());
 
     if (inFile.fail()){
-        cout<<"Could not open file buildTargets.txt"<<endl;
+        cout<<"Could not open file project target file"<<endl;
         return -2;
     }
 
 	inFile.peek();
 
-	string path;
+	string path = "../../";
 	string fileName;
 	string target;
 
 	while (!inFile.eof() && !inFile.fail()){
-		inFile >> path;
+		string temp;
+		inFile >> temp;
+		path += temp;
 		inFile >> fileName;
 		inFile >> target;
 
 		stringstream ss;
 
-		ss << "codeblocks.exe "<< buildString <<" --target=\"" << target << "\" " << path << "\\" << fileName;
+		ss << "codeblocks "<< buildString <<" --target=\"" << target << "\" " << path << "\\" << fileName;
 
 		cout<<ss.str() <<endl;
 
@@ -52,25 +69,24 @@ int main(int argc, const char* argv[])
 		}
 
 		inFile.peek();
+		path = "../../";
 	}
 
 	if (inFile.fail() && !inFile.eof()){
 		cout<<"File could not be opened"<<endl;
-		system("pause");
 		return -1;
 	}
 	else{
 		inFile.close();
 	}
 	if (numFailed != 0){
-		cout << "WARNING! "<<numFailed<<" Files does not build"<<endl;
+		cout << "WARNING! "<<numFailed<<" Files do not build"<<endl;
 		mainRet = numFailed;
 	}
 	else{
 		cout<<"All targets built!"<<endl;
 		mainRet=0;
 	}
-	system("pause");
 
 	return mainRet;
 }

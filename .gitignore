@@ -1,5 +1,6 @@
 #directories#
 codeCoverage
+bin
 
 # Compiled source #
 ###################
@@ -12,6 +13,7 @@ codeCoverage
 *.gcov
 *.o
 *.so
+*.exe
 
 # Packages #
 ############

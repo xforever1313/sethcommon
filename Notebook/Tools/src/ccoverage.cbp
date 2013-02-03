@@ -36,7 +36,7 @@
 			<Add directory="$(#boost.include)" />
 		</Compiler>
 		<Linker>
-			<Add library="boost_filesystem-mgw47-mt-1_52" />
+			<Add library="boost_filesystem" />
 			<Add library="boost_system" />
 			<Add directory="$(#boost.lib)" />
 		</Linker>
