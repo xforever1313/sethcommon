@@ -7,9 +7,9 @@ import os
 absPath = os.getcwd()
 headerPath = os.path.join(absPath, "src")
 sys.path.append(headerPath)
-import runTestHeader
+import toolHeader
 
-numFailed = runTestHeader.runTests(absPath, "tests.txt")
+numFailed = toolHeader.runTests(absPath, "tests.txt")
 
 if (numFailed == 0):
     print("All Tests Pass!")

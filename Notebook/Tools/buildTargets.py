@@ -1,9 +1,14 @@
 #Description:
 #This python file calls an unclean build of all targets in buildTargets.txt with the help of buildTargets.exe
-import subprocess
+import sys
 import os
 
-os.chdir("src/bin")
-subprocess.call("buildTargets.exe")
+absPath = os.getcwd()
+headerPath = os.path.join(absPath, "src")
+sys.path.append(headerPath)
+import toolHeader
+
+executablePath = os.path.join(absPath, "src/bin")
+toolHeader.build(executablePath)
 
 input("Press ENTER to continue")
