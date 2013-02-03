@@ -6,8 +6,14 @@
 
 using namespace std;
 
-int main()
+int main(int argc, const char* argv[])
 {
+    std::string buildString = "--build";
+
+    if ((argc == 2) && (std::string(argv[1]) == "clean")){
+        buildString = "--rebuild";
+    }
+
 	int numFailed = 0;
 	int mainRet;
 	cout<<"Building Projects"<<std::endl;
@@ -34,7 +40,7 @@ int main()
 
 		stringstream ss;
 
-		ss << "codeblocks.exe  --rebuild --target=\"" << target << "\" " << path << "\\" << fileName;
+		ss << "codeblocks.exe "<< buildString <<" --target=\"" << target << "\" " << path << "\\" << fileName;
 
 		cout<<ss.str() <<endl;
 
