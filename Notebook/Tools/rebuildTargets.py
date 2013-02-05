@@ -9,6 +9,7 @@ sys.path.append(headerPath)
 import toolHeader
 
 executablePath = os.path.join(absPath, "src/bin")
-toolHeader.rebuild(executablePath)
+logPath = os.path.join(absPath, "logs")
+toolHeader.rebuild(executablePath, logPath)
 
 input("Press ENTER to continue")

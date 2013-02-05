@@ -8,10 +8,7 @@ using namespace std;
 
 /**
  * Usage:
- * buildTargets.exe - unclean build of targets in buildTargets.txt
- * buildTargets.exe clean - clean build of targets in buildTargets.txt
- * buildTargets.exe projectFile - unclean build of targets in projectFile
- * buildTargets.exe clean projectFile - clean build of targets in projectFile
+ * buildTargets.exe clean/unclean default/ProjectFile logLocation
  */
 
 int main(int argc, const char* argv[])
@@ -19,15 +16,28 @@ int main(int argc, const char* argv[])
     std::string fileString = "../../buildTargets.txt";
     std::string buildString = "--build";
 
-    if ((argc >= 2) && (std::string(argv[1]) == "clean")){
+    if (argc != 4){
+        cout<<"Usage: buildTargets.exe clean/unclean default/ProjectFile logLocation"<<endl;
+        return -10;
+    }
+    //Check first arg
+    if (argv[1] == string("clean")){
         buildString = "--rebuild";
-        if (argc ==3){
-            fileString = argv[2];
-        }
     }
-    else if ((argc == 2) &&  (std::string(argv[1]) != "clean")){
-        fileString = argv[1];
+    else if (argv[1] == string("unclean")){
+        buildString = "--build";
     }
+    else{
+        cout<<"Invalid parameter for build type (use clean or unclean"<<endl;
+        return -11;
+    }
+
+    //Check second arg
+    if (argv[2] != string("default")){
+        fileString = string(argv[2]);
+    }
+
+    std::string logPath = string(argv[3]);
 
 	int numFailed = 0;
 	int mainRet;
@@ -57,7 +67,7 @@ int main(int argc, const char* argv[])
 
 		stringstream ss;
 
-		ss << "codeblocks "<< buildString <<" --target=\"" << target << "\" " << path << "\\" << fileName;
+		ss << "codeblocks "<< buildString <<" --target=\"" << target << "\" " << path << "\\" << fileName << " > " << logPath << "/" << fileName << "Build.log";
 
 		cout<<ss.str() <<endl;
 

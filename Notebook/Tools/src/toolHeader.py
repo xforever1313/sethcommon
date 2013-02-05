@@ -6,31 +6,37 @@ import os
 
 #Calls Buildtargets.exe which builds all targets
 #executablePath - location of buildTargets.exe
-def build(executablePath):
+#logPath - abs path of where to put the log file, NO file name
+def build(executablePath, logPath):
     os.chdir(executablePath)
-    return subprocess.call("buildTargets.exe")
+    return subprocess.call("buildTargets.exe unclean default " + str(logPath), shell=True)
 
 #Calls Buildtargets.exe which rebuilds all targets
 #executablePath - location of buildTargets.exe
-def rebuild(executablePath):
+#logPath - abs path of where to put the log file, along with the filename
+def rebuild(executablePath, logPath):
     os.chdir(executablePath)
-    return subprocess.call("buildTargets.exe clean")
+    return subprocess.call("buildTargets.exe clean default " + str(logPath), shell=True)
 
 #Builds the tools
 #srcPath - path of the tools/src folder
-def buildTools(srcPath):
+#logPath - abs path of where to put the log file
+def buildTools(srcPath, logPath):
     numFailed = 0
-    os.chdir("src")
-    buildTargetCommand = "g++ buildTargets.cpp -o bin/buildTargets.exe"
+    os.chdir(srcPath)
+	
+    buildTargetLog = os.path.join(logPath, "buildTarget.log")
+    buildTargetCommand = "g++ buildTargets.cpp -o bin/buildTargets.exe > " + buildTargetLog
     print (buildTargetCommand)
-    x = subprocess.call(buildTargetCommand)
+    x = subprocess.call(buildTargetCommand, shell=True)
     if (x != 0):
         print ("WARNING! Build Failed!")
         numFailed = numFailed + 1
 
-    ccoverageCommand = "codeblocks --rebuild --target=\"Release\" ccoverage.cbp"
+    coverageLog = os.path.join(logPath, "coverage.log")
+    ccoverageCommand = "codeblocks --rebuild --target=\"Release\" ccoverage.cbp > " + coverageLog
     print(ccoverageCommand)
-    y = subprocess.call(ccoverageCommand)
+    y = subprocess.call(ccoverageCommand, shell=True)
     if (y != 0):
         print ("WARNING! Build Failed!")
         numFailed = numFailed + 1
@@ -38,16 +44,17 @@ def buildTools(srcPath):
     if (numFailed == 0):
         print ("All Tools build successfully!")
     else:
-        print("WARNING! " + numFailed + " tools did not build")
+        print("WARNING! " + str(numFailed) + " tools did not build")
 
     return numFailed
 
 #Runs the tests from given file
 #readerFilePath - the path to the file to be read
 #readerFile - the file with the test list inside
-def runTests (readerFilePath, readerFile):
+#logPath - abs path of where to put the log file. Do NOT include the file Name
+def runTests (readerFilePath, readerFile, logPath):
     numFailed = 0
-	
+
     testName = []
     testPath = []
     testExe = []
@@ -72,10 +79,12 @@ def runTests (readerFilePath, readerFile):
         print ("Testing: " + testName[i])
 
         os.chdir(testPath[i])
-		
-        success = subprocess.call(testExe[i])
+        logFile = os.path.join(logPath, testName[i] + ".log")
+
+        success = subprocess.call(testExe[i] + " > " + str(logFile), shell=True)
+
         if (success != 0):
-            ++numFailed
+            numFailed = numFailed + 1
 
         print("\n")
         i += 1
