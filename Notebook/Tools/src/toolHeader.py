@@ -3,48 +3,96 @@
 
 import subprocess
 import os
+import sys
+import shutil
 
 #Calls Buildtargets.exe which builds all targets
-#executablePath - location of buildTargets.exe
-#logPath - abs path of where to put the log file, NO file name
-def build(executablePath, logPath):
-    os.chdir(executablePath)
-    return subprocess.call("buildTargets.exe unclean default " + str(logPath), shell=True)
+#buildTargetsTxt - abslocation of the buildTargets.txt file
+#logPath - abs path of where to put the log file. Do NOT include the file Name
+def build(buildTargetsTxt, logPath):
+    numFailed = 0
+    
+    SConstructDir = []
+    BuildName = []
+    Targets = []
+    
+    inFile = open(buildTargetsTxt, "r")
+    while (True):
+        line = inFile.readline()
+        if (line == ""):
+            break
+        splitLine = line.strip().split()
+        SConstructDir.append(splitLine[0])
+        BuildName.append(splitLine[1])
+        Targets.append(splitLine[2])
+    inFile.close()
+
+    maxIterations = len(SConstructDir)
+    i = 0
+    while (i < maxIterations):
+        print ("Building: " + BuildName[i])
+
+        os.chdir(SConstructDir[i])
+        logFile = os.path.join(logPath, BuildName[i] + ".log")
+        if(sys.platform == "win32"):
+            redirectString = " > " + str(logFile) + " 2>&1 "
+        else:
+            redirectString = " &> " + str(logFile)
+
+        success = subprocess.call("scons " + Targets[i] + redirectString, shell=True)
+
+        if (success != 0):
+            numFailed = numFailed + 1
+
+        print("\n")
+        i += 1
+        os.chdir(os.path.dirname(buildTargetsTxt))
+
+    return numFailed
 
 #Calls Buildtargets.exe which rebuilds all targets
-#executablePath - location of buildTargets.exe
-#logPath - abs path of where to put the log file, along with the filename
-def rebuild(executablePath, logPath):
-    os.chdir(executablePath)
-    return subprocess.call("buildTargets.exe clean default " + str(logPath), shell=True)
-
-#Builds the tools
-#srcPath - path of the tools/src folder
-#logPath - abs path of where to put the log file
-def buildTools(srcPath, logPath):
+#buildTargetsTxt - location of the Tests.txt file
+#logPath - abs path of where to put the log file. Do NOT include the file Name
+def rebuild(buildTargetsTxt, logPath):
     numFailed = 0
-    os.chdir(srcPath)
-	
-    buildTargetLog = os.path.join(logPath, "buildTarget.log")
-    buildTargetCommand = "g++ buildTargets.cpp -o bin/buildTargets.exe > " + buildTargetLog
-    print (buildTargetCommand)
-    x = subprocess.call(buildTargetCommand, shell=True)
-    if (x != 0):
-        print ("WARNING! Build Failed!")
-        numFailed = numFailed + 1
+    
+    SConstructDir = []
+    BuildName = []
+    Targets = []
+    
+    inFile = open(buildTargetsTxt, "r")
+    while (True):
+        line = inFile.readline()
+        if (line == ""):
+            break
+        splitLine = line.strip().split()
+        SConstructDir.append(splitLine[0])
+        BuildName.append(splitLine[1])
+        Targets.append(splitLine[2])
+    inFile.close()
 
-    coverageLog = os.path.join(logPath, "coverage.log")
-    ccoverageCommand = "codeblocks --rebuild --target=\"Release\" ccoverage.cbp > " + coverageLog
-    print(ccoverageCommand)
-    y = subprocess.call(ccoverageCommand, shell=True)
-    if (y != 0):
-        print ("WARNING! Build Failed!")
-        numFailed = numFailed + 1
+    maxIterations = len(SConstructDir)
+    i = 0
+    while (i < maxIterations):
+        print ("Building: " + BuildName[i])
 
-    if (numFailed == 0):
-        print ("All Tools build successfully!")
-    else:
-        print("WARNING! " + str(numFailed) + " tools did not build")
+        os.chdir(SConstructDir[i])
+        logFile = os.path.join(logPath, BuildName[i] + ".log")
+        if(sys.platform == "win32"):
+            redirectString = " > " + str(logFile) + " 2>&1 "
+        else:
+            redirectString = " &> " + str(logFile)
+            
+        subprocess.call("scons " + Targets[i] + " --clean ", shell=True)
+        print("Building... (printing to log)")
+        success = subprocess.call("scons " + Targets[i] + redirectString, shell=True)
+
+        if (success != 0):
+            numFailed = numFailed + 1
+
+        print("\n")
+        i += 1
+        os.chdir(os.path.dirname(buildTargetsTxt))
 
     return numFailed
 
@@ -57,7 +105,6 @@ def runTests (readerFilePath, readerFile, logPath):
 
     testName = []
     testPath = []
-    testExe = []
 
     os.chdir(readerFilePath)
     inFile = open(readerFile, "r")
@@ -69,19 +116,22 @@ def runTests (readerFilePath, readerFile, logPath):
         splitLine = line.strip().split()
         testName.append(splitLine[0])
         testPath.append(splitLine[1])
-        testExe.append(splitLine[2])
 
     inFile.close()
 
-    maxIterations = len(testExe)
+    maxIterations = len(testName)
     i = 0
     while (i < maxIterations):
         print ("Testing: " + testName[i])
 
         os.chdir(testPath[i])
         logFile = os.path.join(logPath, testName[i] + ".log")
+        if(sys.platform == "win32"):
+            redirectString = " > " + str(logFile) + " 2>&1 "
+        else:
+            redirectString = " &> " + str(logFile)
 
-        success = subprocess.call(testExe[i] + " > " + str(logFile), shell=True)
+        success = subprocess.call("scons run_test" + redirectString, shell=True)
 
         if (success != 0):
             numFailed = numFailed + 1

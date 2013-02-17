@@ -8,8 +8,13 @@ headerPath = os.path.join(absPath, "src")
 sys.path.append(headerPath)
 import toolHeader
 
-executablePath = os.path.join(absPath, "src/bin")
+buildTargetsPath = os.path.join(absPath, "buildTargets.txt")
 logPath = os.path.join(absPath, "logs")
-toolHeader.build(executablePath, logPath)
+
+status = toolHeader.build(buildTargetsPath, logPath)
+if(status == 0):
+    print("All targets built!")
+else:
+    print(str(status) + " Targets failed to build!")
 
 input("Press ENTER to continue")

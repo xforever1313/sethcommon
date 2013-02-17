@@ -1,2 +1,2 @@
-Container_Unit_Test ..\Core\containers\bin\Unit_test Unit_test.exe
-Core_Unit_Test ..\Core\bin\unit_test unit_test.exe
+Container_Unit_Test ../Core/containers
+Core_Unit_Test ../Core
