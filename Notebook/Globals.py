@@ -35,9 +35,13 @@ globalCXXUnitTestFlags = ["-fprofile-arcs", "-ftest-coverage"]
 globalLinkerFlags = ["-Wall"]
 
 #Linker Libs
-globalLibsDebugFlags = ["debug_new"]
+globalLibsDebugFlags = []
 globalLibsReleaseFlags = []
-globalLibsUnitTestFlags = ["gcov", "debug_new", "boost_unit_test_framework", "boost_system"]
+globalLibsUnitTestFlags = ["gcov", "boost_unit_test_framework", "boost_system"]
+
+if (sys.platform == "win32"):
+	globalLibsDebugFlags += ["debug_new"]
+	globalLibsUnitTestFlags += ["debug_new"]
 
 #Tool locations:
 toolsPath = os.path.join(notebookRootDirectory, "Tools")
