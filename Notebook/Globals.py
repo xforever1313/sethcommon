@@ -24,6 +24,8 @@ if (sys.platform == "win32"):
 globalDebugDefines = ["-DDEBUG"]
 globalReleaseDefines = ["-DRELEASE"]
 globalUnitTestDefines = ["-DUNIT_TEST"]
+if (sys.platform != "win32"):
+	globalUnitTestDefines += ["-DBOOST_TEST_DYN_LINK"]
 
 #Compile Flags
 globalCXXFlags = ["-Wall", "-pedantic"]
