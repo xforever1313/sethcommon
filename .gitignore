@@ -19,6 +19,7 @@ unit_test
 *.o
 *.so
 *.exe
+*.pyc
 
 # Packages #
 ############
