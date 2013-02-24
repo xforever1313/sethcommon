@@ -28,13 +28,13 @@ if (sys.platform != "win32"):
 	globalUnitTestDefines += ["-DBOOST_TEST_DYN_LINK"]
 
 #Compile Flags
-globalCXXFlags = ["-Wall", "-pedantic"]
+globalCXXFlags = ["-Wall", "-pedantic", "-Werror"]
 globalCXXDebugFlags = ["-g"]
 globalCXXReleaseFlags = ["-O2"]
 globalCXXUnitTestFlags = ["-g", "-fprofile-arcs", "-ftest-coverage"]
 
 #Linker Flags
-globalLinkerFlags = ["-Wall", "-g"]
+globalLinkerFlags = ["-Wall", "-g", "-Werror"]
 
 #Linker Libs
 globalLibsDebugFlags = []
