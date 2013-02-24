@@ -30,11 +30,11 @@ if (sys.platform != "win32"):
 #Compile Flags
 globalCXXFlags = ["-Wall", "-pedantic"]
 globalCXXDebugFlags = ["-g"]
-globalCXXReleaseFlags = []
-globalCXXUnitTestFlags = ["-fprofile-arcs", "-ftest-coverage"]
+globalCXXReleaseFlags = ["-O2"]
+globalCXXUnitTestFlags = ["-g", "-fprofile-arcs", "-ftest-coverage"]
 
 #Linker Flags
-globalLinkerFlags = ["-Wall"]
+globalLinkerFlags = ["-Wall", "-g"]
 
 #Linker Libs
 globalLibsDebugFlags = []
