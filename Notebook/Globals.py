@@ -41,9 +41,9 @@ globalLibsDebugFlags = []
 globalLibsReleaseFlags = []
 globalLibsUnitTestFlags = ["gcov", "boost_unit_test_framework", "boost_system"]
 
-if (sys.platform == "win32"):
-	globalLibsDebugFlags += ["debug_new"]
-	globalLibsUnitTestFlags += ["debug_new"]
+#if (sys.platform == "win32"):
+	#globalLibsDebugFlags += ["debug_new"]
+	#globalLibsUnitTestFlags += ["debug_new"]
 
 #Tool locations:
 toolsPath = os.path.join(notebookRootDirectory, "Tools")
