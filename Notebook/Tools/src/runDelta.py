@@ -10,11 +10,11 @@ thisDir = os.getcwd()
 currentTime = time.strftime("%m_%d_%Y_%H_%M_%S")
 
 if (sys.platform == "win32"):
-    buildName = "nightWing"
+    buildName = "Welta"
 elif(sys.platform == "darwin"):
-    buildName = "NightMac"
+    buildName = "Melta"
 else:
-    buildName = "Nightix"
+    buildName = "Lelta"
 
 logDir = os.path.join(thisDir, "logs", buildName + "-" + currentTime)
 os.mkdir(logDir)
@@ -28,12 +28,8 @@ while (i < len(targetLocations)):
         redirectString = " > " + str(logFile) + " 2>&1 "
     else:
         redirectString = " &> " + str(logFile)
-
-    commandStr = "scons nightly --clean"
-    print (commandStr)
-    subprocess.call(commandStr, shell=True)
     
-    commandStr = "scons nightly " + redirectString
+    commandStr = "scons delta " + redirectString
     print(commandStr)
     status = subprocess.call(commandStr, shell=True)
 
