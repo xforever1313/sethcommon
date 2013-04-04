@@ -1,0 +1,142 @@
+import SCons.Defaults
+import SCons
+from SCons.Util import unique
+import stat
+import os
+import sys
+import subprocess
+import glob
+import shutil
+from copy import deepcopy
+
+projectName = "CrazySnakesBackend"
+sys.path.append("../../") #Get globals
+from Globals import *
+
+#if a new directory gets added, add to here
+sourceDirectories = ["src"]
+#if a new test directory gets added, add to here
+sourceTestDirectories = ["Test", os.path.join("Test", "src")]
+
+#include paths:
+includePaths = [os.path.join(".", "include")]
+testIncludePaths = [os.path.join("Test", "include")]
+
+#files to ignore all builds that are in 'sourceDirectories'
+blackListedFiles = []
+
+#files to ignore in 'sourceTestDirectories'
+blackListedTestFiles = []
+
+#Files to ignore in "Coverage"
+blackListedCoverageFiles = []
+
+debugLibs = []
+releaseLibs = []
+
+testLibs = debugLibs
+
+if (sys.platform == "win32"):
+    #defaults to MSVC until set to MinGW
+    SCons.Defaults.DefaultEnvironment(tools = [])
+
+Help(
+'''
+SConstruct file for Notebook Core project
+
+Targets:
+    debug          Builds the project for Debug lib (Default)
+    release        Builds the project for Release lib
+    unit_test      Builds the project for Unit Tests
+    run_test       Builds and runs the Unit Tests and memcheck and coverage
+'''
+)
+
+if (sys.platform == "win32"):
+    env = Environment(tools = ["mingw"])
+else:
+    env = Environment(tools = ["default", "gcc", "g++"])
+#TODO make one for Mac and MSVC
+
+#Make common environment
+BaseEnvironment = env.Clone(
+    ENV = {'PATH' : os.environ['PATH']}, #Look in path for tools
+    PROJECT_ROOT = Dir(".")
+)
+
+#Debug Environment
+DebugEnvironment = BaseEnvironment.Clone(
+    OBJPREFIX = os.path.join(Dir(objectDirectory).abspath, "Debug") + '/',
+    CPPDEFINES = globalDefines + globalDebugDefines,
+    CCFLAGS = globalCXXFlags + globalCXXDebugFlags,
+    LIBS = debugLibs + globalLibsDebugFlags,
+	LINKFLAGS = globalLinkerFlags,
+    CPPPATH = includePaths
+)
+
+#Release Environment
+ReleaseEnvironment = BaseEnvironment.Clone(
+    OBJPREFIX = os.path.join(Dir(objectDirectory).abspath, "Release") + '/',
+    CPPDEFINES = globalDefines + globalReleaseDefines,
+    CCFLAGS = globalCXXFlags + globalCXXReleaseFlags,
+    LIBS = releaseLibs + globalLibsReleaseFlags,
+	LINKFLAGS = globalLinkerFlags,
+    CPPPATH = includePaths
+)
+
+#Unit test environment
+TestEnvironment = BaseEnvironment.Clone(
+    OBJPREFIX = os.path.join(Dir(objectDirectory).abspath, "unit_test") + '/',
+    CPPDEFINES = globalDefines + globalUnitTestDefines,
+    CCFLAGS = globalCXXFlags + globalCXXUnitTestFlags,
+    LIBS = testLibs + globalLibsUnitTestFlags,
+	LINKFLAGS = globalLinkerFlags,
+    CPPPATH = includePaths + testIncludePaths
+)
+
+#Create a RunTest Builder
+RunTest = Builder(action = testRunner) #testRunner method in globals.py
+TestEnvironment.Append(BUILDERS = {"Test" : RunTest})
+
+#make a directory to dump all test output files
+testOutputPath = os.path.join(".", "testOutput")
+if(os.path.exists(testOutputPath) == False):
+    os.mkdir(testOutputPath)
+    
+#make unEditableFile.txt and uneditableDir unwritable, and unReadableFile.txt unreadable
+os.chmod(os.path.join(".", "Test", "unEditableFile.txt"), stat.S_IREAD)
+os.chmod(os.path.join(".", "Test", "unReadableFile.txt"), 0)
+
+sourceFiles = []
+sourceTestFiles = []
+
+#Add all .cpp files
+for dir in sourceDirectories:
+    sourceFiles += glob.glob(os.path.join(dir, "*.cpp"))
+
+for dir in sourceTestDirectories:
+    sourceTestFiles += glob.glob(os.path.join(dir, "*.cpp"))
+
+#Remove blacklisted files
+for file in blackListedFiles:
+    sourceFiles.remove(file)
+for file in blackListedTestFiles:
+    sourceTestFiles.remove(file)
+coverageFiles = deepcopy(sourceFiles) #Creates a copy of the list
+for file in blackListedCoverageFiles:
+    coverageFiles.remove(file)
+
+Alias("debug", DebugEnvironment.StaticLibrary(target = os.path.join(executableDirectory, "SkyvoOS-d"), source = sourceFiles))
+Alias("Debug", "debug")
+Alias("release", ReleaseEnvironment.StaticLibrary(target = os.path.join(executableDirectory, "SkyvoOS"), source = sourceFiles))
+Alias("Relase", "relase")
+Alias("unit_test", TestEnvironment.Program(target = os.path.join(executableDirectory, "unit_test", "unit_test"), source = sourceFiles + sourceTestFiles))
+Alias("runUnitTests",TestEnvironment.Test(target = os.path.join(executableDirectory, "unit_test", "run_test"), source = coverageFiles ))
+Alias("run_test", ["unit_test", "runUnitTests"])
+
+
+#used by auto build
+Alias ("nightly", ["debug", "release", "run_test"])
+Alias ("delta", ["release", "run_test"])
+
+Default(["debug"])
