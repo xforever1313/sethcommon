@@ -47,6 +47,7 @@ SConstruct file for Notebook Core project
 Targets:
     debug          Builds the project for Debug lib (Default)
     release        Builds the project for Release lib
+    dll            Builds a dll file for Release
     unit_test      Builds the project for Unit Tests
     run_test       Builds and runs the Unit Tests and memcheck and coverage
 '''
@@ -126,17 +127,19 @@ coverageFiles = deepcopy(sourceFiles) #Creates a copy of the list
 for file in blackListedCoverageFiles:
     coverageFiles.remove(file)
 
-Alias("debug", DebugEnvironment.SharedLibrary(target = os.path.join(executableDirectory, "SkyvoOS-d"), source = sourceFiles))
+Alias("debug", DebugEnvironment.StaticLibrary(target = os.path.join(executableDirectory, "lib", "SkyvoOS-d"), source = sourceFiles))
 Alias("Debug", "debug")
-Alias("release", ReleaseEnvironment.SharedLibrary(target = os.path.join(executableDirectory, "SkyvoOS"), source = sourceFiles))
-Alias("Relase", "relase")
+Alias("release", ReleaseEnvironment.StaticLibrary(target = os.path.join(executableDirectory, "lib", "SkyvoOS"), source = sourceFiles))
+
+Alias("dll",  ReleaseEnvironment.SharedLibrary(target = os.path.join(executableDirectory, "sharedLib", "SkyvoOS"), source = sourceFiles))
+
 Alias("unit_test", TestEnvironment.Program(target = os.path.join(executableDirectory, "unit_test", "unit_test"), source = sourceFiles + sourceTestFiles))
 Alias("runUnitTests",TestEnvironment.Test(target = os.path.join(executableDirectory, "unit_test", "run_test"), source = coverageFiles ))
 Alias("run_test", ["unit_test", "runUnitTests"])
 
 
 #used by auto build
-Alias ("nightly", ["debug", "release", "run_test"])
-Alias ("delta", ["release", "run_test"])
+Alias ("nightly", ["debug", "release", "dll", "run_test"])
+Alias ("delta", "nightly")
 
 Default(["debug"])
