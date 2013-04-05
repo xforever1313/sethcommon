@@ -9,7 +9,7 @@ import glob
 import shutil
 from copy import deepcopy
 
-projectName = "CrazySnakesBackend"
+projectName = "SkyvoOS"
 sys.path.append("../../") #Get globals
 from Globals import *
 
@@ -126,9 +126,9 @@ coverageFiles = deepcopy(sourceFiles) #Creates a copy of the list
 for file in blackListedCoverageFiles:
     coverageFiles.remove(file)
 
-Alias("debug", DebugEnvironment.StaticLibrary(target = os.path.join(executableDirectory, "SkyvoOS-d"), source = sourceFiles))
+Alias("debug", DebugEnvironment.SharedLibrary(target = os.path.join(executableDirectory, "SkyvoOS-d"), source = sourceFiles))
 Alias("Debug", "debug")
-Alias("release", ReleaseEnvironment.StaticLibrary(target = os.path.join(executableDirectory, "SkyvoOS"), source = sourceFiles))
+Alias("release", ReleaseEnvironment.SharedLibrary(target = os.path.join(executableDirectory, "SkyvoOS"), source = sourceFiles))
 Alias("Relase", "relase")
 Alias("unit_test", TestEnvironment.Program(target = os.path.join(executableDirectory, "unit_test", "unit_test"), source = sourceFiles + sourceTestFiles))
 Alias("runUnitTests",TestEnvironment.Test(target = os.path.join(executableDirectory, "unit_test", "run_test"), source = coverageFiles ))
