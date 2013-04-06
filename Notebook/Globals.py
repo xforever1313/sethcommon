@@ -19,7 +19,7 @@ ignoredTestDirectories = codeCoverageDirectory + objectDirectory + executableDir
 #Defines
 globalDefines = []
 if (sys.platform == "win32"):
-    globalDefines += ["_WIN32_WINNT=0x0501"]
+    globalDefines += ["_WIN32_WINNT=0x0501", "BOOST_ASIO_DISABLE_STD_CHRONO"]
     
 globalDebugDefines = ["-DDEBUG"]
 globalReleaseDefines = ["-DRELEASE"]
@@ -28,13 +28,13 @@ if (sys.platform != "win32"):
 	globalUnitTestDefines += ["-DBOOST_TEST_DYN_LINK"]
 
 #Compile Flags
-globalCXXFlags = ["-Wall", "-pedantic", "-Werror"]
+globalCXXFlags = ["-Wall", "-pedantic", "-Werror", "-std=gnu++11"]
 globalCXXDebugFlags = ["-g"]
 globalCXXReleaseFlags = ["-O2"]
 globalCXXUnitTestFlags = ["-g", "-fprofile-arcs", "-ftest-coverage"]
 
 #Linker Flags
-globalLinkerFlags = ["-Wall", "-g", "-Werror"]
+globalLinkerFlags = ["-Wall", "-g", "-Werror", "-std=gnu++11"]
 
 #Linker Libs
 globalLibsDebugFlags = []

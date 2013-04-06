@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(FilesSystem_setUp){
     FileSystem uut;
     BOOST_CHECK(uut.createDir(fileTestOutputPath));
     BOOST_CHECK(uut.dirExists(fileTestOutputPath));
-    #if defined(WIN32)
+    #if defined(_WIN32) | defined(_WIN64)
         illegalDir = "con";
     #else
         illegalDir = "..";
@@ -99,6 +99,7 @@ BOOST_AUTO_TEST_CASE(FileSystem_createDirTest){
     BOOST_CHECK(uut.dirExists(testDirLocation3));
 
     BOOST_CHECK(!uut.createDir(uut.pathJoin(fileTestOutputPath, illegalDir)));
+    std::cout <<illegalDir<<std::endl;
 }
 
 ///\brief tests the isFile method
