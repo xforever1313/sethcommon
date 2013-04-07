@@ -19,7 +19,7 @@ ignoredTestDirectories = codeCoverageDirectory + objectDirectory + executableDir
 #Defines
 globalDefines = []
 if (sys.platform == "win32"):
-    globalDefines += ["_WIN32_WINNT=0x0501", "BOOST_ASIO_DISABLE_STD_CHRONO"]
+    globalDefines += ["_WIN32_WINNT=0x0501"]
     
 globalDebugDefines = ["-DDEBUG"]
 globalReleaseDefines = ["-DRELEASE"]
