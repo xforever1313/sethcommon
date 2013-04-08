@@ -4,6 +4,7 @@ import os
 import subprocess
 import shutil
 import glob
+import time
 
 notebookRootDirectory = os.getcwd()
 
@@ -65,6 +66,8 @@ def testRunner(target, source, env):
         print("Running Coverage")
         try:
             shutil.rmtree(codeCoverageDirectory)
+            #wait for it to be deleted
+            time.sleep(3)
         except:
             print("CodeCoverage directory missing, recreating")
 

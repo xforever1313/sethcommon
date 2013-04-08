@@ -8,12 +8,14 @@ release
 unit_test
 testOutput
 __pycache__
+bld
 
 # Compiled source #
 ###################
 *.com
 *.class
 *.dll
+*.a
 *.gcno
 *.gcna
 *.gcda
