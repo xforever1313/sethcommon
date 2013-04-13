@@ -98,7 +98,7 @@ BOOST_AUTO_TEST_CASE(FileSystem_createDirTest){
     BOOST_CHECK(uut.createDir(testDirLocation3));
     BOOST_CHECK(uut.dirExists(testDirLocation3));
 
-	#ifdef _win32
+	#ifdef _WIN32
     BOOST_CHECK(!uut.createDir(uut.pathJoin(fileTestOutputPath, illegalDir)));
     #else
     BOOST_CHECK(!uut.createDir(illegalDir));
@@ -195,7 +195,7 @@ BOOST_AUTO_TEST_CASE(FileSystem_copyDirTest){
     BOOST_CHECK(!uut.copyDir("derp", "herp"));
 
     //Tests the case where we are copying to an illegal directory
-    #ifdef _win32
+    #ifdef _WIN32
     BOOST_CHECK(!uut.copyDir(testDir, uut.pathJoin(fileTestOutputPath, illegalDir)));
 	#else
 	BOOST_CHECK(!uut.copyDir(testDir, illegalDir));

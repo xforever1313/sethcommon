@@ -57,7 +57,7 @@ bool FileSystem::createDir( const std::string dirPath ){
     std::string currentDir = dirsToMake[0];
     for (unsigned int i = 1; i < dirsToMake.size()+1; ++i){
         if (!dirExists(currentDir)){
-			#ifdef _win32
+			#ifdef _WIN32
             int status = mkdir(currentDir.c_str());
             #else
             mode_t mode = (S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); //rwxr-xr-x
