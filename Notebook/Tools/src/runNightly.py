@@ -17,7 +17,7 @@ else:
     buildName = "Nightix"
 
 logDir = os.path.join(thisDir, "logs", buildName + "-" + currentTime)
-os.mkdir(logDir)
+os.makedirs(logDir)
 
 i = 0
 while (i < len(targetLocations)):

@@ -62,28 +62,30 @@ def testRunner(target, source, env):
         status = subprocess.call("./unit_test")
     os.chdir(thisDir)
 
+	#todo make this work on linux
     if (status == 0):
-        print("Running Coverage")
-        try:
-            shutil.rmtree(codeCoverageDirectory)
-            #wait for it to be deleted
-            time.sleep(3)
-        except:
-            print("CodeCoverage directory missing, recreating")
+		if(sys.platform == "win32"):
+			print("Running Coverage")
+			try:
+				shutil.rmtree(codeCoverageDirectory)
+				#wait for it to be deleted
+				time.sleep(3)
+			except:
+				print("CodeCoverage directory missing, recreating")
 
-        os.mkdir(codeCoverageDirectory)
-        
-        gcovString = "gcov -r -s \"" + thisDir + "\" -o \"" + os.path.join(thisDir, objectDirectory, "unit_test") + "\" "
-        for file in source:
-            gcovString += (os.path.join(thisDir, str(file)) + " ")
-        print (gcovString)
-        
-        subprocess.call(gcovString)
-        
-        #Move all .gcov files to  CodeCoverage folder
-        gcovGlob = glob.glob("*.gcov")    
-        for file in gcovGlob:
-            shutil.move(file, codeCoverageDirectory)
+			os.mkdir(codeCoverageDirectory)
+			
+			gcovString = "gcov -r -s \"" + thisDir + "\" -o \"" + os.path.join(thisDir, objectDirectory, "unit_test") + "\" "
+			for file in source:
+				gcovString += (os.path.join(thisDir, str(file)) + " ")
+			print (gcovString)
+			
+			subprocess.call(gcovString)
+			
+			#Move all .gcov files to  CodeCoverage folder
+			gcovGlob = glob.glob("*.gcov")    
+			for file in gcovGlob:
+				shutil.move(file, codeCoverageDirectory)
             
     else:
         raise Exception("Test Failed!")

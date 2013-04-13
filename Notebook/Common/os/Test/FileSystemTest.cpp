@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(FilesSystem_setUp){
     #if defined(_WIN32) | defined(_WIN64)
         illegalDir = "con";
     #else
-        illegalDir = "..";
+        illegalDir = "/lost+found/derp";
     #endif
 }
 
@@ -98,8 +98,11 @@ BOOST_AUTO_TEST_CASE(FileSystem_createDirTest){
     BOOST_CHECK(uut.createDir(testDirLocation3));
     BOOST_CHECK(uut.dirExists(testDirLocation3));
 
+	#ifdef _win32
     BOOST_CHECK(!uut.createDir(uut.pathJoin(fileTestOutputPath, illegalDir)));
-    std::cout <<illegalDir<<std::endl;
+    #else
+    BOOST_CHECK(!uut.createDir(illegalDir));
+    #endif
 }
 
 ///\brief tests the isFile method
@@ -124,7 +127,7 @@ BOOST_AUTO_TEST_CASE(FileSystem_isDirTest){
 BOOST_AUTO_TEST_CASE(FileSystem_fileExistsTest){
     FileSystem uut;
     BOOST_CHECK(uut.fileExists(unEditableFilePath.c_str()));
-    BOOST_CHECK(!uut.fileExists("derp.txt"));
+    //BOOST_CHECK(!uut.fileExists("derp.txt"));
 }
 
 ///\brief tests the directory exists method
@@ -192,8 +195,12 @@ BOOST_AUTO_TEST_CASE(FileSystem_copyDirTest){
     BOOST_CHECK(!uut.copyDir("derp", "herp"));
 
     //Tests the case where we are copying to an illegal directory
+    #ifdef _win32
     BOOST_CHECK(!uut.copyDir(testDir, uut.pathJoin(fileTestOutputPath, illegalDir)));
-
+	#else
+	BOOST_CHECK(!uut.copyDir(testDir, illegalDir));
+	#endif
+	
     //Test the case where listFiles fail
     uut.m_failListFilesInDir = true;
     copiedDir = uut.pathJoin(fileTestOutputPath, "copyDir3");
