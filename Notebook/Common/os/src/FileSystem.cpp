@@ -45,14 +45,13 @@ bool FileSystem::createDir( const std::string dirPath ){
     std::stringstream ss(dirPath);
     std::vector<std::string> dirsToMake;
 
-    char *nextDir = new char[dirPath.size()];
     ss.peek();
     while (!ss.eof()){
-        ss.getline(nextDir, dirPath.size(), '/');
+        std::string nextDir;
+        std::getline(ss, nextDir, '/');
         dirsToMake.push_back(nextDir);
         ss.peek();
     }
-    delete [] nextDir;
 
     std::string currentDir = dirsToMake[0];
     for (unsigned int i = 1; i < dirsToMake.size()+1; ++i){
