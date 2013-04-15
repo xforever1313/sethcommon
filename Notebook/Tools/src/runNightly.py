@@ -33,7 +33,7 @@ while (i < len(targetLocations)):
     print (commandStr)
     subprocess.call(commandStr, shell=True)
     
-    commandStr = "scons nightly " + redirectString
+    commandStr = "scons nightly " #+ redirectString
     print(commandStr)
     status = subprocess.call(commandStr, shell=True)
 

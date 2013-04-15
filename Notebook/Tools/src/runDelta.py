@@ -17,7 +17,7 @@ else:
     buildName = "Lelta"
 
 logDir = os.path.join(thisDir, "logs", buildName + "-" + currentTime)
-os.mkdir(logDir)
+os.makedirs(logDir)
 
 i = 0
 while (i < len(targetLocations)):
@@ -29,7 +29,7 @@ while (i < len(targetLocations)):
     else:
         redirectString = " &> " + str(logFile)
     
-    commandStr = "scons delta " + redirectString
+    commandStr = "scons delta " #+ redirectString
     print(commandStr)
     status = subprocess.call(commandStr, shell=True)
 
