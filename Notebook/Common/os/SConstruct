@@ -47,6 +47,7 @@ SConstruct file for Notebook Core project
 Targets:
     debug          Builds the project for Debug lib (Default)
     release        Builds the project for Release lib
+    create_lib     Builds both the debug and release libs
     dll            Builds a dll file for Release
     unit_test      Builds the project for Unit Tests
     run_test       Builds and runs the Unit Tests and memcheck and coverage
@@ -130,6 +131,8 @@ for file in blackListedCoverageFiles:
 Alias("debug", DebugEnvironment.StaticLibrary(target = os.path.join(executableDirectory, "lib", "SkyvoOS-d"), source = sourceFiles))
 Alias("Debug", "debug")
 Alias("release", ReleaseEnvironment.StaticLibrary(target = os.path.join(executableDirectory, "lib", "SkyvoOS"), source = sourceFiles))
+
+Alias ("create_lib", ["debug", "release"])
 
 Alias("dll",  ReleaseEnvironment.SharedLibrary(target = os.path.join(executableDirectory, "sharedLib", "SkyvoOS"), source = sourceFiles))
 
