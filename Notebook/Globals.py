@@ -51,6 +51,8 @@ toolsPath = os.path.join(notebookRootDirectory, "Tools")
 corePath = os.path.join(notebookRootDirectory, "Core")
 toolHeaderLocation = os.path.join(notebookRootDirectory, "Tools", "src", "toolHeader.py")
 
+extractionLocation = ""
+
 #Runs the test, and coverage while we are at it :P
 def testRunner(target, source, env):
     thisDir = os.getcwd()
@@ -89,3 +91,20 @@ def testRunner(target, source, env):
             
     else:
         raise Exception("Test Failed!")
+
+#Extracts libs to the given location
+def libExtractor(extractionLocation, libsToExtract):
+    #save the current dir
+    thisDir = os.getcwd()
+    #change to the destination folder
+    os.chdir(extractionLocation)
+    print "Extracting Libs..."
+    for lib in libsToExtract:
+        commandStr = "ar x " + str(lib)
+        print commandStr
+        status = subprocess.call(commandStr, shell=True)
+        if (status != 0):
+            raise Exception("Extraction Error")
+            
+    #return to the old directory
+    os.chdir(thisDir)
