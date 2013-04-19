@@ -142,7 +142,7 @@ Alias("run_test", ["unit_test", "runUnitTests"])
 
 
 #used by auto build
-Alias ("nightly", ["debug", "release", "dll", "run_test"])
-Alias ("delta", "nightly")
+Alias ("nightly", ["debug", "release", "run_test"])
+Alias ("delta", ["release", "run_test"])
 
 Default(["debug"])
