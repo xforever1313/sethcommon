@@ -67,3 +67,4 @@ Thumbs.db
 .sconsign.dblite
 /Notebook/Core/*.layout
 /Notebook/SkyWrite-Core/*.layout
+/Notebook/SkyWrite-GUI-Java/*.layout
