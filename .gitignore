@@ -68,3 +68,4 @@ Thumbs.db
 /Notebook/Core/*.layout
 /Notebook/SkyWrite-Core/*.layout
 /Notebook/SkyWrite-GUI-Java/*.layout
+/Notebook/Core/containers/*.layout
