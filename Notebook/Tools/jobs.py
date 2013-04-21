@@ -1,6 +1,6 @@
 import os
 
-notebookRootDirectory = os.path.abspath(os.path.join("..",".."))
+notebookRootDirectory = os.path.abspath("..")
 
 #Add to these lists where to call scons
 targetLocations = []

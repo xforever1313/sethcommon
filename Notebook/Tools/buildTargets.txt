@@ -1,3 +1,0 @@
-../Core/containers ContainerUnitTestBuild unit_test
-../Core CoreDebugBuild debug
-../Core CoreTestBuild unit_test

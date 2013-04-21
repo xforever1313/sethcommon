@@ -1,8 +1,7 @@
-from toolHeader import *
-
 import time
 import os
 import subprocess
+import sys
 
 from jobs import *
 
