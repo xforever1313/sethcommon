@@ -65,7 +65,7 @@ Thumbs.db
 # Others #
 ##########
 .sconsign.dblite
-/Notebook/Core/*.layout
-/Notebook/SkyWrite-Core/*.layout
-/Notebook/SkyWrite-GUI-Java/*.layout
-/Notebook/Core/containers/*.layout
+/Notebook/Tools/convertedScsvGestures
+
+/Notebook/Tools/xmlFilesToConvert/*.xml
+*.layout
