@@ -39,7 +39,7 @@ unsigned int Date::getMonthNumber() const{
 }
 
 std::string Date::getMonthString() const{
-    if (month > 12 || month < 0){
+    if (month > 12){
         return monthString[0];
     }
 

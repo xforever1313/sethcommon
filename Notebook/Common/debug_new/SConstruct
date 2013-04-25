@@ -1,0 +1,30 @@
+import SCons.Defaults
+import SCons
+from SCons.Util import unique
+import sys
+
+sys.path.append("../../") #Get globals
+from Globals import *
+
+if (sys.platform == "win32"):
+    env = Environment(tools = ["mingw"])
+else:
+    env = Environment(tools = ["default", "gcc", "g++"])
+
+#Make commonCXX environment
+BaseCXXEnvironment = env.Clone(
+    ENV = {'PATH' : os.environ['PATH']}, #Look in path for tools
+    PROJECT_ROOT = Dir("."),
+    OBJPREFIX = os.path.join(Dir(objectDirectory).abspath, "lib") + '/',
+    LIBDIR = "lib",
+    CCFLAGS = globalCXXDebugFlags,
+    LINKFLAGS = globalLinkerFlags
+)
+
+debugNewObject = BaseCXXEnvironment.Object("debug_new.cpp")
+
+buildDebugNew = BaseCXXEnvironment.StaticLibrary(target = os.path.join("lib","debug_new"), source = debugNewObject)
+
+Alias("create_lib", buildDebugNew)
+
+Default("create_lib")

@@ -35,7 +35,7 @@ globalCXXReleaseFlags = ["-O2"]
 globalCXXUnitTestFlags = ["-g", "-fprofile-arcs", "-ftest-coverage"]
 
 #Linker Flags
-globalLinkerFlags = ["-Wall", "-g", "-Werror", "-std=gnu++11"]
+globalLinkerFlags = ["-Wall", "-Werror", "-std=gnu++11"]
 
 #Linker Libs
 globalLibsDebugFlags = []
