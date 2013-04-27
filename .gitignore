@@ -69,3 +69,4 @@ Thumbs.db
 
 /Notebook/Tools/xmlFilesToConvert/*.xml
 *.layout
+/Notebook/SkyWrite-Gestures/user-gestures
