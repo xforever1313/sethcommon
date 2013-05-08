@@ -5,6 +5,7 @@ import sys
 
 sys.path.append("../../") #Get globals
 from Globals import *
+from SConstructGlobals import *
 
 if (sys.platform == "win32"):
     env = Environment(tools = ["mingw"])
@@ -15,8 +16,8 @@ else:
 BaseCXXEnvironment = env.Clone(
     ENV = {'PATH' : os.environ['PATH']}, #Look in path for tools
     PROJECT_ROOT = Dir("."),
-    OBJPREFIX = os.path.join(Dir(objectDirectory).abspath, "lib") + '/',
-    LIBDIR = "lib",
+    OBJPREFIX = os.path.join(Dir(objectDir).abspath, "lib") + '/',
+    LIBDIR = libDir,
     CCFLAGS = globalCXXDebugFlags,
     LINKFLAGS = globalLinkerFlags
 )

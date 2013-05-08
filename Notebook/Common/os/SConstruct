@@ -9,105 +9,24 @@ import glob
 import shutil
 from copy import deepcopy
 
-projectName = "SkyvoOS"
-sys.path.append("../../") #Get globals
+baseDir = os.path.abspath("../../")
+sys.path.append(baseDir) #Get globals
 from Globals import *
+from SConstructGlobals import *
 
+###
+# Files to compile
+###
+
+###include paths:
+includePaths = [includeDir]
+testIncludePaths = [os.path.join(testDir, includeDir)]
+
+###Source Files
 #if a new directory gets added, add to here
 sourceDirectories = ["src"]
 #if a new test directory gets added, add to here
-sourceTestDirectories = ["Test", os.path.join("Test", "src")]
-
-#include paths:
-includePaths = [os.path.join(".", "include")]
-testIncludePaths = [os.path.join("Test", "include")]
-
-#files to ignore all builds that are in 'sourceDirectories'
-blackListedFiles = []
-
-#files to ignore in 'sourceTestDirectories'
-blackListedTestFiles = []
-
-#Files to ignore in "Coverage"
-blackListedCoverageFiles = []
-
-debugLibs = []
-releaseLibs = []
-
-testLibs = debugLibs
-
-if (sys.platform == "win32"):
-    #defaults to MSVC until set to MinGW
-    SCons.Defaults.DefaultEnvironment(tools = [])
-
-Help(
-'''
-SConstruct file for Notebook Core project
-
-Targets:
-    debug          Builds the project for Debug lib (Default)
-    release        Builds the project for Release lib
-    create_lib     Builds both the debug and release libs
-    dll            Builds a dll file for Release
-    unit_test      Builds the project for Unit Tests
-    run_test       Builds and runs the Unit Tests and memcheck and coverage
-'''
-)
-
-if (sys.platform == "win32"):
-    env = Environment(tools = ["mingw"])
-else:
-    env = Environment(tools = ["default", "gcc", "g++"])
-#TODO make one for Mac and MSVC
-
-#Make common environment
-BaseEnvironment = env.Clone(
-    ENV = {'PATH' : os.environ['PATH']}, #Look in path for tools
-    PROJECT_ROOT = Dir(".")
-)
-
-#Debug Environment
-DebugEnvironment = BaseEnvironment.Clone(
-    OBJPREFIX = os.path.join(Dir(objectDirectory).abspath, "Debug") + '/',
-    CPPDEFINES = globalDefines + globalDebugDefines,
-    CCFLAGS = globalCXXFlags + globalCXXDebugFlags,
-    LIBS = debugLibs + globalLibsDebugFlags,
-	LINKFLAGS = globalLinkerFlags,
-    CPPPATH = includePaths
-)
-
-#Release Environment
-ReleaseEnvironment = BaseEnvironment.Clone(
-    OBJPREFIX = os.path.join(Dir(objectDirectory).abspath, "Release") + '/',
-    CPPDEFINES = globalDefines + globalReleaseDefines,
-    CCFLAGS = globalCXXFlags + globalCXXReleaseFlags,
-    LIBS = releaseLibs + globalLibsReleaseFlags,
-	LINKFLAGS = globalLinkerFlags,
-    CPPPATH = includePaths
-)
-
-#Unit test environment
-TestEnvironment = BaseEnvironment.Clone(
-    OBJPREFIX = os.path.join(Dir(objectDirectory).abspath, "unit_test") + '/',
-    CPPDEFINES = globalDefines + globalUnitTestDefines,
-    CCFLAGS = globalCXXFlags + globalCXXUnitTestFlags,
-    LIBS = testLibs + globalLibsUnitTestFlags,
-	LINKFLAGS = globalLinkerFlags,
-    CPPPATH = includePaths + testIncludePaths
-)
-
-#Create a RunTest Builder
-RunTest = Builder(action = testRunner) #testRunner method in globals.py
-TestEnvironment.Append(BUILDERS = {"Test" : RunTest})
-
-#make a directory to dump all test output files
-testOutputPath = os.path.join(".", "testOutput")
-if(os.path.exists(testOutputPath) == False):
-    os.mkdir(testOutputPath)
-    
-#make unEditableFile.txt and uneditableDir unwritable, and unReadableFile.txt unreadable
-os.chmod(os.path.join(".", "Test", "unEditableFile.txt"), stat.S_IREAD)
-os.chmod(os.path.join(".", "Test", "unReadableFile.txt"), 0)
+sourceTestDirectories = [testDir, os.path.join(testDir, srcDir)]
 
 sourceFiles = []
 sourceTestFiles = []
@@ -119,27 +38,68 @@ for dir in sourceDirectories:
 for dir in sourceTestDirectories:
     sourceTestFiles += glob.glob(os.path.join(dir, "*.cpp"))
 
-#Remove blacklisted files
-for file in blackListedFiles:
-    sourceFiles.remove(file)
-for file in blackListedTestFiles:
-    sourceTestFiles.remove(file)
-coverageFiles = deepcopy(sourceFiles) #Creates a copy of the list
-for file in blackListedCoverageFiles:
-    coverageFiles.remove(file)
+coverageFiles = deepcopy(sourceFiles)
+    
+###Libs
+libs = []
 
-Alias("debug", DebugEnvironment.StaticLibrary(target = os.path.join(executableDirectory, "lib", "SkyvoOS-d"), source = sourceFiles))
-Alias("Debug", "debug")
-Alias("release", ReleaseEnvironment.StaticLibrary(target = os.path.join(executableDirectory, "lib", "SkyvoOS"), source = sourceFiles))
+###libPath
+libPath = []
 
+Help(
+'''
+SConstruct file for Notebook Core project
+
+Targets:
+    debug          Builds the project for Debug lib (Default)
+    release        Builds the project for Release lib
+    create_lib     Builds both the debug and release libs
+    unit_test      Builds the project for Unit Tests
+    run_test       Builds and runs the Unit Tests and memcheck and coverage
+'''
+)
+
+###
+# Environment creation
+###
+
+#Make common environment
+envBase = createBaseEnvironment(baseDir, False)
+
+#Debug Environment
+debugEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
+
+#Release Environment
+releaseEnvironment = createReleaseEnvironment(envBase, includePaths, libs, libPath)
+
+#Unit test environment
+testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, libs, libPath)
+
+###
+# Test outputs
+###
+createTestOutputFolder(envBase)
+    
+#make unEditableFile.txt and uneditableDir unwritable, and unReadableFile.txt unreadable
+os.chmod(os.path.join(".", "Test", "unEditableFile.txt"), stat.S_IREAD)
+os.chmod(os.path.join(".", "Test", "unReadableFile.txt"), 0)
+
+###
+# Targets
+###
+
+debugTarget = createStaticLib(debugEnvironment, "SkyvoOS-d", sourceFiles)
+releaseTarget = createStaticLib(releaseEnvironment, "SkyvoOS", sourceFiles)
+(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles)
+
+#TODO move this to globals
+Depends(runTestTarget, unitTestTarget)
+
+Alias("debug", debugTarget)
+Alias("release", releaseTarget)
 Alias ("create_lib", ["debug", "release"])
-
-Alias("dll",  ReleaseEnvironment.SharedLibrary(target = os.path.join(executableDirectory, "sharedLib", "SkyvoOS"), source = sourceFiles))
-
-Alias("unit_test", TestEnvironment.Program(target = os.path.join(executableDirectory, "unit_test", "unit_test"), source = sourceFiles + sourceTestFiles))
-Alias("runUnitTests",TestEnvironment.Test(target = os.path.join(executableDirectory, "unit_test", "run_test"), source = coverageFiles ))
-Alias("run_test", ["unit_test", "runUnitTests"])
-
+Alias("unit_test", unitTestTarget)
+Alias("run_test", [unitTestTarget, runTestTarget])
 
 #used by auto build
 Alias ("nightly", ["debug", "release", "run_test"])
