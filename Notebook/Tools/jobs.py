@@ -10,8 +10,11 @@ targetNames = []
 targetNames += ["OSBuild"] #Must be built first
 targetLocations += [os.path.join(notebookRootDirectory,"Common", "os")]
 
-targetNames += ["CoreBuild"] #Must be built before SkyCore
-targetLocations += [os.path.join(notebookRootDirectory,"Core")]
+targetNames += ["SCSVBuild"]
+targetLocations += [os.path.join(notebookRootDirectory, "Common", "SCSV")]
+
+targetNames += ["NotebookCoreBuild"] 
+targetLocations += [os.path.join(notebookRootDirectory,"Notebook-Core")]
 
 targetNames += ["SkyCoreBuild"]
 targetLocations += [os.path.join(notebookRootDirectory, "SkyWrite-Core")]

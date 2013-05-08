@@ -22,6 +22,9 @@ def getCommonPath(env):
 
 def getCorePath(env):
     return os.path.join(env['NOTEBOOK_ROOT'], "Core")
+
+def getSCSVPath(env):
+    return os.path.join(getCommonPath(env), "SCSV")
     
 def getSkyvoOSPath(env):
     return os.path.join(getCommonPath(env), "os")

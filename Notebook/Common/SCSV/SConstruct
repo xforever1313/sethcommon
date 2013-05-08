@@ -1,0 +1,104 @@
+import SCons.Defaults
+import SCons
+from SCons.Util import unique
+import stat
+import os
+import sys
+import subprocess
+import glob
+import shutil
+from copy import deepcopy
+
+baseDir = os.path.abspath("../../")
+sys.path.append(baseDir) #Get globals
+from Globals import *
+from SConstructGlobals import *
+
+###
+# Files to compile
+###
+
+###include paths:
+includePaths = [includeDir]
+testIncludePaths = [os.path.join(testDir, includeDir)]
+
+###Source Files
+#if a new directory gets added, add to here
+sourceDirectories = ["src"]
+#if a new test directory gets added, add to here
+sourceTestDirectories = [testDir, os.path.join(testDir, srcDir)]
+
+sourceFiles = []
+sourceTestFiles = []
+
+#Add all .cpp files
+for dir in sourceDirectories:
+    sourceFiles += glob.glob(os.path.join(dir, "*.cpp"))
+
+for dir in sourceTestDirectories:
+    sourceTestFiles += glob.glob(os.path.join(dir, "*.cpp"))
+
+coverageFiles = deepcopy(sourceFiles)
+    
+###Libs
+libs = []
+
+###libPath
+libPath = []
+
+Help(
+'''
+SConstruct file for Notebook Core project
+
+Targets:
+    debug          Builds the project for Debug lib (Default)
+    release        Builds the project for Release lib
+    create_lib     Builds both the debug and release libs
+    unit_test      Builds the project for Unit Tests
+    run_test       Builds and runs the Unit Tests and memcheck and coverage
+'''
+)
+
+###
+# Environment creation
+###
+
+#Make common environment
+envBase = createBaseEnvironment(baseDir, False)
+
+#Debug Environment
+debugEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
+
+#Release Environment
+releaseEnvironment = createReleaseEnvironment(envBase, includePaths, libs, libPath)
+
+#Unit test environment
+testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, libs, libPath)
+
+###
+# Test outputs
+###
+createTestOutputFolder(envBase)
+    
+###
+# Targets
+###
+
+debugTarget = createStaticLib(debugEnvironment, "SCSV-d", sourceFiles)
+releaseTarget = createStaticLib(releaseEnvironment, "SCSV", sourceFiles)
+(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles)
+
+#TODO move this to globals
+Depends(runTestTarget, unitTestTarget)
+
+Alias("debug", debugTarget)
+Alias("release", releaseTarget)
+Alias ("create_lib", ["debug", "release"])
+Alias("unit_test", unitTestTarget)
+Alias("run_test", [unitTestTarget, runTestTarget])
+
+#used by auto build
+Alias ("nightly", ["debug", "release", "run_test"])
+Alias ("delta", ["release", "run_test"])
+
+Default(["debug"])
