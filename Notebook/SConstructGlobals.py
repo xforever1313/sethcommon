@@ -27,7 +27,7 @@ if (sys.platform != "win32"):
 	globalUnitTestDefines += ["-DBOOST_TEST_DYN_LINK"]
 
 #Compile Flags
-globalCXXFlags = ["-Wall", "-pedantic", "-Werror", "-std=gnu++11", "-mthreads", "-Wdouble-promotion"]
+globalCXXFlags = ["-pedantic-errors", "-Werror", "-std=gnu++11", "-mthreads", "-Wall", "-Wdouble-promotion", "-Wclobbered", "-Wuseless-cast", "-Wcast-align", "-Wsign-compare", "-Wempty-body", "-Wcast-qual", "-Wmissing-field-initializers", "-Wtype-limits"]
 globalCXXDebugFlags = ["-g", "-Wswitch-enum"]
 globalCXXReleaseFlags = ["-O3", "-Wswitch-enum"]
 globalCXXUnitTestFlags = ["-g", "-fprofile-arcs", "-ftest-coverage"]
