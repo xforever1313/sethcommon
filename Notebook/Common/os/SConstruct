@@ -42,7 +42,7 @@ coverageFiles = deepcopy(sourceFiles)
     
 ###Libs
 libs = []
-
+testLibs = ["boost_thread"] + libs
 ###libPath
 libPath = []
 
@@ -73,7 +73,7 @@ debugEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
 releaseEnvironment = createReleaseEnvironment(envBase, includePaths, libs, libPath)
 
 #Unit test environment
-testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, libs, libPath)
+testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, testLibs, libPath)
 
 ###
 # Test outputs

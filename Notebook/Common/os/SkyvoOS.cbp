@@ -1,0 +1,235 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="SkyvoOS" />
+		<Option makefile="SConstruct" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<MakeCommands>
+			<Build command="" />
+			<CompileFile command="" />
+			<Clean command="" />
+			<DistClean command="$make -f $makefile distclean$target" />
+			<AskRebuildNeeded command="" />
+			<SilentBuild command=" &gt; $(CMD_NULL)" />
+		</MakeCommands>
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/SkyvoOS" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/Debug/" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-D_WIN32_WINNT=0x0501" />
+				</Compiler>
+				<Linker>
+					<Add option="-lwsock32 -lboost_thread -lboost_filesystem -lboost_system" />
+					<Add library="debug_new" />
+				</Linker>
+				<MakeCommands>
+					<Build command="$make debug" />
+					<CompileFile command="$make debug $file" />
+					<Clean command="$make debug --clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make debug -q" />
+					<SilentBuild command="$make debug &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/SkyvoOS" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/Release/" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+				<MakeCommands>
+					<Build command="$make release" />
+					<CompileFile command="$make release $file" />
+					<Clean command="$make release --clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make release -q" />
+					<SilentBuild command="$make release &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="unit_test">
+				<Option output="bin/unit_test/unit_test" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/unit_test/" />
+				<Option object_output="obj/unit_test/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-fexceptions" />
+					<Add option="-fprofile-arcs" />
+					<Add option="-ftest-coverage" />
+					<Add option="-D_WIN32_WINNT=0x0501" />
+					<Add option="-DUNIT_TEST" />
+				</Compiler>
+				<Linker>
+					<Add option="-lwsock32" />
+					<Add library="boost_chrono" />
+					<Add library="boost_date_time" />
+					<Add library="boost_thread" />
+					<Add library="boost_unit_test_framework" />
+					<Add library="boost_system" />
+					<Add library="gcov" />
+					<Add library="debug_new" />
+				</Linker>
+				<MakeCommands>
+					<Build command="$make unit_test" />
+					<CompileFile command="$make unit_test $file" />
+					<Clean command="$make unit_test --clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make unit_test -q" />
+					<SilentBuild command="$make unit_test &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+			<Target title="run_test">
+				<Option output="bin/unit_test/unit_test" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="bin/unit_test/" />
+				<Option object_output="obj/unit_test/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+					<Add option="-fexceptions" />
+					<Add option="-fprofile-arcs" />
+					<Add option="-ftest-coverage" />
+					<Add option="-D_WIN32_WINNT=0x0501" />
+					<Add option="-DUNIT_TEST" />
+				</Compiler>
+				<Linker>
+					<Add option="-lwsock32" />
+					<Add library="boost_chrono" />
+					<Add library="boost_date_time" />
+					<Add library="boost_thread" />
+					<Add library="boost_unit_test_framework" />
+					<Add library="boost_system" />
+					<Add library="gcov" />
+					<Add library="debug_new" />
+				</Linker>
+				<MakeCommands>
+					<Build command="$make run_test" />
+					<CompileFile command="$make run_test $file" />
+					<Clean command="$make run_test --clean" />
+					<DistClean command="$make -f $makefile distclean$target" />
+					<AskRebuildNeeded command="$make run_test -q" />
+					<SilentBuild command="$make run_test &gt; $(CMD_NULL)" />
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add directory="$(#boost.include)" />
+			<Add directory="$(#core)" />
+		</Compiler>
+		<Linker>
+			<Add directory="#($core)" />
+		</Linker>
+		<Unit filename="SConstruct">
+			<Option target="run_test" />
+		</Unit>
+		<Unit filename="Test/DateTest.cpp">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="Test/FileSystemTest.cpp">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="Test/SkyvoThreadTest.cpp">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="Test/TestHelper.cpp">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="Test/TestHelper.h">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="Test/UnitTestRunner.cpp">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="Test/include/ThreadImpl.h">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="Test/src/ThreadImpl.cpp">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="include/Base_Task.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="include/Date.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="include/FileSystem.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="include/SkyvoMutex.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="include/SkyvoThread.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Unit filename="include/Test_Task.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="include/ThreadPool.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="src/Date.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="src/FileSystem.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="src/SkyvoMutex.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="src/SkyvoThread.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+		</Unit>
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
