@@ -4,6 +4,8 @@
 #include <deque>
 #include <string>
 
+namespace SkyvoOS{
+
 /**
 * \class FileSystem
 * \brief This will be our interface to the file system. It wraps all unistd
@@ -77,4 +79,6 @@ class FileSystem
 
 };
 
+
+}
 #endif

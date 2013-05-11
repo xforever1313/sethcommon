@@ -18,6 +18,3 @@ targetLocations += [os.path.join(notebookRootDirectory,"Notebook-Core")]
 
 targetNames += ["SkyCoreBuild"]
 targetLocations += [os.path.join(notebookRootDirectory, "SkyWrite-Core")]
-
-targetNames += ["SkyWriteJavaGUI"]
-targetLocations += [os.path.join(notebookRootDirectory, "SkyWrite-GUI-Java")]

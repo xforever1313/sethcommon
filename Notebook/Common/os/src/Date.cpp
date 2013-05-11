@@ -2,7 +2,7 @@
 
 #include <sstream>
 
-using namespace std;
+namespace SkyvoOS{
 
 const std::string Date::monthString [13] = {"Natecember", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
@@ -88,56 +88,56 @@ std::string Date::getAM_PM() const{
 }
 
 std::string Date::getDateSlashes() const{
-    stringstream ss;
+    std::stringstream ss;
     ss << getMonthNumber() << "/" << getDay() << "/" << getYear();
     return ss.str();
 }
 
 std::string Date::getFullDateUnderscores() const
 {
-    stringstream ss;
+    std::stringstream ss;
     ss << getMonthNumber() << "_" << getDay() << "_" << getYear()  << "-" << get24Hour() << "_" << getMinute() << "_" << getSecond();
     return ss.str();
 }
 
 std::string Date::getDateFull() const{
-    stringstream ss;
+    std::stringstream ss;
     ss << getMonthString() << " " << getDay() << ", " << getYear();
     return ss.str();
 }
 
 std::string Date::getTime12() const{
-    stringstream ss;
+    std::stringstream ss;
     ss << get12Hour() << ":" << getMinute() << ":" << getSecond() << " " << getAM_PM();
     return ss.str();
 }
 
 std::string Date::getTime24() const{
-    stringstream ss;
+    std::stringstream ss;
     ss << get24Hour() << ":" << getMinute() << ":" << getSecond();
     return ss.str();
 }
 
 std::string Date::getDateTimeSlashes12() const{
-    stringstream ss;
+    std::stringstream ss;
     ss << getDateSlashes() << " " << getTime12();
     return ss.str();
 }
 
 std::string Date::getDateTimeSlashes24() const{
-    stringstream ss;
+    std::stringstream ss;
     ss << getDateSlashes() << " " << getTime24();
     return ss.str();
 }
 
 std::string Date::getDateTimeFull12() const{
-    stringstream ss;
+    std::stringstream ss;
     ss << getDateFull() << ". " << getTime12();
     return ss.str();
 }
 
 std::string Date::getDateTimeFull24() const{
-    stringstream ss;
+    std::stringstream ss;
     ss << getDateFull() << ". " <<getTime24();
     return ss.str();
 }
@@ -242,4 +242,7 @@ bool Date::operator > (const Date &other) const{
 
 bool Date::operator >= (const Date &other) const{
     return (((*this) > other) || ((*this) == other));
+}
+
+
 }

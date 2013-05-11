@@ -12,6 +12,7 @@
 
 #include "FileSystem.h"
 
+namespace SkyvoOS{
 const std::string FileSystem::THIS_DIR = ".";
 const std::string FileSystem::UP_DIR = "..";
 
@@ -60,7 +61,7 @@ bool FileSystem::createDir( const std::string dirPath ){
             int status = mkdir(currentDir.c_str());
             #else
             mode_t mode = (S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); //rwxr-xr-x
-            
+
             int status = mkdir (currentDir.c_str(), mode);
             #endif
             if (status != 0){
@@ -417,4 +418,6 @@ std::string FileSystem::pathJoin(const std::string parent, const std::string chi
     std::stringstream ss;
     ss << parent << "/" << child;
     return ss.str();
+}
+
 }

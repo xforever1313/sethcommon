@@ -12,6 +12,8 @@
 #include <ctime>
 
 
+namespace SkyvoOS{
+
 /**
  * \class Date
  * \brief Represents a moment in time
@@ -217,4 +219,6 @@ class Date{
         #endif
 };
 
+
+}
 #endif // DATE_H
