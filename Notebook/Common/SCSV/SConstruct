@@ -14,6 +14,8 @@ sys.path.append(baseDir) #Get globals
 from Globals import *
 from SConstructGlobals import *
 
+armBuild = parseArguments(ARGUMENTS)
+
 ###
 # Files to compile
 ###
@@ -24,7 +26,7 @@ testIncludePaths = [os.path.join(testDir, includeDir)]
 
 ###Source Files
 #if a new directory gets added, add to here
-sourceDirectories = ["src"]
+sourceDirectories = [srcDir]
 #if a new test directory gets added, add to here
 sourceTestDirectories = [testDir, os.path.join(testDir, srcDir)]
 
@@ -64,7 +66,7 @@ Targets:
 ###
 
 #Make common environment
-envBase = createBaseEnvironment(baseDir, False)
+envBase = createBaseEnvironment(baseDir, armBuild)
 
 #Debug Environment
 debugEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)

@@ -43,6 +43,12 @@ if (sys.platform == "win32"):
 	globalLibsDebug += ["debug_new"]
 	globalLibsUnitTest += ["debug_new"]
 
+    
+#Parses arguments
+def parseArguments(args):
+    armBuild = (args.get('arm_build', '0') == '1')
+    return armBuild
+    
 ###
 # Environments
 ###
@@ -54,7 +60,10 @@ def createBaseEnvironment (rootDir, isArm):
     elif (not isArm):
         env = Environment(tools = ["default", "gcc", "g++"])
     else:
-        #TODO make one for ARM
+        print ("Building for ARM")
+        binDir += armPrefix
+        libDir += armPrefix
+        objectDir += armPrefix
         env = Environment()
     baseEnvironment = env.Clone(
         ENV = {'PATH' : os.environ['PATH']}, #Look in path for tools

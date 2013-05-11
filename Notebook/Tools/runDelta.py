@@ -8,6 +8,12 @@ from jobs import *
 thisDir = os.getcwd()
 currentTime = time.strftime("%m_%d_%Y_%H_%M_%S")
 
+arm = False
+
+if (len(sys.argv) == 2):
+    if (sys.argv[1] == "arm"):
+        arm = True
+
 if (sys.platform == "win32"):
     buildName = "Welta"
 elif(sys.platform == "darwin"):
@@ -28,7 +34,10 @@ while (i < len(targetLocations)):
     else:
         redirectString = " &> " + str(logFile)
     
-    commandStr = "scons delta " #+ redirectString
+    if (arm): 
+        commandStr = "scons delta arm_build=1" # + redirectString
+    else:
+        commandStr = "scons delta arm_build=0" # + redirectString
     print(commandStr)
     status = subprocess.call(commandStr, shell=True)
 

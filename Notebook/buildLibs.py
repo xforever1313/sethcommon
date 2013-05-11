@@ -2,23 +2,36 @@
 
 import os
 import subprocess
+import sys
 
 #Add to here the directories that contain libs that need to be built
-libDirs = [os.path.join("Common", "os"), os.path.join("Common", "SCSV") "Notebook-Core", "SkyWrite-Core"]
+libDirs = [os.path.join("Common", "os"), os.path.join("Common", "SCSV"), "Notebook-Core", "SkyWrite-Core"]
 
 thisDir = os.getcwd()
 
 errors = 0
 
+arm = False
+
+if (len(sys.argv) == 2):
+    if (sys.argv[1] == "arm"):
+        arm = True
+
+if (arm):
+    cleanCommand = "scons create_lib arm_build=1 --clean"
+    buildCommand = "scons create_lib arm_build=1"
+else:
+    cleanCommand = "scons create_lib arm_build=0 --clean"
+    buildCommand = "scons create_lib arm_build=0"
+
 for dir in libDirs:
     os.chdir(dir)
-    cleanLib = "scons create_lib --clean"
-    print (cleanLib)
-    subprocess.call(cleanLib, shell=True)
+
+    print (cleanCommand)
+    subprocess.call(cleanCommand, shell=True)
     
-    createLib = "scons create_lib"
-    print (createLib)
-    status = subprocess.call(createLib, shell=True)
+    print (buildCommand)
+    status = subprocess.call(buildCommand, shell=True)
     if (status != 0):
         errors = errors + 1
 
@@ -26,3 +39,5 @@ for dir in libDirs:
         
 if (errors != 0):
     print ("***Errors have occured!***")
+
+exit(errors)

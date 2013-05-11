@@ -8,6 +8,12 @@ from jobs import *
 thisDir = os.getcwd()
 currentTime = time.strftime("%m_%d_%Y_%H_%M_%S")
 
+arm = False
+
+if (len(sys.argv) == 2):
+    if (sys.argv[1] == "arm"):
+        arm = True
+
 if (sys.platform == "win32"):
     buildName = "nightWing"
 elif(sys.platform == "darwin"):
@@ -27,12 +33,18 @@ while (i < len(targetLocations)):
         redirectString = " > " + str(logFile) + " 2>&1 "
     else:
         redirectString = " &> " + str(logFile)
-
-    commandStr = "scons nightly --clean"
+    
+    if (arm): 
+        commandStr = "scons nightly arm_build=1 --clean" 
+    else:
+        commandStr = "scons nightly arm_build=0 --clean"
     print (commandStr)
     subprocess.call(commandStr, shell=True)
     
-    commandStr = "scons nightly " #+ redirectString
+    if (arm): 
+        commandStr = "scons nightly arm_build=1" # + redirectString
+    else:
+        commandStr = "scons nightly arm_build=0" # + redirectString
     print(commandStr)
     status = subprocess.call(commandStr, shell=True)
 

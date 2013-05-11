@@ -12,6 +12,7 @@ libDir = "lib"
 objectDir = "obj"
 srcDir = "src"
 testDir = "Test"
+armPrefix = "-arm"
 
 debugDir = "debug"
 releaseDir = "release"
