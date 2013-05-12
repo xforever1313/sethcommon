@@ -181,10 +181,24 @@ def createSharedLib(env, sourceFiles, libName):
     sharedLibTarget = env.SharedLibrary(target = os.path.join(env['LIBDIR'], libName), source = sourceFiles)
     return sharedLibTarget
 
+def createDoxygenTarget(env, doxygenFiles):
+    Doxygen = Builder(action = doxgyenBuilder)
+    env.Append(BUILDERS = {"Doxygen" : Doxygen})
+    if (not os.path.exists(docDir)):
+        os.mkdir(docDir)
+    target = env.Doxygen(target = os.path.join(env['PROJECT_ROOT'], doxygenDir, "html/index.html"), source = doxygenFiles)
+    return target
+    
 ###
 # Other helper functions
 ###
-    
+
+#Source is only passed in so we know if we need to rebuild if any sources change
+def doxgyenBuilder(target, source, env):
+    status = subprocess.call("doxygen Doxyfile", shell=True)
+    if (status != 0):
+        raise Error("***Doxygen failed***")
+
 def filterSourceFiles(sourceFiles, blackListedFiles):
     for file in blackListedFiles:
         sourceFiles.remove(file)

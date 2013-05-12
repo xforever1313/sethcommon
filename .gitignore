@@ -70,3 +70,7 @@ Thumbs.db
 /Notebook/Tools/xmlFilesToConvert/*.xml
 *.layout
 /Notebook/SkyWrite-Gestures/user-gestures
+/Notebook/Common/SCSV/doc/doxygen
+/Notebook/Common/os/doc/doxygen
+/Notebook/Notebook-Core/doc/doxygen
+/Notebook/SkyWrite-Core/doc/doxygen

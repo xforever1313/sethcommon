@@ -1,0 +1,29 @@
+SCSV Standard:
+
+SCSV is like regular CSV, excpet for a few modifications.  Standard CSV implies each row must be of the same length:
+a,b,c
+d,e,f
+g,h,i
+
+SCSV states that the rows can be of different sizes:
+
+a,b,c,d
+e,f
+g,,h
+
+
+Notes about the standard:
+Each line must end with a \n.  Therefore there must be an empty line (NO CHARACTERS) at the end of the file.  
+An empty line anywhere else is assumed to be a row with one blank cell (these lines have \n in them, not just EOF)
+,,     value means an empty cell
+
+Amps and commas are not allowed in a cell.  Use these instead:
+&amp; = &
+&comma; = ,
+
+example:
+
+strokeIndex
+x,y,P
+x,y,P
+EOF

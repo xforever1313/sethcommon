@@ -52,12 +52,13 @@ libPath = []
 
 Help(
 '''
-SConstruct file for Notebook Core project
+SConstruct file for SCSV project
 
 Targets:
     debug          Builds the project for Debug lib (Default)
     release        Builds the project for Release lib
     create_lib     Builds both the debug and release libs
+    doxygen        Builds the doxygen documentation
     unit_test      Builds the project for Unit Tests
     run_test       Builds and runs the Unit Tests and memcheck and coverage
 '''
@@ -79,6 +80,9 @@ releaseEnvironment = createReleaseEnvironment(envBase, includePaths, libs, libPa
 #Unit test environment
 testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, libs, libPath)
 
+###Doxygen
+doxygenFiles = sourceFiles + sourceTestFiles + glob.glob(os.path.join(includeDir, "*h")) + glob.glob(os.path.join(testDir, includeDir, "*h"))
+
 ###
 # Test outputs
 ###
@@ -91,6 +95,9 @@ createTestOutputFolder(envBase)
 debugTarget = createStaticLib(debugEnvironment, "SCSV-d", sourceFiles)
 releaseTarget = createStaticLib(releaseEnvironment, "SCSV", sourceFiles)
 (unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles)
+doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
+#TODO move this to globals
+Clean(doxygenTarget, os.path.join(envBase['PROJECT_ROOT'], doxygenDir))
 
 #TODO move this to globals
 if (not armBuild):
@@ -98,7 +105,8 @@ if (not armBuild):
 
 Alias("debug", debugTarget)
 Alias("release", releaseTarget)
-Alias ("create_lib", ["debug", "release"])
+Alias("create_lib", ["debug", "release"])
+Alias("doxygen", doxygenTarget)
 Alias("unit_test", unitTestTarget)
 Alias("run_unit_test", runTestTarget)
 Alias("run_test", [unitTestTarget, runTestTarget])
@@ -106,10 +114,10 @@ Alias("run_test", [unitTestTarget, runTestTarget])
 #used by auto build
 if (armBuild):
     print("WARNING! Unit tests are not going to be run on an ARM nightly/delta build")
-    Alias ("nightly", ["debug", "release", "unit_test"])
+    Alias ("nightly", ["debug", "release", "doxygen", "unit_test"])
     Alias ("delta", ["release", "unit_test"])
 else:
-    Alias ("nightly", ["debug", "release", "run_test"])
+    Alias ("nightly", ["debug", "release", "doxygen", "run_test"])
     Alias ("delta", ["release", "run_test"])
 
 Default(["debug"])

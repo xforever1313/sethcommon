@@ -1,0 +1,28 @@
+How to create and modify a Doxyfile
+
+A Doxyfile is what doxygen uses to generate its documentation.  Here are the steps to create one correctly.
+
+Remeber to make sure doxygen/bin is in your path
+
+1.  Go to a project root, where the SConstruct is located.
+2.  On the command line, run "doxygen -g"
+3.  A Doxyfile should appear.  Go ahead and open this file up in your favorite text editor.
+4.  Modify the following fields (I recommend using CTRL+F to find these).  Put each parameter in quotes.
+    a. PROJECT_NAME (usually what the folder is called)
+    b. PROJECT_BRIEF (A description of the project)
+    c. PROJECT_LOGO (Have this point to our logo, located in Notebook/doc/SkyvoLogo.png. Relative paths are allowed)
+    d. OUTPUT_DIRECTORY (set this to "doc/doxygen")
+    e. INPUT (located around line 664) 
+        Put the directories of wherever there is a hearder or source file in the project, including any unit tests. For most projects, you need a minimum of this:
+        INPUT = "./include" "./src" "./Test" "./Test/include" "./Test/src"
+        NOTE:  Everytime a folder is added that contains source code, this needs to be updated.
+    f. GENERATE_HTML (set to YES if it isn't already)
+    g. GENERATE_LATEX (set to NO if it isn't already)
+    h. GENERATE_RTF (set to NO if it isn't already)
+    i. GENERATE_XML (set to NO if it isn't already)
+    j. GENERATE_PERLMOD (set to NO if it isn't already)
+5.  Modify the SConstruct such that it can create a doxygen target.  SConstructGlobals.py has a method that makes this easy.
+6.  Run "scons doxygen"  Check the doc folder and ensure that a doxygen folder is there.
+7.  Open doc/doxygen/index.html, and ensure everything is there that you expected to be
+8.  Add doc/doxygen to the git ignore list (on TortoiseGit, right click on doc/doxygen, TortoiseGit->add to ignore list->doxygen, and select the .gitignore in the root directory)
+9. Commit the Doxyfile and the SConstruct if you made changes to it.

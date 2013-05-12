@@ -7,6 +7,7 @@ import os
 codeCoverageDir = "CodeCoverage"
 binDir = "bin"
 docDir = "doc"
+doxygenDir = os.path.join(docDir, "doxygen")
 includeDir = "include"
 libDir = "lib"
 objectDir = "obj"
