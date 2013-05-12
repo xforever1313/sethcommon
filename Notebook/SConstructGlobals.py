@@ -27,7 +27,7 @@ globalUnitTestDefines = ["-DUNIT_TEST"]
 
 #Compile Flags
 #-Wuseless-cast gets thrown out in ARM
-globalCXXFlags = ["-pedantic-errors", "-Werror", "-std=gnu++11", "-Wall", "-Wdouble-promotion", "-Wclobbered", "-Wuseless-cast", "-Wcast-align", "-Wsign-compare", "-Wempty-body", "-Wcast-qual", "-Wmissing-field-initializers", "-Wtype-limits"]
+globalCXXFlags = ["-pedantic-errors", "-Werror", "-std=gnu++11", "-Wall", "-Wdouble-promotion", "-Wclobbered", "-Wcast-align", "-Wsign-compare", "-Wempty-body", "-Wcast-qual", "-Wmissing-field-initializers", "-Wtype-limits"]
 globalCXXDebugFlags = ["-g", "-Wswitch-enum"]
 globalCXXReleaseFlags = ["-O3", "-Wswitch-enum"]
 globalCXXUnitTestFlags = ["-g", "-fprofile-arcs", "-ftest-coverage"]
