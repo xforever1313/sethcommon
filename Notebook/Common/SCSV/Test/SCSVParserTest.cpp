@@ -163,7 +163,7 @@ BOOST_AUTO_TEST_CASE(SCSVParser_blankFileTest){
 
     BOOST_CHECK_EQUAL(status.errorNumber, Core::SCSV_OKAY);
 
-    BOOST_CHECK_EQUAL(status.CSVValues.size(), 0);
+    BOOST_CHECK_EQUAL(status.CSVValues.size(), static_cast<unsigned int>(0));
 }
 
 ///\brief tests the case where there is no blank line at the end of the file

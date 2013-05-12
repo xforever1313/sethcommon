@@ -23,17 +23,23 @@ globalDefines = []
 globalDebugDefines = ["-DDEBUG"]
 globalReleaseDefines = ["-DRELEASE"]
 globalUnitTestDefines = ["-DUNIT_TEST"]
-if (sys.platform != "win32"):
-	globalUnitTestDefines += ["-DBOOST_TEST_DYN_LINK"]
+
 
 #Compile Flags
-globalCXXFlags = ["-pedantic-errors", "-Werror", "-std=gnu++11", "-mthreads", "-Wall", "-Wdouble-promotion", "-Wclobbered", "-Wuseless-cast", "-Wcast-align", "-Wsign-compare", "-Wempty-body", "-Wcast-qual", "-Wmissing-field-initializers", "-Wtype-limits"]
+#-Wuseless-cast gets thrown out in ARM
+globalCXXFlags = ["-pedantic-errors", "-Werror", "-std=gnu++11", "-Wall", "-Wdouble-promotion", "-Wclobbered", "-Wuseless-cast", "-Wcast-align", "-Wsign-compare", "-Wempty-body", "-Wcast-qual", "-Wmissing-field-initializers", "-Wtype-limits"]
 globalCXXDebugFlags = ["-g", "-Wswitch-enum"]
 globalCXXReleaseFlags = ["-O3", "-Wswitch-enum"]
 globalCXXUnitTestFlags = ["-g", "-fprofile-arcs", "-ftest-coverage"]
 
+if (sys.platform == "win32"):
+    globalCXXFlags += ["-mthreads"]
+
 #Linker Flags
-globalLinkerFlags = ["-Wall", "-Werror", "-std=gnu++11", "-mthreads"]
+globalLinkerFlags = ["-static", "-Wall", "-Werror", "-std=gnu++11"]
+
+if(sys.platform == "win32"):
+    globalLinkerFlags += ["-mthreads"]
 
 #Libs
 globalLibsDebug = []
@@ -56,18 +62,42 @@ def parseArguments(args):
 #isArm is a boolean about whether or not to use the ARM compiler
 def createBaseEnvironment (rootDir, isArm):
     if (sys.platform == "win32"):
-        env = Environment(tools = ["mingw"])
+        env = Environment(            
+            tools = ["mingw"],
+            ARM = False
+        )
     elif (not isArm):
-        env = Environment(tools = ["default", "gcc", "g++"])
+        env = Environment(
+            tools = ["default", "gcc", "g++"],
+            ARM = False
+        )
     else:
         print ("Building for ARM")
+        global armPrefix
+        global binDir
         binDir += armPrefix
+        global libDir
         libDir += armPrefix
+        global objectDir
         objectDir += armPrefix
-        env = Environment()
+        global globalCXXFlags
+        globalCXXFlags += ["-march=armv6k"]
+        globalCXXFlags.remove("-Wuseless-cast")
+        gcc_location = os.environ['GCC_ARM']
+        env = Environment(
+            tools = ["g++", "gcc", "as", "ar", "link"],
+            CC = os.path.join(gcc_location, 'bin/arm-linux-gnueabihf-gcc'),
+            CXX = os.path.join(gcc_location,'bin/arm-linux-gnueabihf-g++'),
+            AR = os.path.join(gcc_location, 'bin/arm-linux-gnueabihf-ar'),
+            AS = os.path.join(gcc_location,'bin/arm-linux-gnueabihf-as'),
+            #TODO enable this
+            #RANLIB = os.path.join(gcc_location, 'bin/arm-linux-gnueabihf-gcc-ranlib'),
+            GCC_ARM = gcc_location,
+            ARM = True
+        )        
     baseEnvironment = env.Clone(
+        PROJECT_ROOT = os.path.abspath("."),
         ENV = {'PATH' : os.environ['PATH']}, #Look in path for tools
-        PROJECT_ROOT = os.path.abspath(".")
     )
     baseEnvironment['NOTEBOOK_ROOT'] = os.path.abspath(rootDir)
     return baseEnvironment
@@ -84,6 +114,9 @@ def createDebugEnvironment(envBase, includePaths, libs, libPath):
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, debugDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, debugDir))
     )
+    if (debugEnvironment['ARM']):
+        debugEnvironment.Append(CPPPATH = os.path.join(debugEnvironment['GCC_ARM'], 'include'))
+        debugEnvironment.Append(LIBPATH = os.path.join(debugEnvironment['GCC_ARM'], 'lib'))
     return debugEnvironment
     
 def createReleaseEnvironment(envBase, includePaths, libs, libPath):
@@ -98,6 +131,9 @@ def createReleaseEnvironment(envBase, includePaths, libs, libPath):
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, releaseDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, releaseDir))
     )
+    if (releaseEnvironment['ARM']):
+        releaseEnvironment.Append(CPPPATH = os.path.join(releaseEnvironment['GCC_ARM'], 'include'))
+        releaseEnvironment.Append(LIBPATH = os.path.join(releaseEnvironment['GCC_ARM'], 'lib'))
     return releaseEnvironment
     
 def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
@@ -112,6 +148,10 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, unitTestDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, unitTestDir))
     )
+    if (testEnvironment['ARM']):
+        testEnvironment.Append(CPPPATH = os.path.join(testEnvironment['GCC_ARM'], 'include'))
+        testEnvironment.Append(LIBPATH = os.path.join(testEnvironment['GCC_ARM'], 'lib'))
+    
     RunTest = Builder(action = testRunner)
     testEnvironment.Append(BUILDERS = {"Test" : RunTest})
     return testEnvironment
