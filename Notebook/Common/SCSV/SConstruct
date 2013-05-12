@@ -12,9 +12,11 @@ from copy import deepcopy
 baseDir = os.path.abspath("../../")
 sys.path.append(baseDir) #Get globals
 from Globals import *
-from SConstructGlobals import *
+from SConstructGlobals import parseArguments
 
 armBuild = parseArguments(ARGUMENTS)
+
+from SConstructGlobals import *
 
 ###
 # Files to compile
@@ -91,12 +93,14 @@ releaseTarget = createStaticLib(releaseEnvironment, "SCSV", sourceFiles)
 (unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles)
 
 #TODO move this to globals
-Depends(runTestTarget, unitTestTarget)
+if (not armBuild):
+    Depends(runTestTarget, unitTestTarget)
 
 Alias("debug", debugTarget)
 Alias("release", releaseTarget)
 Alias ("create_lib", ["debug", "release"])
 Alias("unit_test", unitTestTarget)
+Alias("run_unit_test", runTestTarget)
 Alias("run_test", [unitTestTarget, runTestTarget])
 
 #used by auto build

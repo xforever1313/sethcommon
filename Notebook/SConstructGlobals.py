@@ -26,7 +26,6 @@ globalUnitTestDefines = ["-DUNIT_TEST"]
 
 
 #Compile Flags
-#-Wuseless-cast gets thrown out in ARM
 globalCXXFlags = ["-pedantic-errors", "-Werror", "-std=gnu++11", "-Wall", "-Wdouble-promotion", "-Wclobbered", "-Wcast-align", "-Wsign-compare", "-Wempty-body", "-Wcast-qual", "-Wmissing-field-initializers", "-Wtype-limits"]
 globalCXXDebugFlags = ["-g", "-Wswitch-enum"]
 globalCXXReleaseFlags = ["-O3", "-Wswitch-enum"]
@@ -34,12 +33,16 @@ globalCXXUnitTestFlags = ["-g", "-fprofile-arcs", "-ftest-coverage"]
 
 if (sys.platform == "win32"):
     globalCXXFlags += ["-mthreads"]
+else:
+    globalCXXFlags += ["-pthread"]
 
 #Linker Flags
 globalLinkerFlags = ["-static", "-Wall", "-Werror", "-std=gnu++11"]
 
 if(sys.platform == "win32"):
     globalLinkerFlags += ["-mthreads"]
+else:
+    globalLinkerFlags += ["-pthread"]
 
 #Libs
 globalLibsDebug = []
@@ -53,6 +56,14 @@ if (sys.platform == "win32"):
 #Parses arguments
 def parseArguments(args):
     armBuild = (args.get('arm_build', '0') == '1')
+    if (armBuild):
+        global armPrefix
+        global binDir
+        binDir += armPrefix
+        global libDir
+        libDir += armPrefix
+        global objectDir
+        objectDir += armPrefix
     return armBuild
     
 ###
@@ -73,16 +84,9 @@ def createBaseEnvironment (rootDir, isArm):
         )
     else:
         print ("Building for ARM")
-        global armPrefix
-        global binDir
-        binDir += armPrefix
-        global libDir
-        libDir += armPrefix
-        global objectDir
-        objectDir += armPrefix
         global globalCXXFlags
         globalCXXFlags += ["-march=armv6k"]
-        globalCXXFlags.remove("-Wuseless-cast")
+        globalCXXFlags.remove("-Werror")
         gcc_location = os.environ['GCC_ARM']
         env = Environment(
             tools = ["g++", "gcc", "as", "ar", "link"],
