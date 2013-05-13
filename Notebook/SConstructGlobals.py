@@ -86,7 +86,7 @@ def createBaseEnvironment (rootDir, isArm):
         print ("Building for ARM")
         global globalCXXFlags
         globalCXXFlags += ["-march=armv6k"]
-        globalCXXFlags.remove("-Werror")
+        globalCXXFlags.remove("-Werror")       #Warnings are not errors in the arm compiler
         gcc_location = os.environ['GCC_ARM']
         env = Environment(
             tools = ["g++", "gcc", "as", "ar", "link"],
@@ -118,9 +118,6 @@ def createDebugEnvironment(envBase, includePaths, libs, libPath):
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, debugDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, debugDir))
     )
-    if (debugEnvironment['ARM']):
-        debugEnvironment.Append(CPPPATH = os.path.join(debugEnvironment['GCC_ARM'], 'include'))
-        debugEnvironment.Append(LIBPATH = os.path.join(debugEnvironment['GCC_ARM'], 'lib'))
     return debugEnvironment
     
 def createReleaseEnvironment(envBase, includePaths, libs, libPath):
@@ -135,9 +132,6 @@ def createReleaseEnvironment(envBase, includePaths, libs, libPath):
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, releaseDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, releaseDir))
     )
-    if (releaseEnvironment['ARM']):
-        releaseEnvironment.Append(CPPPATH = os.path.join(releaseEnvironment['GCC_ARM'], 'include'))
-        releaseEnvironment.Append(LIBPATH = os.path.join(releaseEnvironment['GCC_ARM'], 'lib'))
     return releaseEnvironment
     
 def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
@@ -152,9 +146,6 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, unitTestDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, unitTestDir))
     )
-    if (testEnvironment['ARM']):
-        testEnvironment.Append(CPPPATH = os.path.join(testEnvironment['GCC_ARM'], 'include'))
-        testEnvironment.Append(LIBPATH = os.path.join(testEnvironment['GCC_ARM'], 'lib'))
     
     RunTest = Builder(action = testRunner)
     testEnvironment.Append(BUILDERS = {"Test" : RunTest})
