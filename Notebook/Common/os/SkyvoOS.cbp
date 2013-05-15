@@ -145,6 +145,9 @@
 		<Unit filename="Test/FileSystemTest.cpp">
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="Test/SkyvoSemaphoreTest.cpp">
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="Test/SkyvoThreadTest.cpp">
 			<Option target="unit_test" />
 		</Unit>
@@ -157,7 +160,13 @@
 		<Unit filename="Test/UnitTestRunner.cpp">
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="Test/include/SemaphorePoster.h">
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="Test/include/ThreadImpl.h">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="Test/src/SemaphorePoster.cpp">
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="Test/src/ThreadImpl.cpp">
@@ -179,6 +188,11 @@
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/SkyvoMutex.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="include/SkyvoSemaphore.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="unit_test" />
@@ -208,6 +222,11 @@
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="src/SkyvoMutex.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="src/SkyvoSemaphore.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="unit_test" />
