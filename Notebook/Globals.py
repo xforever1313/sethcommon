@@ -5,6 +5,7 @@ import os
 
 #Globals.py
 codeCoverageDir = "CodeCoverage"
+apiDir = "api"
 binDir = "bin"
 docDir = "doc"
 doxygenDir = os.path.join(docDir, "doxygen")

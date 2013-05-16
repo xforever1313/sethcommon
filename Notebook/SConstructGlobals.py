@@ -1,5 +1,5 @@
 #These functions and constants are used throughout all SConstructs
-from SCons.Script.Main import *
+from SCons.Script import *
 from SCons.Environment import *
 from SCons.Builder import *
 from Globals import *
@@ -179,10 +179,37 @@ def createDoxygenTarget(env, doxygenFiles):
         os.mkdir(docDir)
     target = env.Doxygen(target = os.path.join(env['PROJECT_ROOT'], doxygenDir, "html/index.html"), source = doxygenFiles)
     return target
+
+def createApiMoveTarget(env, apiFiles):
+    readMe = os.path.join(env['PROJECT_ROOT'], apiDir, 'readme.txt')
+    apiMove = Builder(action = apiBuilder)
+    env.Append(BUILDERS = {"Api" : apiMove})
+    target = env.Api(target = readMe, source = apiFiles)
+    Depends(target, apiFiles)
+    Clean(target, os.path.join(env['PROJECT_ROOT'], apiDir))
+    return target
     
 ###
 # Other helper functions
 ###
+
+#Copies the API include files (given as source) to project_root/api
+def apiBuilder(target, source, env):
+    readmeText='''
+    DO NOT EDIT THESE FILES.  
+    These files are only to make a convient place to host the api for this project.
+    If you wish to edit these files, please go into include/api and rebuild.  
+    When you rebuild, these files get updated
+    '''
+    readme = open(os.path.join(env['OBJPREFIX'], 'apireadme.txt'), 'w')
+    readme.write(readmeText)
+    readme.close()
+    
+    for file in source:
+        Execute(Copy(os.path.join(env['PROJECT_ROOT'], apiDir), file))
+        
+    Execute(Copy(os.path.join(env['PROJECT_ROOT'], apiDir, 'readme.txt'), 'apireadme.txt'))
+    Execute(Delete('apireadme.txt'))
 
 #Source is only passed in so we know if we need to rebuild if any sources change
 def doxgyenBuilder(target, source, env):
