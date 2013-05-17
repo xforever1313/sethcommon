@@ -1,0 +1,70 @@
+import SCons.Defaults
+import SCons
+from SCons.Util import unique
+import stat
+import os
+import sys
+import subprocess
+import glob
+import shutil
+from copy import deepcopy
+
+baseDir = "../../"
+sys.path.append(baseDir) #Get globals
+from Globals import *
+from SConstructGlobals import parseArguments
+
+armBuild = parseArguments(ARGUMENTS)
+
+from SConstructGlobals import *
+
+envBase = createBaseEnvironment(baseDir, armBuild)
+
+###
+# Files to compile
+###
+
+'''
+TODO make it so we don't need to add an include every time we make a new directory
+'''
+###API Files
+apiFiles = glob.glob(os.path.join(includeDir, "SkyvoUI.h"))
+
+###include paths:
+includePaths = [includeDir]
+
+Help(
+'''
+SConstruct file for Notebook Core project
+
+Targets:
+    doxygen        Builds the doxygen documentation
+'''
+)
+
+###
+# Environment creation
+###
+
+#Doxygen 
+doxygenFiles = glob.glob(os.path.join(includeDir, "*h"))
+
+###
+# Targets
+###
+doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
+#TODO move this to globals
+Clean(doxygenTarget, os.path.join(envBase['PROJECT_ROOT'], doxygenDir))
+
+Alias("doxygen", doxygenTarget)
+
+#TODO add fitnesse to autobuld when we want to use it
+#used by auto build
+if (armBuild):
+    Alias ("nightly", doxygenTarget)
+    Alias ("delta", doxygenTarget)
+else:
+    Alias ("nightly", doxygenTarget)
+    Alias ("delta", doxygenTarget)
+
+Default(["delta"])

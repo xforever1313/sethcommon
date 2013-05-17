@@ -76,3 +76,7 @@ Thumbs.db
 /Notebook/SkyWrite-Core/doc/doxygen
 
 /Notebook/Notebook-Core/api
+
+/Notebook/Common/common_classes/doc/doxygen
+
+/Notebook/Common/common_classes/api
