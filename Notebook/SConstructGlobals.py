@@ -27,9 +27,9 @@ globalUnitTestDefines = ["-DUNIT_TEST"]
 
 #Compile Flags
 globalCXXFlags = ["-pedantic-errors", "-Werror", "-std=gnu++11", "-Wall", "-Wdouble-promotion", "-Wclobbered", "-Wcast-align", "-Wsign-compare", "-Wempty-body", "-Wcast-qual", "-Wmissing-field-initializers", "-Wtype-limits"]
-globalCXXDebugFlags = ["-g", "-Og", "-Wswitch-enum"]
+globalCXXDebugFlags = ["-g", "-Wswitch-enum"]
 globalCXXReleaseFlags = ["-O3", "-Wswitch-enum"]
-globalCXXUnitTestFlags = ["-g", "-Og", "-fprofile-arcs", "-ftest-coverage"]
+globalCXXUnitTestFlags = ["-g", "-fprofile-arcs", "-ftest-coverage"]
 
 if (sys.platform == "win32"):
     globalCXXFlags += ["-mthreads"]

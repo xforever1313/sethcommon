@@ -10,6 +10,9 @@ targetNames = []
 targetNames += ["OSBuild"] #Must be built first
 targetLocations += [os.path.join(notebookRootDirectory,"Common", "os")]
 
+targetNames += ['CommonClassesBuild']
+targetLocations += [os.path.join(notebookRootDirectory, "Common", "common_classes")]
+
 targetNames += ["SCSVBuild"]
 targetLocations += [os.path.join(notebookRootDirectory, "Common", "SCSV")]
 
