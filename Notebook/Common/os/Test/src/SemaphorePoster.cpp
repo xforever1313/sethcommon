@@ -11,8 +11,8 @@ SemaphorePoster::~SemaphorePoster(){
 
 void SemaphorePoster::run(){
     SkyvoOS::SkyvoThread::sleep(500);
-    m_semaphore->post();
     m_posted_mutex.lock();
+    m_semaphore->post();
     m_posted = true;
     m_posted_mutex.unlock();
 }

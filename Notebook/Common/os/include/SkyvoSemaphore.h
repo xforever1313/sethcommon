@@ -43,7 +43,7 @@ class SkyvoSemaphore{
 
         /**
         * \brief decrements the semaphore count if the count is greater than zero
-        * \detail If the value is less than, equal to zero, returns false, and thread is not blocked.
+        * If the value is less than, equal to zero, returns false, and thread is not blocked.
         * \return true if count greater than zero or shut down, else return false
         */
         bool tryWait();
@@ -68,13 +68,19 @@ class SkyvoSemaphore{
         */
         bool isShutdown();
 
+        /**
+        * \brief returns the semaphore count
+        * \return the semaphore count
+        */
+        int getSemaphoreCount();
+
     private:
         //Not copyable (Boost does this)
         SkyvoSemaphore(const SkyvoSemaphore&);
         SkyvoSemaphore &operator=(const SkyvoSemaphore&);
 
         impl *m_impl;
-
+        bool m_isShutDown;
         SkyvoMutex m_isShutdownMutex;
 
 };
