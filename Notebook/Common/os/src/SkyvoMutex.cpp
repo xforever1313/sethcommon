@@ -1,4 +1,4 @@
-#include <boost/thread/mutex.hpp>
+#include <boost/thread.hpp>
 
 #include "SkyvoMutex.h"
 
@@ -6,7 +6,7 @@ namespace SkyvoOS{
 
 typedef struct impl{
     impl() :
-        m_mutex(new boost::mutex())
+        m_mutex(new boost::recursive_mutex())
     {
     }
 
@@ -14,7 +14,7 @@ typedef struct impl{
         delete m_mutex;
     }
 
-    boost::mutex *m_mutex;
+    boost::recursive_mutex *m_mutex;
 }impl;
 
 SkyvoMutex::SkyvoMutex() :

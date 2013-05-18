@@ -9,7 +9,7 @@ import glob
 import shutil
 from copy import deepcopy
 
-baseDir = "../../"
+baseDir = os.path.abspath("../../")
 sys.path.append(baseDir) #Get globals
 from Globals import *
 from SConstructGlobals import parseArguments
@@ -18,27 +18,56 @@ armBuild = parseArguments(ARGUMENTS)
 
 from SConstructGlobals import *
 
+#Make common environment
 envBase = createBaseEnvironment(baseDir, armBuild)
+
+osPath = getSkyvoOSPath(envBase)
 
 ###
 # Files to compile
 ###
 
-'''
-TODO make it so we don't need to add an include every time we make a new directory
-'''
-###API Files
-apiFiles = glob.glob(os.path.join(includeDir, "SkyvoUI.h"))
-
 ###include paths:
-includePaths = [includeDir]
+includePaths = [includeDir, os.path.join(osPath, includeDir)]
+testIncludePaths = [os.path.join(testDir, includeDir)]
+
+###Source Files
+#if a new directory gets added, add to here
+sourceDirectories = [srcDir]
+#if a new test directory gets added, add to here
+sourceTestDirectories = [testDir, os.path.join(testDir, srcDir)]
+
+sourceFiles = []
+sourceTestFiles = []
+
+#Add all .cpp files
+for dir in sourceDirectories:
+    sourceFiles += glob.glob(os.path.join(dir, "*.cpp"))
+
+for dir in sourceTestDirectories:
+    sourceTestFiles += glob.glob(os.path.join(dir, "*.cpp"))
+
+coverageFiles = deepcopy(sourceFiles)
+
+###Libs
+libs = [] #Only need debug lib for unit tests.
+testLibs = ['SkyvoOS-d', "boost_thread", "boost_system"] + libs
+if (sys.platform != "win32"):
+    testLibs += ["rt", 'pthread', 'c']
+###libPath
+libPath = [os.path.join(osPath, libDir, debugDir)]
 
 Help(
 '''
-SConstruct file for Notebook Core project
+SConstruct file for Skyvo OS project
 
 Targets:
+    debug          Builds the project for Debug lib (Default)
+    release        Builds the project for Release lib
+    create_lib     Builds both the debug and release libs
     doxygen        Builds the doxygen documentation
+    unit_test      Builds the project for Unit Tests
+    run_test       Builds and runs the Unit Tests and memcheck and coverage
 '''
 )
 
@@ -46,25 +75,52 @@ Targets:
 # Environment creation
 ###
 
-#Doxygen 
-doxygenFiles = glob.glob(os.path.join(includeDir, "*h"))
+#Debug Environment
+debugEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
+
+#Release Environment
+releaseEnvironment = createReleaseEnvironment(envBase, includePaths, libs, libPath)
+
+#Unit test environment
+testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, testLibs, libPath)
+
+#Doxygen
+doxygenFiles = sourceFiles + sourceTestFiles + glob.glob(os.path.join(includeDir, "*h")) + glob.glob(os.path.join(testDir, includeDir, "*h"))
+
+###
+# Test outputs
+###
+createTestOutputFolder(envBase)
 
 ###
 # Targets
 ###
+
+debugTarget = createStaticLib(debugEnvironment, "SkyvoCommon-d", sourceFiles)
+releaseTarget = createStaticLib(releaseEnvironment, "SkyvoCommon", sourceFiles)
+(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles)
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
 #TODO move this to globals
 Clean(doxygenTarget, os.path.join(envBase['PROJECT_ROOT'], doxygenDir))
 
-Alias("doxygen", doxygenTarget)
+if (not armBuild):
+    Depends(runTestTarget, unitTestTarget)
 
-#TODO add fitnesse to autobuld when we want to use it
+Alias("debug", debugTarget)
+Alias("release", releaseTarget)
+Alias ("create_lib", ["debug", "release"])
+Alias("doxygen", doxygenTarget)
+Alias("unit_test", unitTestTarget)
+Alias("run_unit_test", runTestTarget)
+Alias("run_test", [unitTestTarget, runTestTarget])
+
 #used by auto build
 if (armBuild):
-    Alias ("nightly", doxygenTarget)
-    Alias ("delta", doxygenTarget)
+    print("WARNING! Unit tests are not going to be run on an ARM nightly/delta build")
+    Alias ("nightly", ["debug", "release", "doxygen", "unit_test"])
+    Alias ("delta", ["release", "unit_test"])
 else:
-    Alias ("nightly", doxygenTarget)
-    Alias ("delta", doxygenTarget)
+    Alias ("nightly", ["debug", "release", "doxygen", "run_test"])
+    Alias ("delta", ["release", "run_test"])
 
-Default(["delta"])
+Default(["debug"])

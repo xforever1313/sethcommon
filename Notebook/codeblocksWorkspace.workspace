@@ -4,5 +4,6 @@
 		<Project filename="SkyWrite-Core/SkyWriteCore.cbp" />
 		<Project filename="Notebook-Core/Core.cbp" />
 		<Project filename="Common/os/SkyvoOS.cbp" />
+		<Project filename="Common/common_classes/SkyvoCommon.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
