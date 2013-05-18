@@ -23,34 +23,62 @@ typedef struct impl{
 SkyvoSemaphore::SkyvoSemaphore() :
     m_impl(new impl(0))
 {
-
 }
 
 SkyvoSemaphore::SkyvoSemaphore(unsigned int initialCount) :
     m_impl(new impl(initialCount))
 {
-
 }
 
 SkyvoSemaphore::~SkyvoSemaphore(){
+    m_isShutdownMutex.lock();
     delete m_impl;
+    m_impl = NULL;
+    m_isShutdownMutex.unlock();
 }
 
 void SkyvoSemaphore::post(){
-    m_impl->m_semaphore->post();
+    if (!isShutDown()){
+        m_impl->m_semaphore->post();
+    }
 }
 
 void SkyvoSemaphore::wait(){
-    m_impl->m_semaphore->wait();
+    if (!isShutDown()){
+        m_impl->m_semaphore->wait();
+    }
 }
 
 bool SkyvoSemaphore::tryWait(){
-    return m_impl->m_semaphore->try_wait();
+    bool ret = true;
+    if (!isShutDown()){
+        ret = m_impl->m_semaphore->try_wait();
+    }
+    return ret;
 }
 
 bool SkyvoSemaphore::timedWait(unsigned long millisecs){
-    boost::posix_time::ptime time = boost::posix_time::microsec_clock::local_time() + boost::posix_time::milliseconds(millisecs);
-    return m_impl->m_semaphore->timed_wait(time);
+    bool ret = true;
+    if (!isShutDown()){
+        boost::posix_time::ptime time = boost::posix_time::microsec_clock::local_time() + boost::posix_time::milliseconds(millisecs);
+        ret = m_impl->m_semaphore->timed_wait(time);
+    }
+    return ret;
+}
+
+void SkyvoSemaphore::shutDown(){
+    m_isShutdownMutex.lock();
+    delete m_impl;
+    m_impl = NULL;
+    m_isShutdownMutex.unlock();
+}
+
+bool SkyvoSemaphore::isShutDown(){
+    bool ret;
+    m_isShutdownMutex.lock();
+    ret = (m_impl == NULL);
+    m_isShutdownMutex.unlock();
+    return ret;
 }
 
 }

@@ -163,10 +163,16 @@
 		<Unit filename="Test/include/SemaphorePoster.h">
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="Test/include/SemaphoreWaiter.h">
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="Test/include/ThreadImpl.h">
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="Test/src/SemaphorePoster.cpp">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="Test/src/SemaphoreWaiter.cpp">
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="Test/src/ThreadImpl.cpp">

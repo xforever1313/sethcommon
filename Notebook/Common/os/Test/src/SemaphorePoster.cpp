@@ -4,12 +4,9 @@ SemaphorePoster::SemaphorePoster(SkyvoOS::SkyvoSemaphore *semaphore) :
     m_semaphore(semaphore),
     m_posted(false)
 {
-    //ctor
 }
 
-SemaphorePoster::~SemaphorePoster()
-{
-    //dtor
+SemaphorePoster::~SemaphorePoster(){
 }
 
 void SemaphorePoster::run(){

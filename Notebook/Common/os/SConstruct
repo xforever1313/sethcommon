@@ -96,7 +96,6 @@ try:
     os.chmod(os.path.join(".", "Test", "unReadableFile.txt"), 0)
 except OSError:
     pass
-    
 
 ###
 # Targets

@@ -3,6 +3,7 @@
 #define private public
 
 #include "SemaphorePoster.h"
+#include "SemaphoreWaiter.h"
 #include "SkyvoSemaphore.h"
 
 ///\brief tests the wait method with an inital count set to zero
@@ -47,4 +48,35 @@ BOOST_AUTO_TEST_CASE(Semaphore_timedWaitTest){
     poster2.join();
 
     delete uut;
+}
+
+///\brief tests that all wait methods return after a shutdown
+BOOST_AUTO_TEST_CASE(Semaphore_shutdownTest){
+    SkyvoOS::SkyvoSemaphore *uut1 = new SkyvoOS::SkyvoSemaphore();
+    BOOST_CHECK(!uut1->isShutDown());
+    uut1->shutDown();
+    BOOST_CHECK(uut1->isShutDown());
+    uut1->wait(); //thread should not block
+    BOOST_CHECK(uut1->tryWait());
+    BOOST_CHECK(uut1->timedWait(10000));
+    delete uut1;
+
+    //Test the case where the semaphore is waiting,
+    SkyvoOS::SkyvoSemaphore *uut2 = new SkyvoOS::SkyvoSemaphore();
+    SemaphoreWaiter waiter1 (uut2);
+    waiter1.start();
+    SemaphoreWaiter waiter2 (uut2);
+    waiter2.start();
+    SemaphoreWaiter waiter3 (uut2);
+    waiter3.start();
+
+    uut2->shutDown();
+
+    waiter1.join();
+    waiter2.join();
+    waiter3.join();
+    //If the program doesn't hang, test successful!
+    BOOST_CHECK(true);
+
+    delete uut2;
 }
