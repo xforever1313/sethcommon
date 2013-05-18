@@ -63,7 +63,6 @@ void EventExecutor::run(){
     while (isRunning()){
         m_eventSemaphore.wait();
         executeEvent();
-        SkyvoOS::SkyvoThread::sleep(1); ///\todo for some reason, without this here, the program hangs with a few test cases :(
     }
     m_exitRunLoopSemaphore.post();
 }

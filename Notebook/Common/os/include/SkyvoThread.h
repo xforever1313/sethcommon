@@ -13,7 +13,7 @@
 */
 namespace SkyvoOS{
 
-typedef struct impl impl;
+typedef struct skyvoThreadImpl skyvoThreadImpl_t;
 
 class SkyvoThread
 {
@@ -79,7 +79,7 @@ class SkyvoThread
 
         SkyvoMutex m_status_mutex;
 
-        impl *m_impl; ///<NULL if thread is not started
+        skyvoThreadImpl_t *m_impl; ///<NULL if thread is not started
 };
 
 }

@@ -47,3 +47,10 @@ BOOST_AUTO_TEST_CASE(SkyvoThread_startedTwiceTest){
     uut.start();
     BOOST_CHECK_EQUAL(uut.m_numberOfRuns, 1);
 }
+
+///\brief test the case where a thread is deleted before beings started
+BOOST_AUTO_TEST_CASE(SkyvoThread_notStartedTest){
+    ThreadImpl *uut = new ThreadImpl;
+    delete uut;
+    //If program doesn't segfault, success!
+}

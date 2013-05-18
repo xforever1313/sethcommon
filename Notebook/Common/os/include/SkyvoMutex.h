@@ -3,7 +3,7 @@
 
 namespace SkyvoOS{
 
-typedef struct impl impl;
+typedef struct mutexImpl mutexImpl_t;
 
 class SkyvoMutex
 {
@@ -13,7 +13,7 @@ class SkyvoMutex
         void lock() const;
         void unlock() const;
     private:
-        impl *m_impl;
+        mutexImpl_t *m_impl;
 };
 
 }

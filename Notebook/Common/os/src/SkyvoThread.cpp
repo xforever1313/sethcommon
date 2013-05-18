@@ -6,22 +6,22 @@
 
 namespace SkyvoOS{
 
-typedef struct impl{
-    impl(std::function<void(void)> func) :
+typedef struct skyvoThreadImpl{
+    skyvoThreadImpl(std::function<void(void)> func) :
         m_thread(new boost::thread(func))
     {
     }
-    impl(impl &&other) noexcept:
+    skyvoThreadImpl(skyvoThreadImpl &&other) noexcept:
         m_thread(other.m_thread)
     {
     }
-    ~impl(){
+    ~skyvoThreadImpl(){
         m_thread->join();
         delete m_thread;
     }
 
     boost::thread *m_thread;
-}impl;
+}skyvoThreadImpl_t;
 
 SkyvoThread::SkyvoThread():
     m_status(NOT_STARTED),
@@ -42,7 +42,7 @@ SkyvoThread::~SkyvoThread(){
 void SkyvoThread::start(){
     if (m_impl == NULL){
         auto runFunc = std::bind (&SkyvoThread::work, this);
-        m_impl = new impl(runFunc);
+        m_impl = new skyvoThreadImpl_t(runFunc);
     }
 }
 

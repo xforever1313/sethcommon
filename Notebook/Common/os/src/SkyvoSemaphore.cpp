@@ -6,8 +6,8 @@
 
 namespace SkyvoOS{
 
-typedef struct impl{
-    impl(unsigned int count) :
+typedef struct semaphoreImpl{
+    semaphoreImpl(unsigned int count) :
         m_conditionVariable(new boost::condition_variable),
         m_semaphoreCount(count)
     {
@@ -23,16 +23,16 @@ typedef struct impl{
     int m_semaphoreCount;
     boost::mutex m_semaphoreCountMutex;
     boost::mutex m_lockMutex;
-}impl;
+}semaphoreImpl_t;
 
 SkyvoSemaphore::SkyvoSemaphore() :
-    m_impl(new impl(0)),
+    m_impl(new semaphoreImpl_t(0)),
     m_isShutDown(false)
 {
 }
 
 SkyvoSemaphore::SkyvoSemaphore(unsigned int initialCount) :
-    m_impl(new impl(initialCount))
+    m_impl(new semaphoreImpl_t(initialCount))
 {
 }
 

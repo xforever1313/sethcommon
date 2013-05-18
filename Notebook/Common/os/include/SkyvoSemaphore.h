@@ -5,12 +5,11 @@
 
 namespace SkyvoOS{
 
-typedef struct impl impl;
+typedef struct semaphoreImpl semaphoreImpl_t;
 
 /**
 * \class SkyvoSemaphore
 * \brief a wrapper around os semaphore calls.
-* \detail boost documentation: http://www.boost.org/doc/libs/1_53_0/boost/interprocess/sync/interprocess_semaphore.hpp
 * \author Seth Hendrick
 */
 class SkyvoSemaphore{
@@ -79,7 +78,7 @@ class SkyvoSemaphore{
         SkyvoSemaphore(const SkyvoSemaphore&);
         SkyvoSemaphore &operator=(const SkyvoSemaphore&);
 
-        impl *m_impl;
+        semaphoreImpl_t *m_impl;
         bool m_isShutDown;
         SkyvoMutex m_isShutdownMutex;
 

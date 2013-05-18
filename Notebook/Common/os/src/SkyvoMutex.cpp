@@ -4,21 +4,21 @@
 
 namespace SkyvoOS{
 
-typedef struct impl{
-    impl() :
+typedef struct mutexImpl{
+    mutexImpl() :
         m_mutex(new boost::recursive_mutex())
     {
     }
 
-    ~impl(){
+    ~mutexImpl(){
         delete m_mutex;
     }
 
     boost::recursive_mutex *m_mutex;
-}impl;
+}mutexImpl_t;
 
 SkyvoMutex::SkyvoMutex() :
-    m_impl(new impl())
+    m_impl(new mutexImpl_t())
 {
 }
 
