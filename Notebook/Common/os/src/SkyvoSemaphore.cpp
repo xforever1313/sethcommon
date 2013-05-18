@@ -38,20 +38,20 @@ SkyvoSemaphore::~SkyvoSemaphore(){
 }
 
 void SkyvoSemaphore::post(){
-    if (!isShutDown()){
+    if (!isShutdown()){
         m_impl->m_semaphore->post();
     }
 }
 
 void SkyvoSemaphore::wait(){
-    if (!isShutDown()){
+    if (!isShutdown()){
         m_impl->m_semaphore->wait();
     }
 }
 
 bool SkyvoSemaphore::tryWait(){
     bool ret = true;
-    if (!isShutDown()){
+    if (!isShutdown()){
         ret = m_impl->m_semaphore->try_wait();
     }
     return ret;
@@ -59,21 +59,21 @@ bool SkyvoSemaphore::tryWait(){
 
 bool SkyvoSemaphore::timedWait(unsigned long millisecs){
     bool ret = true;
-    if (!isShutDown()){
+    if (!isShutdown()){
         boost::posix_time::ptime time = boost::posix_time::microsec_clock::local_time() + boost::posix_time::milliseconds(millisecs);
         ret = m_impl->m_semaphore->timed_wait(time);
     }
     return ret;
 }
 
-void SkyvoSemaphore::shutDown(){
+void SkyvoSemaphore::shutdown(){
     m_isShutdownMutex.lock();
     delete m_impl;
     m_impl = NULL;
     m_isShutdownMutex.unlock();
 }
 
-bool SkyvoSemaphore::isShutDown(){
+bool SkyvoSemaphore::isShutdown(){
     bool ret;
     m_isShutdownMutex.lock();
     ret = (m_impl == NULL);

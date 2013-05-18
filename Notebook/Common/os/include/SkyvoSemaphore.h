@@ -60,13 +60,13 @@ class SkyvoSemaphore{
         * \brief unblocks the semaphore, and wait calls no longer block threads
         * \warning once this is called, all waits do not block
         */
-        void shutDown();
+        void shutdown();
 
         /**
         * \brief determines if the semaphore is shutdown or not
         * \return true if semaphore is shutdown, else return false
         */
-        bool isShutDown();
+        bool isShutdown();
 
     private:
         //Not copyable (Boost does this)
