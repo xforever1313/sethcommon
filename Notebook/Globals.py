@@ -14,6 +14,7 @@ libDir = "lib"
 objectDir = "obj"
 srcDir = "src"
 testDir = "Test"
+testOutputDir = "testOutput"
 armPrefix = "-arm"
 
 debugDir = "debug"
@@ -31,3 +32,6 @@ def getSCSVPath(env):
     
 def getSkyvoOSPath(env):
     return os.path.join(getCommonPath(env), "os")
+
+def getCommonClassesPath(env):
+    return os.path.join(getCommonPath(env), "common_classes")

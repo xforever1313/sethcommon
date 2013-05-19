@@ -162,6 +162,7 @@ def createExe(env, exeName, sourceFiles):
 def createUnitTestExe(env, sourceFiles, coverageFiles):
     testExeTarget = env.Program(target = os.path.join(env['BINDIR'], "unit_test"), source = sourceFiles)
     runTestTarget = env.Test(target = os.path.join(env['BINDIR'], "run_test"), source = coverageFiles)
+    Execute(Delete(Glob(os.path.join(testOutputDir, '*')))) #Remove old test outputs
     return (testExeTarget, runTestTarget)
 
 def createStaticLib(env, libName, sourceFiles):
