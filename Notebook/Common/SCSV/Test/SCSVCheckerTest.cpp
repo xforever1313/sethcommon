@@ -14,5 +14,5 @@ BOOST_AUTO_TEST_CASE(SCSVChecker_checkTest){
     std::stringstream ss;
     ss << SCSV_AMP_REPLACE << " " << SCSV_SEPARATOR_REPLACE << " " << SCSV_AMP_REPLACE << SCSV_SEPARATOR_REPLACE;
 
-    BOOST_CHECK_EQUAL(Core::SCSVChecker::checkText(testString), ss.str());
+    BOOST_CHECK_EQUAL(Common::SCSVChecker::checkText(testString), ss.str());
 }

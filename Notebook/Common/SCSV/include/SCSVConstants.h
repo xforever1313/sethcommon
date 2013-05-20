@@ -1,6 +1,6 @@
 #ifndef SCSVCONSTANTS_H_INCLUDED
 #define SCSVCONSTANTS_H_INCLUDED
-namespace Core{
+namespace Common{
 #define SCSV_SEPARATOR ','
 #define SCSV_AMP '&'
 

@@ -3,7 +3,7 @@
 
 #include <string>
 
-namespace Core{
+namespace Common{
 
 ///\brief Checks and replaces strings that are invalid in a SCSV file such as commasa and amps
 class SCSVChecker{
@@ -14,5 +14,5 @@ class SCSVChecker{
 
 };
 
-}//Core
+}
 #endif // SCSVCHECKER_H_INCLUDED

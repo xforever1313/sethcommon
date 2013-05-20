@@ -3,7 +3,7 @@
 #include "SCSVChecker.h"
 #include "SCSVConstants.h"
 
-namespace Core{
+namespace Common{
 std::string SCSVChecker::checkText(std::string s){
 
     for (unsigned int i = 0; i < s.size(); ++i){
@@ -20,4 +20,4 @@ std::string SCSVChecker::checkText(std::string s){
     }
     return s;
 }
-}//Core
+}

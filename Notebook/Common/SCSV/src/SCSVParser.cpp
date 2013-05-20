@@ -1,6 +1,6 @@
 #include "SCSVParser.h"
 
-namespace Core{
+namespace Common{
 
 SCSVParser::SCSVParser() :
     SCSVParser(SCSV_DEFAULT_STRING)
