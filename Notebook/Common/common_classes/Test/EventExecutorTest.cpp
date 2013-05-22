@@ -7,7 +7,6 @@
 
 ///\brief tests the run method
 BOOST_AUTO_TEST_CASE(EventExecutor_runTest){
-    DummyEvent::ranCount = 0;
     DummyEvent *event1 = new DummyEvent();
     DummyEvent *event2 = new DummyEvent();
     DummyEvent *event3 = new DummyEvent();
@@ -29,10 +28,10 @@ BOOST_AUTO_TEST_CASE(EventExecutor_runTest){
     uut->addEvent(event8);
     uut->addEvent(event9);
     uut->addEvent(event10);
-    while (DummyEvent::getRanCount() < 10){
-        //Wait for all events to execute
-    }
-    BOOST_CHECK_EQUAL(DummyEvent::ranCount, 10);
+    do {
+        DummyEvent::semaphore.wait();
+    }while(DummyEvent::getRanCount() < 10);
+    BOOST_CHECK_EQUAL(DummyEvent::getRanCount(), 10);
     delete uut;
 }
 

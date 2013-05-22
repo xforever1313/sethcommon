@@ -12,17 +12,11 @@ typedef struct semaphoreImpl{
         m_semaphoreCount(count)
     {
     }
-    int getSemaphoreCount(){
-        int count;
-        m_semaphoreCountMutex.lock();
-        count = m_semaphoreCount;
-        m_semaphoreCountMutex.unlock();
-        return count;
-    }
+
     boost::condition_variable *m_conditionVariable;
-    int m_semaphoreCount;
+    unsigned int m_semaphoreCount;
     boost::mutex m_semaphoreCountMutex;
-    boost::mutex m_lockMutex;
+    boost::mutex m_shutdownMutex;
 }semaphoreImpl_t;
 
 SkyvoSemaphore::SkyvoSemaphore() :
@@ -44,69 +38,56 @@ SkyvoSemaphore::~SkyvoSemaphore(){
 }
 
 void SkyvoSemaphore::post(){
-    m_impl->m_semaphoreCountMutex.lock();
-    ++m_impl->m_semaphoreCount;
-    m_impl->m_semaphoreCountMutex.unlock();
-    m_impl->m_conditionVariable->notify_one();
+    //if (!isShutdown()){
+        boost::unique_lock<boost::mutex> lock(m_impl->m_semaphoreCountMutex);
+        ++m_impl->m_semaphoreCount;
+        m_impl->m_conditionVariable->notify_one();
+    //}
 }
 
 void SkyvoSemaphore::wait(){
-    while (!isShutdown() && (m_impl->getSemaphoreCount() <= 0)){
-        boost::unique_lock< boost::mutex > lock(m_impl->m_lockMutex);
+    boost::unique_lock<boost::mutex> lock(m_impl->m_semaphoreCountMutex);
+    while ((m_impl->m_semaphoreCount == 0)){
         m_impl->m_conditionVariable->wait(lock);
     }
-
-    m_impl->m_semaphoreCountMutex.lock();
     --m_impl->m_semaphoreCount;
-    m_impl->m_semaphoreCountMutex.unlock();
 }
 
 bool SkyvoSemaphore::tryWait(){
     bool ret = true;
-    if (!isShutdown()){
-        if (m_impl->getSemaphoreCount() <= 0){
-            ret = false;
-        }
-        else{
-            m_impl->m_semaphoreCountMutex.lock();
-            --m_impl->m_semaphoreCount;
-            m_impl->m_semaphoreCountMutex.unlock();
-        }
+    boost::unique_lock<boost::mutex> lock(m_impl->m_semaphoreCountMutex);
+    if (m_impl->m_semaphoreCount == 0){
+        ret = false;
+    }
+    else{
+        --m_impl->m_semaphoreCount;
     }
     return ret;
 }
 
 bool SkyvoSemaphore::timedWait(unsigned long millisecs){
     bool ret = true;
-    if (!isShutdown()){
-        boost::unique_lock< boost::mutex > lock(m_impl->m_lockMutex);
+    boost::unique_lock<boost::mutex> lock(m_impl->m_semaphoreCountMutex);
+    if (m_impl->m_semaphoreCount == 0){
         ret = m_impl->m_conditionVariable->timed_wait(lock, boost::posix_time::milliseconds(millisecs));
         if (ret){
-            m_impl->m_semaphoreCountMutex.lock();
             --m_impl->m_semaphoreCount;
-            m_impl->m_semaphoreCountMutex.unlock();
         }
     }
     return ret;
 }
 
 void SkyvoSemaphore::shutdown(){
-    m_isShutdownMutex.lock();
+    boost::unique_lock<boost::mutex> lock(m_impl->m_semaphoreCountMutex);
+    boost::unique_lock<boost::mutex> shutdownLock(m_impl->m_shutdownMutex);
     m_isShutDown = true;
-    m_isShutdownMutex.unlock();
+    m_impl->m_semaphoreCount = -1;
     m_impl->m_conditionVariable->notify_all(); //Wake up ALL the threads
 }
 
 bool SkyvoSemaphore::isShutdown(){
-    bool ret;
-    m_isShutdownMutex.lock();
-    ret = m_isShutDown;
-    m_isShutdownMutex.unlock();
-    return ret;
-}
-
-int SkyvoSemaphore::getSemaphoreCount(){
-    return m_impl->getSemaphoreCount();
+    boost::unique_lock<boost::mutex> shutdownLock(m_impl->m_shutdownMutex);
+    return m_isShutDown;
 }
 
 }

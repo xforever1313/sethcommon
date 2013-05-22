@@ -1,8 +1,6 @@
 #ifndef SKYVOSEMAPHORE_H
 #define SKYVOSEMAPHORE_H
 
-#include "SkyvoMutex.h"
-
 namespace SkyvoOS{
 
 typedef struct semaphoreImpl semaphoreImpl_t;
@@ -67,12 +65,6 @@ class SkyvoSemaphore{
         */
         bool isShutdown();
 
-        /**
-        * \brief returns the semaphore count
-        * \return the semaphore count
-        */
-        int getSemaphoreCount();
-
     private:
         //Not copyable (Boost does this)
         SkyvoSemaphore(const SkyvoSemaphore&);
@@ -80,8 +72,6 @@ class SkyvoSemaphore{
 
         semaphoreImpl_t *m_impl;
         bool m_isShutDown;
-        SkyvoMutex m_isShutdownMutex;
-
 };
 
 }

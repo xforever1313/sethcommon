@@ -9,14 +9,11 @@
 ///\brief tests the wait method with an inital count set to zero
 BOOST_AUTO_TEST_CASE(Semaphore_waitTestDefaultConstructor){
     SkyvoOS::SkyvoSemaphore *uut = new SkyvoOS::SkyvoSemaphore;
-    BOOST_CHECK_EQUAL(uut->getSemaphoreCount(), 0);
     SemaphorePoster poster(uut);
     poster.start();
     uut->wait();
-    BOOST_CHECK_EQUAL(uut->getSemaphoreCount(), 0);
     BOOST_CHECK(poster.getPosted()); //If it gets here, the test was successful, as the program didn't hang
     poster.join(); //Wait for thread to exit
-    BOOST_CHECK_EQUAL(uut->getSemaphoreCount(), 0);
     delete uut;
 }
 
@@ -25,18 +22,14 @@ BOOST_AUTO_TEST_CASE(Semaphore_waitTest){
     SkyvoOS::SkyvoSemaphore uut(1);
     uut.wait();
     //If it gets here, the test was successful, as the program didn't hang (no blocking should happen when semahpore count greater than zero
-    BOOST_CHECK_EQUAL(uut.getSemaphoreCount(), 0);
 }
 
 
 ///\brief tests the tryWait method
 BOOST_AUTO_TEST_CASE(Semaphore_tryWaitTest){
     SkyvoOS::SkyvoSemaphore uut(1);
-    BOOST_CHECK_EQUAL(uut.getSemaphoreCount(), 1);
     BOOST_CHECK(uut.tryWait()); //Should return true, as the count is greater than zero.
-    BOOST_CHECK_EQUAL(uut.getSemaphoreCount(), 0);
     BOOST_CHECK(!uut.tryWait()); //Should return false, as the count is zero.
-    BOOST_CHECK_EQUAL(uut.getSemaphoreCount(), 0);
     //The program should NOT hang
 }
 

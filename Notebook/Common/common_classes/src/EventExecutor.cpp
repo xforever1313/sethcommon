@@ -1,7 +1,6 @@
 #include <cstddef> //Needed for NULL
 #include <list>
 #include <SkyvoThread.h>
-#include <iostream>
 
 #include "EventExecutor.h"
 #include "EventInterface.h"
@@ -27,8 +26,8 @@ EventExecutor::EventExecutor() :
 EventExecutor::~EventExecutor(){
     m_isRunningMutex.lock();
     m_isRunning = false;
-    m_isRunningMutex.unlock();
     m_eventSemaphore.shutdown(); //Allows run thread to exit
+    m_isRunningMutex.unlock();
     m_exitRunLoopSemaphore.wait(); //Wait for run loop to exit before deleting
     //Run all unexecuted events
     while (!m_eventList.empty()){  //No need to put m_eventList in mutexes, as the run thread has exited.
@@ -39,8 +38,8 @@ EventExecutor::~EventExecutor(){
 void EventExecutor::addEvent(EventInterface *newEvent){
     m_eventListMutex.lock();
     m_eventList.push_back(newEvent);
-    m_eventListMutex.unlock();
     m_eventSemaphore.post();
+    m_eventListMutex.unlock();
 }
 
 void EventExecutor::executeEvent(){
@@ -54,7 +53,7 @@ void EventExecutor::executeEvent(){
     }
     m_eventListMutex.unlock();
     if (eventToRun != NULL){
-        eventToRun->execute(); //Run method
+        eventToRun->execute();
         delete eventToRun;
     }
 }
@@ -68,9 +67,8 @@ void EventExecutor::run(){
 }
 
 bool EventExecutor::isRunning(){
-    bool ret;
     m_isRunningMutex.lock();
-    ret = m_isRunning;
+    bool ret = m_isRunning;
     m_isRunningMutex.unlock();
     return ret;
 }
