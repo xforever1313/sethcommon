@@ -19,5 +19,8 @@ targetLocations += [os.path.join(notebookRootDirectory, "Common", "SCSV")]
 targetNames += ["NotebookCoreBuild"] 
 targetLocations += [os.path.join(notebookRootDirectory,"Notebook-Core")]
 
+targetNames += ["NotebookCLI"]
+targetLocations += [os.path.join(notebookRootDirectory, "Notebook-CLI")]
+
 targetNames += ["SkyCoreBuild"]
 targetLocations += [os.path.join(notebookRootDirectory, "SkyWrite-Core")]
