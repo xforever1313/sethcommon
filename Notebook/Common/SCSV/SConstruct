@@ -114,10 +114,10 @@ Alias("run_test", [unitTestTarget, runTestTarget])
 #used by auto build
 if (armBuild):
     print("WARNING! Unit tests are not going to be run on an ARM nightly/delta build")
-    Alias ("nightly", ["debug", "release", "doxygen", "unit_test"])
-    Alias ("delta", ["release", "unit_test"])
+    Alias ("nightly", ["create_lib", "doxygen", "unit_test"])
+    Alias ("delta", ["create_lib", "unit_test"])
 else:
-    Alias ("nightly", ["debug", "release", "doxygen", "run_test"])
-    Alias ("delta", ["release", "run_test"])
+    Alias ("nightly", ["create_lib", "doxygen", "run_test"])
+    Alias ("delta", ["create_lib", "run_test"])
 
 Default(["debug"])
