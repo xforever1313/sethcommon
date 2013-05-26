@@ -34,7 +34,6 @@ bld
 *.dmg
 *.gz
 *.iso
-*.jar
 *.rar
 *.tar
 *.zip
@@ -82,3 +81,13 @@ Thumbs.db
 
 /Notebook/Common/common_classes/api
 /Notebook/Notebook-CLI/doc/doxygen
+
+/Notebook/fitnesse/FitNesseRoot/ErrorLogs
+/Notebook/fitnesse/FitNesseRoot/files
+/Notebook/fitnesse/FitNesseRoot/RecentChanges
+/Notebook/fitnesse/FitNesseRoot/updateDoNotCopyOverList
+/Notebook/fitnesse/FitNesseRoot/updateList
+
+/Notebook/fitnesse/FitNesseRoot/NotebookTestOutput
+/Notebook/fitnesse/FitNesseRoot/FitNesse
+/Notebook/fitnesse/FitNesseRoot/NotebookTests/AllPlatformTests/content.txt
