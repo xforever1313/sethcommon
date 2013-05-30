@@ -1,8 +1,11 @@
 #directories#
 codeCoverage
+CodeCoverage
 bin
 debug
 Debug
+lib
+obj
 Release
 release
 unit_test
