@@ -1,4 +1,7 @@
 import os
+import subprocess
+
+fitnessDir = "../fitnesse"
 
 notebookRootDirectory = os.path.abspath("..")
 
@@ -24,3 +27,15 @@ targetLocations += [os.path.join(notebookRootDirectory, "Notebook-CLI")]
 
 targetNames += ["SkyCoreBuild"]
 targetLocations += [os.path.join(notebookRootDirectory, "SkyWrite-Core")]
+
+def buildFixtures():
+    os.chdir(fitnessDir)
+    status = subprocess.call("python installFitnesse.py", shell=True)
+    if (status != 0):
+        raise Exception ("Failed to Install Fitnesse")
+        
+def cleanFixtures():
+    os.chdir(fitnessDir)
+    status = subprocess.call("python cleanFixtures.py", shell=True)
+    if (status != 0):
+        raise Exception ("Failed to clean fixtures")

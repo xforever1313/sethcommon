@@ -49,3 +49,6 @@ while (i < len(targetLocations)):
 if (status != 0):
     print("A compile error occured!")
     exit(status)
+
+#Tests
+buildFixtures()
