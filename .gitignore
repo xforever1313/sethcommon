@@ -93,4 +93,6 @@ Thumbs.db
 
 /Notebook/fitnesse/FitNesseRoot/NotebookTestOutput
 /Notebook/fitnesse/FitNesseRoot/FitNesse
-/Notebook/fitnesse/FitNesseRoot/NotebookTests/AllPlatformTests/content.txt
+/Notebook/Tools/logs
+
+/Notebook/fitnesse/FitNesseRoot/NotebookTests/content.txt

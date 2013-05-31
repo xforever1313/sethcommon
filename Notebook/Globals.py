@@ -1,7 +1,5 @@
-from SCons.Script.Main import *
-from SCons.Environment import *
-
 import os
+import sys
 
 #Globals.py
 codeCoverageDir = "CodeCoverage"
@@ -35,3 +33,11 @@ def getSCSVPath(env):
     
 def getSkyvoOSPath(env):
     return os.path.join(getCommonPath(env), "os")
+
+    
+def getRedirectString(file):
+    if(sys.platform == "win32"):
+        redirectString = " > " + str(file) + " 2>&1 "
+    else:
+        redirectString = " &> " + str(file)
+    return redirectString
