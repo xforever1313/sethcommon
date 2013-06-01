@@ -25,6 +25,11 @@ FileSystem::FileSystem(){
 FileSystem::~FileSystem(){
 }
 
+std::string FileSystem::getCWD(){
+    char *dir = get_current_dir_name();
+    return std::string(dir);
+}
+
 bool FileSystem::createFile( const std::string filePath ){
     bool ret = false;
     FILE *file = fopen(filePath.c_str(), "w");
@@ -46,7 +51,17 @@ bool FileSystem::createDir( const std::string dirPath ){
     std::stringstream ss(dirPath);
     std::vector<std::string> dirsToMake;
 
-    ss.peek();
+    char firstChar = ss.peek();
+    //If the first character is /, it means we want to create a dir in root.
+    if (firstChar == '/'){ 
+        std::string nextDir;
+        std::getline(ss, nextDir, '/');
+        if (ss.str() != ""){                //If empty string, ignore
+            nextDir = "/" + nextDir;
+            dirsToMake.push_back(nextDir); 
+        }
+        ss.peek();
+    }
     while (!ss.eof()){
         std::string nextDir;
         std::getline(ss, nextDir, '/');

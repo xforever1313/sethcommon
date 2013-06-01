@@ -105,6 +105,31 @@ BOOST_AUTO_TEST_CASE(FileSystem_createDirTest){
     #endif
 }
 
+///\brief tests the case where the directory is an abspath from root
+BOOST_AUTO_TEST_CASE(FileSystem_createDirFromRootTest){
+    SkyvoOS::FileSystem uut;
+    std::string testDir = "absDir";
+    std::string absPath = uut.getCWD();
+    std::string testDirLocation = uut.pathJoin(absPath, fileTestOutputPath);
+    testDirLocation = uut.pathJoin(testDirLocation, testDir);
+    BOOST_CHECK(uut.createDir(testDirLocation));
+    
+    std::string relTestDirLocation = uut.pathJoin(fileTestOutputPath, testDir);
+    BOOST_CHECK(uut.dirExists(relTestDirLocation));
+}
+
+///\brief tests the case where the directory has two '//' in it
+BOOST_AUTO_TEST_CASE(FileSystem_createDirDoubleSlashes){
+    SkyvoOS::FileSystem uut;
+    std::string testDir = "//twoSlashDir";
+    std::string testDirLocation = uut.pathJoin(fileTestOutputPath, testDir);
+    testDirLocation = uut.pathJoin(testDirLocation, testDir);
+    BOOST_CHECK(uut.createDir(testDirLocation));
+    
+    std::string realTestDirLocation = uut.pathJoin(fileTestOutputPath, "twoSlashDir");
+    BOOST_CHECK(uut.dirExists(realTestDirLocation));
+}
+
 ///\brief tests the isFile method
 BOOST_AUTO_TEST_CASE(FileSystem_isFileTest){
     SkyvoOS::FileSystem uut;

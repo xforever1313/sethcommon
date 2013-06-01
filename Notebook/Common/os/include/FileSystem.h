@@ -31,6 +31,8 @@ class FileSystem
 
         virtual ~FileSystem();
 
+        virtual std::string getCWD();
+
         ///\brief the equivalent of using "touch"
         virtual bool createFile(const std::string filePath);
 
