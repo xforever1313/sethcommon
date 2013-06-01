@@ -52,5 +52,4 @@ if (status != 0):
     exit(status)
 
 #Tests
-buildFixtures(logDir)
 runFitnesseSuite("NotebookTests.SmokeTests", logDir)

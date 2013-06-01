@@ -19,6 +19,8 @@ debugDir = "debug"
 releaseDir = "release"
 unitTestDir = "unit_test"
 
+fitNesseDir = "fitnesse"
+
 def getCommonClassesPath(env):
     return os.path.join(getCommonPath(env), "common_classes")
 
@@ -34,7 +36,10 @@ def getSCSVPath(env):
 def getSkyvoOSPath(env):
     return os.path.join(getCommonPath(env), "os")
 
-    
+def getCppUTestPath(env):
+    return os.path.join(env['NOTEBOOK_ROOT'], fitNesseDir, "fixtures", "CppUTest")
+
+
 def getRedirectString(file):
     if(sys.platform == "win32"):
         redirectString = " > " + str(file) + " 2>&1 "

@@ -59,6 +59,4 @@ if (status != 0):
     exit(status)
 
 #Tests
-cleanFixtures()
-buildFixtures(logDir)
 runFitnesseSuite("NotebookTests.AllPlatformTests", logDir)

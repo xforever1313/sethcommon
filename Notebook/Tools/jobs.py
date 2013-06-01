@@ -33,31 +33,18 @@ targetLocations += [os.path.join(notebookRootDirectory, "Notebook-CLI")]
 targetNames += ["SkyCoreBuild"]
 targetLocations += [os.path.join(notebookRootDirectory, "SkyWrite-Core")]
 
-def buildFixtures(logDir):
-    thisDir = os.getcwd()
-    redirectString = getRedirectString(os.path.abspath(os.path.join(logDir, "fixtureBuild.log")))
-    command = "python installFitnesse.py " + str(redirectString)
-    print (command)
-    os.chdir(fitnessDir)
-    status = subprocess.call(command, shell=True)
-    if (status != 0):
-        raise Exception ("Failed to Install Fitnesse")
-        
-    os.chdir(thisDir)
-        
-def cleanFixtures():
-    thisDir = os.getcwd()
-    os.chdir(fitnessDir)
-    status = subprocess.call("python cleanFixtures.py", shell=True)
-    if (status != 0):
-        raise Exception ("Failed to clean fixtures")
-        
-    os.chdir(thisDir)
-        
+#These MUST be built and last
+targetNames += ["CppUTest"]
+targetLocations += [os.path.join(notebookRootDirectory, "fitnesse/Fixtures/CppUTest")]
+
+targetNames += ["CSlim"]
+targetLocations += [os.path.join(notebookRootDirectory, "fitnesse/Fixtures/cslim")]
+
 def runFitnesseSuite(suiteName, logDir):
     redirectString = getRedirectString(os.path.abspath(os.path.join(logDir, "FitNesseLog.html")))
     thisDir = os.getcwd()
     os.chdir(fitnessDir)
+    subprocess.call("python installFitnesse.py")
     command = "java -jar fitnesse-standalone.jar -e 1 -p 5000 -c " + suiteName + "?suite " + redirectString
     print (command)
     status = subprocess.call(command, shell=True)
