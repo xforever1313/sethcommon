@@ -10,6 +10,10 @@
 #include <unistd.h>
 #include <vector>
 
+#ifdef _WIN32
+#include <windows.h>
+#endif
+
 #include "FileSystem.h"
 
 namespace SkyvoOS{
@@ -26,8 +30,18 @@ FileSystem::~FileSystem(){
 }
 
 std::string FileSystem::getCWD(){
+    std::string ret;
+    #ifdef _WIN32
+    char dir[MAX_PATH];
+    GetModuleFileName( NULL, dir, MAX_PATH );
+    ret = std::string (dir);
+    std::string::size_type pos = ret.find_last_of( "\\/" ); //Get rid of the filename
+    ret = ret.substr(0, pos);
+    #else
     char *dir = get_current_dir_name();
-    return std::string(dir);
+    ret = std::string(dir);
+    #endif
+    return ret;
 }
 
 bool FileSystem::createFile( const std::string filePath ){

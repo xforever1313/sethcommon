@@ -118,6 +118,17 @@ BOOST_AUTO_TEST_CASE(FileSystem_createDirFromRootTest){
     BOOST_CHECK(uut.dirExists(relTestDirLocation));
 }
 
+///\brief tests the case where a directory tries to be made in root
+BOOST_AUTO_TEST_CASE(FileSystem_createDirInRootTest){
+    //You should not be able to create a dir in root.
+    SkyvoOS::FileSystem uut;
+    std::string testDir = "/sethderp";
+    std::string absPath = uut.getCWD();
+    BOOST_CHECK(!uut.createDir(testDir));
+    BOOST_CHECK(!uut.dirExists(testDir));
+}
+
+
 ///\brief tests the case where the directory has two '//' in it
 BOOST_AUTO_TEST_CASE(FileSystem_createDirDoubleSlashes){
     SkyvoOS::FileSystem uut;
