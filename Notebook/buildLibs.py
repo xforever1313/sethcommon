@@ -1,5 +1,6 @@
 #Builds all the libraries
 
+from Globals import parseArguments
 import os
 import subprocess
 import sys
@@ -11,11 +12,7 @@ thisDir = os.getcwd()
 
 errors = 0
 
-arm = False
-
-if (len(sys.argv) == 2):
-    if (sys.argv[1] == "arm"):
-        arm = True
+arm = parseArguments()
 
 if (arm):
     cleanCommand = "scons create_lib arm_build=1 --clean"

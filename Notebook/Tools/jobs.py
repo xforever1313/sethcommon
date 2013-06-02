@@ -44,7 +44,7 @@ def runFitnesseSuite(suiteName, logDir):
     redirectString = getRedirectString(os.path.abspath(os.path.join(logDir, "FitNesseLog.html")))
     thisDir = os.getcwd()
     os.chdir(fitnessDir)
-    subprocess.call("python installFitnesse.py")
+    subprocess.call("python installFitnesse.py", shell=True)
     command = "java -jar fitnesse-standalone.jar -e 1 -p 5000 -c " + suiteName + "?suite " + redirectString
     print (command)
     status = subprocess.call(command, shell=True)

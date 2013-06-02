@@ -58,5 +58,10 @@ if (status != 0):
     print("A compile error occured!")
     exit(status)
 
-#Tests
-runFitnesseSuite("NotebookTests.AllPlatformTests", logDir)
+###
+#  Tests
+###
+
+#Do not run arm tests yet, as they need to move over to the PI
+if (not arm):
+    runFitnesseSuite("NotebookTests.AllPlatformTests", logDir)

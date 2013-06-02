@@ -21,6 +21,15 @@ unitTestDir = "unit_test"
 
 fitNesseDir = "fitnesse"
 
+#Determines if the first argument is arm
+def parseArguments():
+    arm = False
+    if (len(sys.argv) == 2):
+        if (sys.argv[1] == "arm"):
+            arm = True
+    return arm
+    
+
 def getCommonClassesPath(env):
     return os.path.join(getCommonPath(env), "common_classes")
 
