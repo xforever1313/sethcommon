@@ -117,31 +117,45 @@ int CXX_CodingStandard::getX() const{  //Don't forget the const
 #include "Page.h"                       //Include any user files next.  Put in alphabetical order
 #include "PageMetaData.h"
 
-//Next, put any constants used by the test.  Note, due to limitations of boost, these names must be unique throughout the tests.  If there is a value that is across multiple tests, put in a testHelper.h file, and include the file in both tests.
-Date baseCreationDate;
-Date baseModifiedDate;
-PageMetaData dummyPageData("some title", PageMetaData::GRAPH, baseCreationDate, baseModifiedDate, "some location");
+//Next, put the set up, tear down, and any member variables used throughout the test
+//Name it ClassnameFixture
+struct PictureFixture{
 
-//Now its for the actual tests.
-///\brief tests the copy constructor    //Make a description of what the test does
-BOOST_AUTO_TEST_CASE(Page_copyTest){  //Note the value in the ().  The first part, before the '_' is the class being tested.  The next value is a name of the test being done.  This is done so we know which test fails.
-    DummyContainer *cont1 = new DummyContainer (13, 14, 15, 16, 17);
-    Textbox *cont2 = new Textbox (2, "font", "text", 18, 19, 20, 21, 22);
-    Picture *cont3 = new Picture ("location", 18, 19, 20, 21, 22);
-    std::deque <Container *> clist;
-    clist.push_back(cont1);
-    clist.push_back(cont2);
-    clist.push_back(cont3);
+    ///\brief SetUp.  This gets run before every test
+    PictureFixture() :
+        m_uut1(new Picture(m_location, m_x, m_y, m_z, m_width, m_height)),
+        m_uut2(new Picture(m_location, m_x, m_y, m_z, m_width, m_height))
+    {
+    }
 
-    Page *uut = new Page(new PageMetaData(dummyPageData), clist);
-    Page *uut2 = new Page((*uut));
-    uut->setTitle("Hello!");
-    //Ensure the pages are separate    //Put ensure statements where needed.
-    BOOST_CHECK_EQUAL(uut2->getTitle(), "some title");
-    delete uut;
-    //Ensure a copy of pageMetaData was made.  This shouldn't segfault
-    BOOST_CHECK_EQUAL(uut2->getTitle(), "some title");
-    delete uut2;
+    ///\brief TearDown, this gets run after every test
+    ~PictureFixture(){
+        delete m_uut1;
+        delete m_uut2;
+    }
+
+    const double m_x = 12.5;
+    const double m_y = 13;
+    const double m_z = 20.3;
+    const double m_height = 12.2;
+    const double m_width = 34.3;
+    const std::string m_location = "SomeCoolLocation.png";
+    Picture *m_uut1;
+    Picture *m_uut2;
+};
+
+//Next, set up the fixture.  First param is ClassnameTest, second is the fixture.
+BOOST_FIXTURE_TEST_SUITE(PictureTest, PictureFixture )
+
+//Now its for the actual tests.  Include a brief telling what the test does.
+//The parameter is what the test is testing.  Put testName_testDescription
+///\brief Test setLocation
+BOOST_AUTO_TEST_CASE (Picture_setLocationTest){
+    std::string newLocation = "Seth is cool";
+
+    m_uut1->setLocation(newLocation);
+
+    BOOST_CHECK_EQUAL(m_uut1->location, newLocation);
 }
 
 /**
