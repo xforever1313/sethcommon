@@ -158,6 +158,9 @@ BOOST_AUTO_TEST_CASE (Picture_setLocationTest){
     BOOST_CHECK_EQUAL(m_uut1->location, newLocation);
 }
 
+//Lastly, end the test suite
+BOOST_AUTO_TEST_SUITE_END()
+
 /**
 * Remeber, Unit tests need 100% coverage.  Do not be afraid to use #ifdef UNIT_TEST in your classes to get this.
 */
