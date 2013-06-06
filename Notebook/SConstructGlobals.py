@@ -47,7 +47,7 @@ else:
 #Libs
 globalLibsDebug = []
 globalLibsRelease = []
-globalLibsUnitTest = ["gcov", "boost_unit_test_framework", "boost_system"]
+globalLibsUnitTest = ["gcov", "gtest", "gmock", "boost_unit_test_framework", "boost_system"]
 if (sys.platform == "win32"):
 	globalLibsDebug += ["debug_new"]
 	globalLibsUnitTest += ["debug_new"]
