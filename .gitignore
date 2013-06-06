@@ -68,6 +68,7 @@ Thumbs.db
 # Others #
 ##########
 .sconsign.dblite
+*.save
 /Notebook/Tools/convertedScsvGestures
 
 /Notebook/Tools/xmlFilesToConvert/*.xml
