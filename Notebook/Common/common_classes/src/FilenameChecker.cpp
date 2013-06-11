@@ -1,5 +1,7 @@
+#include <sstream>
+
 #include "FilenameChecker.h"
-#include <iostream>
+
 namespace Common{
 
 ///\warning each replacement character must be different
@@ -48,7 +50,16 @@ const std::string FilenameChecker::PLUS_REPLACE = FilenameChecker::ESCAPE_CHARAC
 const std::string FilenameChecker::SPACE = " ";
 const std::string FilenameChecker::SPACE_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "_" + FilenameChecker::ESCAPE_CHARACTER;
 
+const std::string FilenameChecker::PERIOD = ".";
+const std::string FilenameChecker::PERIOD_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "d" + FilenameChecker::ESCAPE_CHARACTER; //perioD
+
 std::string FilenameChecker::checkFilename(std::string filename){
+    if (filename.size() >= FilenameChecker::MAX_FILE_SIZE){
+        std::stringstream ss;
+        ss << "Filename " << filename << " is bigger than " << FilenameChecker::MAX_FILE_SIZE << " characters";
+        throw FilenameCheckerException(ss.str());
+    }
+
     for (unsigned int i = 0; i < filename.size(); ++i){
         std::string replacementString = "";
         if (filename[i] == FilenameChecker::SPACE[0]){
@@ -93,8 +104,9 @@ std::string FilenameChecker::checkFilename(std::string filename){
         else if (filename[i] == FilenameChecker::PLUS[0]){
             replacementString = FilenameChecker::PLUS_REPLACE;
         }
-
-
+        else if (filename[i] == FilenameChecker::PERIOD[0]){
+            replacementString = FilenameChecker::PERIOD_REPLACE;
+        }
 
         if (replacementString != ""){
             filename.erase(i, 1);

@@ -3,6 +3,8 @@
 
 #include <string>
 
+#include "FilenameCheckerException.h"
+
 namespace Common{
 
 /**
@@ -62,6 +64,12 @@ class FilenameChecker{
         static const std::string SPACE;
         static const std::string SPACE_REPLACE;
 
+        static const std::string PERIOD;
+        static const std::string PERIOD_REPLACE;
+
+        /**
+        * \throw FileCheckerException when fileName is greater than MAX_FILE_SIZE
+        */
         static std::string checkFilename(std::string fileName);
 
     private:
