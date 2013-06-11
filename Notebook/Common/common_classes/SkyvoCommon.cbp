@@ -91,6 +91,12 @@
 		<Unit filename="Test/EventExecutorTest.cpp">
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="Test/FilenameCheckerExceptionTest.cpp">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="Test/FilenameCheckerTest.cpp">
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="Test/UnitTestRunner.cpp">
 			<Option target="unit_test" />
 		</Unit>
@@ -110,12 +116,32 @@
 			<Option target="Release" />
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="include/FilenameChecker.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="include/FilenameCheckerException.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="include/SkyvoUI.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="src/EventExecutor.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="src/FilenameChecker.cpp">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="src/FilenameCheckerException.cpp">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="unit_test" />
