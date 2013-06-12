@@ -17,7 +17,7 @@ class FilenameChecker{
     public:
         virtual ~FilenameChecker();
 
-        static const unsigned int MAX_FILE_SIZE = 85; //255÷3
+        static const unsigned int MAX_FILE_SIZE = 127; //255÷2
 
         static const std::string ESCAPE_CHARACTER;
 

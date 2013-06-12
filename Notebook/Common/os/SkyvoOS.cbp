@@ -160,6 +160,9 @@
 		<Unit filename="Test/UnitTestRunner.cpp">
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="Test/include/MockFilesystem.h">
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="Test/include/SemaphorePoster.h">
 			<Option target="unit_test" />
 		</Unit>

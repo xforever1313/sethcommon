@@ -63,10 +63,9 @@ BOOST_AUTO_TEST_CASE(FilenameChecker_replacementCharacterTest){
 
     for (unsigned int i = 0; i < forbiddenChars.size(); ++i){
         //Ensure the size of each replacement string is 3
-        BOOST_CHECK_EQUAL(forbiddenChars[i].size(), 3);
+        BOOST_CHECK_EQUAL(forbiddenChars[i].size(), 2);
         //Ensure the beginning and end chars are escape chars
         BOOST_CHECK_EQUAL(forbiddenChars[i][0], Common::FilenameChecker::ESCAPE_CHARACTER[0]);
-        BOOST_CHECK_EQUAL(forbiddenChars[i][2], Common::FilenameChecker::ESCAPE_CHARACTER[0]);
         for (unsigned int j = 0; j < forbiddenChars.size(); ++j){
             if (i != j){
                 //Ensure each replacement character is unique.

@@ -9,49 +9,49 @@ namespace Common{
 const std::string FilenameChecker::ESCAPE_CHARACTER = "+";
 
 const std::string FilenameChecker::BACK_SLASH = "\\";
-const std::string FilenameChecker::BACK_SLASH_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "b" + FilenameChecker::ESCAPE_CHARACTER; //Back slash
+const std::string FilenameChecker::BACK_SLASH_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "b"; //Back slash
 
 const std::string FilenameChecker::FRONT_SLASH = "/";
-const std::string FilenameChecker::FRONT_SLASH_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "f" + FilenameChecker::ESCAPE_CHARACTER; //Forward slash
+const std::string FilenameChecker::FRONT_SLASH_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "f"; //Forward slash
 
 const std::string FilenameChecker::COLON = ":";
-const std::string FilenameChecker::COLON_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "c" + FilenameChecker::ESCAPE_CHARACTER; //Colon
+const std::string FilenameChecker::COLON_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "c"; //Colon
 
 const std::string FilenameChecker::ASTERIC = "*";
-const std::string FilenameChecker::ASTERIC_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "s" + FilenameChecker::ESCAPE_CHARACTER; //aSteric
+const std::string FilenameChecker::ASTERIC_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "s"; //aSteric
 
 const std::string FilenameChecker::AMP = "&";
-const std::string FilenameChecker::AMP_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "m" + FilenameChecker::ESCAPE_CHARACTER; //aMp
+const std::string FilenameChecker::AMP_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "m"; //aMp
 
 const std::string FilenameChecker::QUESTION = "?";
-const std::string FilenameChecker::QUESTION_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "e" + FilenameChecker::ESCAPE_CHARACTER; //quEstion
+const std::string FilenameChecker::QUESTION_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "e"; //quEstion
 
 const std::string FilenameChecker::QUOTE = "\"";
-const std::string FilenameChecker::QUOTE_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "o" + FilenameChecker::ESCAPE_CHARACTER; //quOte
+const std::string FilenameChecker::QUOTE_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "o"; //quOte
 
 const std::string FilenameChecker::APOS = "\'";
-const std::string FilenameChecker::APOS_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "p" + FilenameChecker::ESCAPE_CHARACTER; //aPos
+const std::string FilenameChecker::APOS_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "p"; //aPos
 
 const std::string FilenameChecker::LT = "<";
-const std::string FilenameChecker::LT_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "l" + FilenameChecker::ESCAPE_CHARACTER; //Less than
+const std::string FilenameChecker::LT_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "l"; //Less than
 
 const std::string FilenameChecker::GT = ">";
-const std::string FilenameChecker::GT_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "g" + FilenameChecker::ESCAPE_CHARACTER; //Greater than
+const std::string FilenameChecker::GT_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "g"; //Greater than
 
 const std::string FilenameChecker::PIPE = "|";
-const std::string FilenameChecker::PIPE_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "i" + FilenameChecker::ESCAPE_CHARACTER; //pIpe
+const std::string FilenameChecker::PIPE_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "i"; //pIpe
 
 const std::string FilenameChecker::CARROT = "^";
-const std::string FilenameChecker::CARROT_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "r" + FilenameChecker::ESCAPE_CHARACTER; //caRrot
+const std::string FilenameChecker::CARROT_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "r"; //caRrot
 
 const std::string FilenameChecker::PLUS = "+";
-const std::string FilenameChecker::PLUS_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "u" + FilenameChecker::ESCAPE_CHARACTER; //plUs
+const std::string FilenameChecker::PLUS_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "u"; //plUs
 
 const std::string FilenameChecker::SPACE = " ";
-const std::string FilenameChecker::SPACE_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "_" + FilenameChecker::ESCAPE_CHARACTER;
+const std::string FilenameChecker::SPACE_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "_";
 
 const std::string FilenameChecker::PERIOD = ".";
-const std::string FilenameChecker::PERIOD_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "d" + FilenameChecker::ESCAPE_CHARACTER; //perioD
+const std::string FilenameChecker::PERIOD_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "d"; //perioD
 
 std::string FilenameChecker::checkFilename(std::string filename){
     if (filename.size() >= FilenameChecker::MAX_FILE_SIZE){
