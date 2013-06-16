@@ -1,6 +1,7 @@
 #ifndef SKYVOTHREAD_H
 #define SKYVOTHREAD_H
 
+#include "SkyvoSemaphore.h"
 #include "SkyvoMutex.h"
 
 /**
@@ -75,6 +76,7 @@ class SkyvoThread
         ///\brief what the thread executes.
         void work();
 
+        SkyvoSemaphore m_start_semaphore;
         SkyvoThreadStatus m_status;
 
         SkyvoMutex m_status_mutex;

@@ -43,6 +43,7 @@ void SkyvoThread::start(){
     if (m_impl == NULL){
         auto runFunc = std::bind (&SkyvoThread::work, this);
         m_impl = new skyvoThreadImpl_t(runFunc);
+        m_start_semaphore.wait(); //Wait for the thread to start
     }
 }
 
@@ -89,7 +90,7 @@ void SkyvoThread::sleep(unsigned int millisecs){
 }
 
 void SkyvoThread::work(){
-    ///\todo put in a mutex
+    m_start_semaphore.post(); //Thread created, start may return
     m_status_mutex.lock();
     m_status = RUNNING;
     m_status_mutex.unlock();
