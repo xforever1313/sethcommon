@@ -94,14 +94,8 @@ createTestOutputFolder(envBase)
 
 debugTarget = createStaticLib(debugEnvironment, "SCSV-d", sourceFiles)
 releaseTarget = createStaticLib(releaseEnvironment, "SCSV", sourceFiles)
-(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles)
+(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles, armBuild)
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
-#TODO move this to globals
-Clean(doxygenTarget, os.path.join(envBase['PROJECT_ROOT'], doxygenDir))
-
-#TODO move this to globals
-if (not armBuild):
-    Depends(runTestTarget, unitTestTarget)
 
 Alias("debug", debugTarget)
 Alias("release", releaseTarget)

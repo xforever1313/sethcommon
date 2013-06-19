@@ -159,10 +159,12 @@ def createExe(env, exeName, sourceFiles):
     exeTarget = env.Program(target = os.path.join(env['BINDIR'], exeName), source = sourceFiles)
     return exeTarget
     
-def createUnitTestExe(env, sourceFiles, coverageFiles):
+def createUnitTestExe(env, sourceFiles, coverageFiles, armBuild):
     testExeTarget = env.Program(target = os.path.join(env['BINDIR'], "unit_test"), source = sourceFiles)
     runTestTarget = env.Test(target = os.path.join(env['BINDIR'], "run_test"), source = coverageFiles)
     Execute(Delete(Glob(os.path.join(testOutputDir, '*')))) #Remove old test outputs
+    if (not armBuild):
+        Depends(runTestTarget, testExeTarget)
     return (testExeTarget, runTestTarget)
 
 def createStaticLib(env, libName, sourceFiles):
@@ -179,6 +181,7 @@ def createDoxygenTarget(env, doxygenFiles):
     if (not os.path.exists(docDir)):
         os.mkdir(docDir)
     target = env.Doxygen(target = os.path.join(env['PROJECT_ROOT'], doxygenDir, "html/index.html"), source = doxygenFiles)
+    Clean(target, os.path.join(env['PROJECT_ROOT'], doxygenDir))
     return target
 
 def createApiMoveTarget(env, apiFiles):

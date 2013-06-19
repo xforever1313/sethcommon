@@ -103,13 +103,8 @@ except OSError:
 
 debugTarget = createStaticLib(debugEnvironment, "SkyvoOS-d", sourceFiles)
 releaseTarget = createStaticLib(releaseEnvironment, "SkyvoOS", sourceFiles)
-(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles)
+(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles, armBuild)
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
-#TODO move this to globals
-Clean(doxygenTarget, os.path.join(envBase['PROJECT_ROOT'], doxygenDir))
-
-if (not armBuild):
-    Depends(runTestTarget, unitTestTarget)
 
 Alias("debug", debugTarget)
 Alias("release", releaseTarget)

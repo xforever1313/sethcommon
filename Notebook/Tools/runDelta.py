@@ -38,7 +38,7 @@ while (i < len(targetLocations)):
     if (arm): 
         commandStr = "scons delta arm_build=1" + redirectString
     else:
-        commandStr = "scons delta arm_build=0" + redirectString
+        commandStr = "scons delta -j4 arm_build=0" + redirectString
     print(commandStr)
     status = subprocess.call(commandStr, shell=True)
 
