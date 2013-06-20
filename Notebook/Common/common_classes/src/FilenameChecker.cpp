@@ -54,7 +54,7 @@ const std::string FilenameChecker::PERIOD = ".";
 const std::string FilenameChecker::PERIOD_REPLACE = FilenameChecker::ESCAPE_CHARACTER + "d"; //perioD
 
 std::string FilenameChecker::checkFilename(std::string filename){
-    if (filename.size() >= FilenameChecker::MAX_FILE_SIZE){
+    if (filename.size() > FilenameChecker::MAX_FILE_SIZE){
         std::stringstream ss;
         ss << "Filename " << filename << " is bigger than " << FilenameChecker::MAX_FILE_SIZE << " characters";
         throw FilenameCheckerException(ss.str());

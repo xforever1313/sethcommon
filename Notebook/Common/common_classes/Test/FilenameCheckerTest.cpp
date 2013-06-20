@@ -75,4 +75,88 @@ BOOST_AUTO_TEST_CASE(FilenameChecker_replacementCharacterTest){
     }
 }
 
+///\brief tests the case where there are just under the max characters passed in for non-forbidden characters
+BOOST_AUTO_TEST_CASE(FilenameChecker_lessThanMaxCharactersNonForbidden){
+    std::stringstream ss;
+    for (unsigned int i = 0; i < Common::FilenameChecker::MAX_FILE_SIZE - 1; ++i){
+        ss << "i";
+    }
+    std::string testReturn;
+    BOOST_CHECK_NO_THROW(testReturn = Common::FilenameChecker::checkFilename(ss.str()));
+    BOOST_CHECK_EQUAL(testReturn, ss.str());
+}
+
+///\brief tests the case where there are just under the max characters passed in for all forbidden characters
+BOOST_AUTO_TEST_CASE(FilenameChecker_lessThanMaxCharactersForbidden){
+    std::stringstream orignalss;
+    std::stringstream expectedss;
+    for (unsigned int i = 0; i < Common::FilenameChecker::MAX_FILE_SIZE - 1; ++i){
+        orignalss << Common::FilenameChecker::QUESTION;
+        expectedss << Common::FilenameChecker::QUESTION_REPLACE;
+    }
+    std::string testReturn;
+    BOOST_CHECK_NO_THROW(testReturn = Common::FilenameChecker::checkFilename(orignalss.str()));
+    BOOST_CHECK_EQUAL(testReturn, expectedss.str());
+}
+
+///\brief tests the case where there are equal to the max characters passed in for non-forbidden characters
+BOOST_AUTO_TEST_CASE(FilenameChecker_equalToMaxCharactersNonForbidden){
+    std::stringstream ss;
+    for (unsigned int i = 0; i < Common::FilenameChecker::MAX_FILE_SIZE ; ++i){
+        ss << "i";
+    }
+    std::string testReturn;
+    BOOST_CHECK_NO_THROW(testReturn = Common::FilenameChecker::checkFilename(ss.str()));
+    BOOST_CHECK_EQUAL(testReturn, ss.str());
+}
+
+///\brief tests the case where there are equal to the max characters passed in for all forbidden characters
+BOOST_AUTO_TEST_CASE(FilenameChecker_equalToMaxCharactersForbidden){
+    std::stringstream orignalss;
+    std::stringstream expectedss;
+    for (unsigned int i = 0; i < Common::FilenameChecker::MAX_FILE_SIZE; ++i){
+        orignalss << Common::FilenameChecker::QUESTION;
+        expectedss << Common::FilenameChecker::QUESTION_REPLACE;
+    }
+    std::string testReturn;
+    BOOST_CHECK_NO_THROW(testReturn = Common::FilenameChecker::checkFilename(orignalss.str()));
+    BOOST_CHECK_EQUAL(testReturn, expectedss.str());
+}
+
+///\brief tests the case where there are greater than the max characters passed in for non-forbidden characters
+BOOST_AUTO_TEST_CASE(FilenameChecker_greaterThanMaxCharactersNonForbidden){
+    std::stringstream orignalss;
+    for (unsigned int i = 0; i < Common::FilenameChecker::MAX_FILE_SIZE + 1; ++i){
+        orignalss << "i";
+    }
+
+    std::stringstream expectedss;
+    expectedss << "Filename " << orignalss.str() << " is bigger than " << Common::FilenameChecker::MAX_FILE_SIZE << " characters";
+
+    try{
+        Common::FilenameChecker::checkFilename(orignalss.str());
+    }
+    catch(const Common::FilenameCheckerException &e){
+        BOOST_CHECK_EQUAL(e.what(), expectedss.str());
+    }
+}
+
+///\brief tests the case where there are greater than the max characters passed in for all forbidden characters
+BOOST_AUTO_TEST_CASE(FilenameChecker_greaterThanMaxCharactersForbidden){
+    std::stringstream orignalss;
+    for (unsigned int i = 0; i < Common::FilenameChecker::MAX_FILE_SIZE + 1; ++i){
+        orignalss << Common::FilenameChecker::QUESTION;
+    }
+
+    std::stringstream expectedss;
+    expectedss << "Filename " << orignalss.str() << " is bigger than " << Common::FilenameChecker::MAX_FILE_SIZE << " characters";
+
+    try{
+        Common::FilenameChecker::checkFilename(orignalss.str());
+    }
+    catch(const Common::FilenameCheckerException &e){
+        BOOST_CHECK_EQUAL(e.what(), expectedss.str());
+    }
+}
+
 BOOST_AUTO_TEST_SUITE_END()
