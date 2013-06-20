@@ -159,4 +159,14 @@ BOOST_AUTO_TEST_CASE(FilenameChecker_greaterThanMaxCharactersForbidden){
     }
 }
 
+///\brief tests to make sure capital letters go to lowercase
+BOOST_AUTO_TEST_CASE(FilenameChecker_capitalLetterTest){
+    std::string original = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+    std::string expected = "abcdefghijklmnopqrstuvwxyz1234567890";
+
+    std::string testReturn = Common::FilenameChecker::checkFilename(original);
+
+    BOOST_CHECK_EQUAL(testReturn, expected);
+}
+
 BOOST_AUTO_TEST_SUITE_END()

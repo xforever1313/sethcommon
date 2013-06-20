@@ -77,6 +77,8 @@ class FilenameChecker{
         * therefore private constructor
         */
         FilenameChecker();
+
+        static void toLowerCase(std::string &s);
 };
 
 }
