@@ -7,10 +7,11 @@
 #include <list>
 
 #include "EventInterface.h"
+#include "EventExecutorInterface.h"
 
 namespace Common{
 
-class EventExecutor : public SkyvoOS::SkyvoThread{
+class EventExecutor : public SkyvoOS::SkyvoThread, public EventExecutorInterface{
     public:
         EventExecutor();
         virtual ~EventExecutor();

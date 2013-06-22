@@ -87,6 +87,9 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
+		<Unit filename="../../Notebook-Core/Test/api/NotebookAPITest.cpp">
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="SConstruct" />
 		<Unit filename="Test/EventExecutorTest.cpp">
 			<Option target="unit_test" />
@@ -103,10 +106,18 @@
 		<Unit filename="Test/include/DummyEvent.h">
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="Test/include/MockEventExecutor.h">
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="Test/src/DummyEvent.cpp">
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/EventExecutor.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="include/EventExecutorInterface.h">
 			<Option target="Debug" />
 			<Option target="Release" />
 			<Option target="unit_test" />
