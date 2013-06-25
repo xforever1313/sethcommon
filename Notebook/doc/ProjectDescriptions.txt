@@ -1,0 +1,64 @@
+This document describes what each directory in this project is.  Please turn word wrapping on, or you wont be able to read this.
+
+Common:
+    The projects contained in this folder are classes used in more than one project.  For example, threading is used in SkyWrite-Core and Notebook-Core.
+    
+    Common_classes
+        Classes contained in here are common throughout the repo.  This is a level higher than the os layer, and should be built after the os layer is built.  Classes in here should be programmed such that they are cross platform, that is, C/C++.
+    
+    debug_new:
+        debug_new is a memory leak detector.  For platforms with valgrind, this really isnt needed.  On platforms without valgrind (win32), then debug_new is needed to detect memory leaks.  Building the project inside of here makes a static library of debug_new.  For win32 users, the debug_new lib is already included inside of Skyvo's MinGW compiler.
+    
+    math:
+        Common math functions.  Ignore for now, as its out of date.  Ideally, this language should be as cross platform as possible.  That is, C.  If C is not feasable, C++.
+
+    Common/os:
+        This is platform specific os calls.  This includes threading and filesystem calls.  The implementation of these classes can be platform-specific, but should be abstracted in a way to be cross-platform.  This is the lowest level, and should be built first.  The language is C++, unless other platforms required a different language (they must, however, be wrapped so c++ can call them).    
+
+    rapidxml:
+        xml parser written in c++.  This is a library we found online.
+        
+    SCSV:
+        Us at skyvo disliked CSV as a format, so we created our own standard called Skyvo CSV (SCSV).  This project contains the SCSV parser.  The language is C++.
+    
+Doc:
+    Project-wide documentation
+
+FitNesse:
+    FitNesse is a cross-platform acceptance/regression testing platform.  We use this for automated testing.
+    
+    FitNesseRoot
+        This is the root of FitNesse.  It contains blue images (typically called golden images outside of Skyvo, they're called blue since the sky is blue), test set ups, and test tables.  Typically, you won't touch the other files in here outside of FitNesse.
+        
+    Fixtures
+        Fixtures talk to the backend's API and exercises them.  FitNesse uses tables to talk to the fixtures.
+        
+        CppUTest
+            CSlim (see below) requires this.  Typically, nothing is touched in this directory.
+        
+        cslim
+            Slim is a protocol FitNesse uses.  This is a C implementation of it.  Typically, nothing is touched in this directory.  
+            
+        NotebookFixtures
+            Fixtures for the Notebook-Core project.  The language is C/C++, although it might be possible to do Obj-C with wrappings.
+
+Notebook-CLI
+    Command-Line Interface of Notebook.  This should call Notebook-Core's API only.  Used for testing.  The language is C++.
+    
+Notebook-Core
+    The backend of Notebook.  No platform specific calls (those should be abstracted in Common/os) allowed.  The language, so that it stays cross-platform, is C++.
+    
+Notebook-GUI-iOS
+    Frontend for Notebook on iOS.  The language is (probably) obj-c.  Wrappers are needed to talk to Notebook Core's API and the OS layer.
+    
+SkyWrite-Core
+    The backend of SkyWrite.  No platform specific calls (those should be abstracted in Common/os) allowed.  The language, so that it stays cross-platform, is C++.
+    
+SkyWrite-Gestures
+    Gestures used for SkyWrite.
+
+SkyWrite-GUI-win8
+    Win8 test gui for SkyWrite
+    
+Tools
+    Useful tools for the project.  Auto build scripts are located in here.
