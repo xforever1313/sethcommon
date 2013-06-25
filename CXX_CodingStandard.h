@@ -46,10 +46,10 @@ class CXX_CodingStandard : public BaseClass {  //A class that implements a base 
         ///Getters probably can be const, so make them so.
 		int getX() const;
         
-        static int MAXIMUM_X;  ///Only constants can go in the public section.  All other variables need to go in protected or private.  Instead of camelCase, put a '_' where spaces go
+        static const int MAXIMUM_X;  ///Only constants can go in the public section.  All other variables need to go in protected or private.  Instead of camelCase, put a '_' where spaces go
 		
 	protected:
-		//Any protected methods go here
+		//Any protected methods go here.  Do not include "protected:" if there are no protected members/functions.
 	
 	private: //Private methods go next
 		///If there is no reason for there to be a default construction, make the default constructor private
@@ -78,7 +78,7 @@ class CXX_CodingStandard : public BaseClass {  //A class that implements a base 
  //It is highly recommended that you not use using statements.  Use them sparingly.
  
 //First, any static data members should be initialized here, for example:
-int CXX_CodingStandard::maximumX = 3;
+int CXX_CodingStandard::MAXIMUM_X = 3;
  
 //Next come the implementation of the methods.  Comments are not needed before methods
  
@@ -101,8 +101,8 @@ int CXX_CodingStandard::getX() const{  //Don't forget the const
 
 ///Unit Testing-------------------------------------------------------------
 /**
- * \file PageTest.cpp                    //File name
- * \brief Tests the Page class           //Description
+ * \file PictureTest.cpp                    //File name
+ * \brief Tests the Picture class           //Description
  *
  * \author Seth Hendrick                 //Author
  */
@@ -164,6 +164,9 @@ BOOST_AUTO_TEST_SUITE_END()
 /**
 * Remeber, Unit tests need 100% coverage.  Do not be afraid to use #ifdef UNIT_TEST in your classes to get this.
 */
+
+///You will notice that some (many) unit tests aren't as... nice as this one.  These were written before we realized that 
+///Boost unit tests have a setup and teardown ability.  These bad tests should be refactored when time allows.
 
 ///Other tips---------------------------------------------------------------
 //For for loops, use ++i, NOT i++.  ++i is more efficient
