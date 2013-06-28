@@ -3,6 +3,7 @@ import sys
 
 #Globals.py
 codeCoverageDir = "CodeCoverage"
+profilingDataFile = os.path.join(codeCoverageDir, "profiling_data.txt")
 apiDir = "api"
 binDir = "bin"
 docDir = "doc"
