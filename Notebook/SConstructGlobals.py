@@ -264,38 +264,36 @@ def testRunner(target, source, env):
         status = subprocess.call("./unit_test")
     os.chdir(thisDir)
 
-    #todo make this work on linux
     if (status == 0):
-        if(sys.platform == "win32"):
-            print("Running Coverage")
-            try:
-                Execute(Delete(codeCoverageDir)) #Remove old code coverage
-                time.sleep(3)
-            except:
-                print("CodeCoverage directory missing, recreating")
+        print("Running Coverage")
+        try:
+            Execute(Delete(codeCoverageDir)) #Remove old code coverage
+            time.sleep(3)
+        except:
+            print("CodeCoverage directory missing, recreating")
 
-            os.mkdir(codeCoverageDir)
-            
-            gcovString = "gcov -r -s \"" + thisDir + "\" -o \"" + os.path.join(thisDir, objectDir, unitTestDir) + "\" "
-            for file in source:
-                gcovString += (os.path.join(thisDir, str(file)) + " ")
-            print (gcovString)
-            
-            gcovProc = subprocess.Popen(gcovString, shell=True, stdout=subprocess.PIPE)
-            gcovOutput = gcovProc.communicate()[0]
-            parsedGcovString = parseGcovOutput(gcovOutput)
-            
-            #Save coverage data, and print it
-            outFile = open(profilingDataFile, "w")
-            outFile.write(parsedGcovString)
-            outFile.close()
-            
-            print parsedGcovString
-            
-            #Move all .gcov files to  CodeCoverage folder
-            gcovGlob = glob.glob("*.gcov")    
-            for file in gcovGlob:
-                shutil.move(file, codeCoverageDir)
+        os.mkdir(codeCoverageDir)
+        
+        gcovString = "gcov -r -s \"" + thisDir + "\" -o \"" + os.path.join(thisDir, objectDir, unitTestDir) + "\" "
+        for file in source:
+            gcovString += (os.path.join(thisDir, str(file)) + " ")
+        print (gcovString)
+        
+        gcovProc = subprocess.Popen(gcovString, shell=True, stdout=subprocess.PIPE)
+        gcovOutput = gcovProc.communicate()[0]
+        parsedGcovString = parseGcovOutput(gcovOutput)
+        
+        #Save coverage data, and print it
+        outFile = open(profilingDataFile, "w")
+        outFile.write(parsedGcovString)
+        outFile.close()
+        
+        print parsedGcovString
+        
+        #Move all .gcov files to  CodeCoverage folder
+        gcovGlob = glob.glob("*.gcov")    
+        for file in gcovGlob:
+            shutil.move(file, codeCoverageDir)
             
     else:
         raise Exception("Test Failed!")
