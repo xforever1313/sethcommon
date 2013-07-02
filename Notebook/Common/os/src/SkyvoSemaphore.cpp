@@ -1,22 +1,23 @@
-#include <boost/thread.hpp>
-#include <boost/date_time/posix_time/posix_time_types.hpp>
+#include <condition_variable>
 #include <ctime>
-#include <iostream>
+#include <mutex>
+
+#include "SkyvoThread.h"
 #include "SkyvoSemaphore.h"
 
 namespace SkyvoOS{
 
 typedef struct semaphoreImpl{
     semaphoreImpl(unsigned int count) :
-        m_conditionVariable(new boost::condition_variable),
+        m_conditionVariable(new std::condition_variable),
         m_semaphoreCount(count)
     {
     }
 
-    boost::condition_variable *m_conditionVariable;
+    std::condition_variable *m_conditionVariable;
     unsigned int m_semaphoreCount;
-    boost::mutex m_semaphoreCountMutex;
-    boost::mutex m_shutdownMutex;
+    std::mutex m_semaphoreCountMutex;
+    std::mutex m_shutdownMutex;
 }semaphoreImpl_t;
 
 SkyvoSemaphore::SkyvoSemaphore() :
@@ -31,22 +32,23 @@ SkyvoSemaphore::SkyvoSemaphore(unsigned int initialCount) :
 }
 
 SkyvoSemaphore::~SkyvoSemaphore(){
-    shutdown();
+    if(!isShutdown()){
+        shutdown();
+    }
     delete m_impl->m_conditionVariable; //Delete this here, since for some strange reason, a ~impl() destructor does not get called :|
     m_impl->m_conditionVariable = NULL;
     delete m_impl;
 }
 
 void SkyvoSemaphore::post(){
-    //if (!isShutdown()){
-        boost::unique_lock<boost::mutex> lock(m_impl->m_semaphoreCountMutex);
-        ++m_impl->m_semaphoreCount;
-        m_impl->m_conditionVariable->notify_one();
-    //}
+    std::unique_lock<std::mutex> lock(m_impl->m_semaphoreCountMutex);
+    ++m_impl->m_semaphoreCount;
+    m_impl->m_conditionVariable->notify_one();
+    SkyvoThread::yield(); //Allow another thread to go.
 }
 
 void SkyvoSemaphore::wait(){
-    boost::unique_lock<boost::mutex> lock(m_impl->m_semaphoreCountMutex);
+    std::unique_lock<std::mutex> lock(m_impl->m_semaphoreCountMutex);
     while ((m_impl->m_semaphoreCount == 0)){
         m_impl->m_conditionVariable->wait(lock);
     }
@@ -55,7 +57,7 @@ void SkyvoSemaphore::wait(){
 
 bool SkyvoSemaphore::tryWait(){
     bool ret = true;
-    boost::unique_lock<boost::mutex> lock(m_impl->m_semaphoreCountMutex);
+    std::unique_lock<std::mutex> lock(m_impl->m_semaphoreCountMutex);
     if (m_impl->m_semaphoreCount == 0){
         ret = false;
     }
@@ -67,9 +69,13 @@ bool SkyvoSemaphore::tryWait(){
 
 bool SkyvoSemaphore::timedWait(unsigned long millisecs){
     bool ret = true;
-    boost::unique_lock<boost::mutex> lock(m_impl->m_semaphoreCountMutex);
+    std::cv_status timeout = std::cv_status::no_timeout;
+    std::unique_lock<std::mutex> lock(m_impl->m_semaphoreCountMutex);
     if (m_impl->m_semaphoreCount == 0){
-        ret = m_impl->m_conditionVariable->timed_wait(lock, boost::posix_time::milliseconds(millisecs));
+        timeout = m_impl->m_conditionVariable->wait_for(lock, std::chrono::milliseconds(millisecs));
+        if (timeout == std::cv_status::timeout){
+            ret = false;
+        }
         if (ret){
             --m_impl->m_semaphoreCount;
         }
@@ -78,15 +84,15 @@ bool SkyvoSemaphore::timedWait(unsigned long millisecs){
 }
 
 void SkyvoSemaphore::shutdown(){
-    boost::unique_lock<boost::mutex> lock(m_impl->m_semaphoreCountMutex);
-    boost::unique_lock<boost::mutex> shutdownLock(m_impl->m_shutdownMutex);
+    std::unique_lock<std::mutex> lock(m_impl->m_semaphoreCountMutex);
+    std::unique_lock<std::mutex> shutdownLock(m_impl->m_shutdownMutex);
     m_isShutDown = true;
     m_impl->m_semaphoreCount = -1;
     m_impl->m_conditionVariable->notify_all(); //Wake up ALL the threads
 }
 
 bool SkyvoSemaphore::isShutdown(){
-    boost::unique_lock<boost::mutex> shutdownLock(m_impl->m_shutdownMutex);
+    std::unique_lock<std::mutex> shutdownLock(m_impl->m_shutdownMutex);
     return m_isShutDown;
 }
 

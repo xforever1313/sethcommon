@@ -39,14 +39,14 @@ while (i < len(targetLocations)):
         commandStr = "scons nightly arm_build=1 --clean" 
     else:
         commandStr = "scons nightly arm_build=0 --clean"
-    print (commandStr)
+    print ("Running scons nightly --clean for " + targetNames[i])
     subprocess.call(commandStr, shell=True)
     
     if (arm): 
         commandStr = "scons nightly arm_build=1" + redirectString
     else:
         commandStr = "scons nightly -j4 arm_build=0" + redirectString
-    print(commandStr)
+    print("Running scons nightly for " + targetNames[i])
     status = subprocess.call(commandStr, shell=True)
 
     os.chdir(thisDir)

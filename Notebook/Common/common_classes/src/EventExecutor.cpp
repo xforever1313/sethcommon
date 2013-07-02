@@ -28,7 +28,7 @@ EventExecutor::~EventExecutor(){
     m_isRunning = false;
     m_eventSemaphore.shutdown(); //Allows run thread to exit
     m_isRunningMutex.unlock();
-    m_exitRunLoopSemaphore.wait(); //Wait for run loop to exit before deleting
+    join(); //wait for thread to exit
     //Run all unexecuted events
     while (!m_eventList.empty()){  //No need to put m_eventList in mutexes, as the run thread has exited.
         executeEvent();
@@ -63,7 +63,6 @@ void EventExecutor::run(){
         m_eventSemaphore.wait();
         executeEvent();
     }
-    m_exitRunLoopSemaphore.post();
 }
 
 bool EventExecutor::isRunning(){

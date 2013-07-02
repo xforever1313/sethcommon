@@ -1,4 +1,5 @@
-#include <boost/thread.hpp>
+#include <mutex>
+#include <thread>
 
 #include "SkyvoMutex.h"
 
@@ -6,15 +7,15 @@ namespace SkyvoOS{
 
 typedef struct mutexImpl{
     mutexImpl() :
-        m_mutex(new boost::mutex())
+        m_mutex(new std::mutex())
     {
     }
 
-    ~mutexImpl(){
+    virtual ~mutexImpl(){
         delete m_mutex;
     }
 
-    boost::mutex *m_mutex;
+    std::mutex *m_mutex;
 }mutexImpl_t;
 
 SkyvoMutex::SkyvoMutex() :
@@ -23,7 +24,6 @@ SkyvoMutex::SkyvoMutex() :
 }
 
 SkyvoMutex::~SkyvoMutex(){
-    unlock();
     delete m_impl;
 }
 

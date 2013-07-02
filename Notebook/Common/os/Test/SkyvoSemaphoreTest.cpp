@@ -69,9 +69,7 @@ BOOST_AUTO_TEST_CASE(Semaphore_shutdownTest){
     waiter2.start();
     SemaphoreWaiter waiter3 (uut2);
     waiter3.start();
-
     uut2->shutdown();
-
     waiter1.join();
     waiter2.join();
     waiter3.join();
@@ -80,4 +78,3 @@ BOOST_AUTO_TEST_CASE(Semaphore_shutdownTest){
 
     delete uut2;
 }
-

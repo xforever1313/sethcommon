@@ -1,6 +1,8 @@
 #ifndef SKYVOTHREAD_H
 #define SKYVOTHREAD_H
 
+#include <thread>
+
 #include "SkyvoSemaphore.h"
 #include "SkyvoMutex.h"
 
@@ -18,6 +20,8 @@ typedef struct skyvoThreadImpl skyvoThreadImpl_t;
 
 class SkyvoThread
 {
+    friend skyvoThreadImpl_t;
+
     public:
         enum SkyvoThreadStatus{
             NOT_STARTED,
@@ -33,7 +37,7 @@ class SkyvoThread
         SkyvoThread& operator=(const SkyvoThread &other) = delete;
 
         ///\brief Move Constructor
-        SkyvoThread(SkyvoThread &&other) noexcept;
+        SkyvoThread(SkyvoThread &&other);
         ///\brief this may or may not be needed
         //SkyvoThread &operator=(SkyvoThread &&other) noexcept;
 
@@ -57,11 +61,7 @@ class SkyvoThread
 
         static unsigned hardware_concurrency();
 
-        ///\note returns if thread is not running
-        void interrupt();
-
-        ///\note returns false if thread not started
-        bool interruption_requested() const;
+        static void yield();
 
         ///\brief causes the thread that CALLS THIS FUNCTION sleep for the given number of millisecs
         static void sleep(unsigned int millisecs);
@@ -81,6 +81,7 @@ class SkyvoThread
 
         SkyvoMutex m_status_mutex;
 
+        std::thread m_thread;
         skyvoThreadImpl_t *m_impl; ///<NULL if thread is not started
 };
 

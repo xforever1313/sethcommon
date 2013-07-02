@@ -46,7 +46,7 @@ coverageFiles = deepcopy(sourceFiles)
     
 ###Libs
 libs = []
-testLibs = ["boost_thread"] + libs
+testLibs = ["pthread"] + libs
 if (sys.platform != "win32"):
     testLibs += ["rt", 'pthread', 'c']
 ###libPath
@@ -105,6 +105,11 @@ debugTarget = createStaticLib(debugEnvironment, "SkyvoOS-d", sourceFiles)
 releaseTarget = createStaticLib(releaseEnvironment, "SkyvoOS", sourceFiles)
 (unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles, armBuild)
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
+#TODO move this to globals
+Clean(doxygenTarget, os.path.join(envBase['PROJECT_ROOT'], doxygenDir))
+
+if (not armBuild):
+    Depends(runTestTarget, unitTestTarget)
 
 Alias("debug", debugTarget)
 Alias("release", releaseTarget)

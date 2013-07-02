@@ -30,8 +30,9 @@ targetLocations += [os.path.join(notebookRootDirectory,"Notebook-Core")]
 targetNames += ["NotebookCLI"]
 targetLocations += [os.path.join(notebookRootDirectory, "Notebook-CLI")]
 
-targetNames += ["SkyCoreBuild"]
-targetLocations += [os.path.join(notebookRootDirectory, "SkyWrite-Core")]
+###Black listed until its implementation uses std::thread, not boost::thread
+#targetNames += ["SkyCoreBuild"]
+#targetLocations += [os.path.join(notebookRootDirectory, "SkyWrite-Core")]
 
 #These MUST be built and last
 targetNames += ["CppUTest"]

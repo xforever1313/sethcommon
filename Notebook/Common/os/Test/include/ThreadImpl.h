@@ -11,7 +11,7 @@ class ThreadImpl : public SkyvoOS::SkyvoThread{
     public:
         ThreadImpl();
         virtual ~ThreadImpl();
-        void run();
+        virtual void run();
         unsigned int m_numberOfRuns;
 };
 

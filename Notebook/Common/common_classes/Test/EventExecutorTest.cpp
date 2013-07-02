@@ -1,4 +1,5 @@
 #include <boost/test/unit_test.hpp>
+#include <iostream>
 
 #define private public
 
@@ -48,7 +49,7 @@ BOOST_AUTO_TEST_CASE(EventExecutor_destroyTest){
     DummyEvent *event8 = new DummyEvent();
     DummyEvent *event9 = new DummyEvent();
     DummyEvent *event10 = new DummyEvent();
-    Common::EventExecutor::startRightAway = true;
+    Common::EventExecutor::startRightAway = false;
     Common::EventExecutor *uut = new Common::EventExecutor();
     uut->addEvent(event1);
     uut->addEvent(event2);

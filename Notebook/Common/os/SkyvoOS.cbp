@@ -181,11 +181,6 @@
 		<Unit filename="Test/src/ThreadImpl.cpp">
 			<Option target="unit_test" />
 		</Unit>
-		<Unit filename="include/Base_Task.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-			<Option target="unit_test" />
-		</Unit>
 		<Unit filename="include/Date.h">
 			<Option target="Debug" />
 			<Option target="Release" />
@@ -209,16 +204,6 @@
 		<Unit filename="include/SkyvoThread.h">
 			<Option target="Debug" />
 			<Option target="Release" />
-		</Unit>
-		<Unit filename="include/Test_Task.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-			<Option target="unit_test" />
-		</Unit>
-		<Unit filename="include/ThreadPool.h">
-			<Option target="Debug" />
-			<Option target="Release" />
-			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="src/Date.cpp">
 			<Option target="Debug" />

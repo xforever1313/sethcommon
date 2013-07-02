@@ -39,7 +39,7 @@ while (i < len(targetLocations)):
         commandStr = "scons delta arm_build=1" + redirectString
     else:
         commandStr = "scons delta -j4 arm_build=0" + redirectString
-    print(commandStr)
+    print("Running scons delta for " + targetNames[i])
     status = subprocess.call(commandStr, shell=True)
 
     os.chdir(thisDir)
