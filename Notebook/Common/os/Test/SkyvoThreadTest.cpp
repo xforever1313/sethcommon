@@ -4,18 +4,18 @@
 
 #include "SkyvoThread.h"
 #include "ThreadImpl.h"
-/*
+
 ///\brief tests the make sure no-ops happen when the thread is not started
 BOOST_AUTO_TEST_CASE(SkyvoThread_noOpTest){
     ThreadImpl *uut = new ThreadImpl;
-    //BOOST_CHECK(uut->m_impl == NULL);
+    BOOST_CHECK(uut->m_impl == NULL);
     ///For the test to pass, no segfaults should happen
-    //BOOST_CHECK(!uut->joinable());
-    //uut->join();
-   // uut->detach();
+    BOOST_CHECK(!uut->joinable());
+    uut->join();
+    uut->detach();
     delete uut;
 }
-*/
+
 ///\brief checks the thread status during various parts of the run method
 BOOST_AUTO_TEST_CASE(SkyvoThread_statusTest){
     ThreadImpl *uut = new ThreadImpl;
