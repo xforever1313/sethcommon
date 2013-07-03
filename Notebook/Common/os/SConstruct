@@ -47,8 +47,7 @@ coverageFiles = deepcopy(sourceFiles)
 ###Libs
 libs = []
 testLibs = ["pthread"] + libs
-if (sys.platform != "win32"):
-    testLibs += ["rt", 'pthread', 'c']
+
 ###libPath
 libPath = []
 

@@ -1,8 +1,6 @@
 #ifndef SKYVOTHREAD_H
 #define SKYVOTHREAD_H
 
-#include <thread>
-
 #include "SkyvoSemaphore.h"
 #include "SkyvoMutex.h"
 
@@ -17,10 +15,11 @@
 namespace SkyvoOS{
 
 typedef struct skyvoThreadImpl skyvoThreadImpl_t;
+typedef struct skyvoThreadRunner skyvoThreadRunner_t;
 
 class SkyvoThread
 {
-    friend skyvoThreadImpl_t;
+    friend skyvoThreadRunner;
 
     public:
         enum SkyvoThreadStatus{
@@ -81,7 +80,7 @@ class SkyvoThread
 
         SkyvoMutex m_status_mutex;
 
-        std::thread m_thread;
+        skyvoThreadRunner_t *m_runner;
         skyvoThreadImpl_t *m_impl; ///<NULL if thread is not started
 };
 

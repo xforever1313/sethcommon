@@ -1,3 +1,4 @@
+#include <iostream>
 #include <thread>
 
 #include "SkyvoThread.h"
@@ -5,41 +6,61 @@
 namespace SkyvoOS{
 
 typedef struct skyvoThreadImpl{
-    skyvoThreadImpl(SkyvoThread *thread) :
+    
+    skyvoThreadImpl(skyvoThreadRunner &runner) :
+        m_thread(std::thread(runner))
+    {
+    }
+    
+    skyvoThreadImpl(skyvoThreadImpl &&other) :
+        m_thread(std::move(other.m_thread))
+    {
+    }
+    
+    virtual ~skyvoThreadImpl(){
+    }
+    
+    std::thread m_thread;
+    
+}skyvoThreadImpl_t;
+
+typedef struct skyvoThreadRunner{
+    skyvoThreadRunner(SkyvoThread *thread) :
         m_skyvoThread(thread)
     {
     }
 
-    virtual ~skyvoThreadImpl(){
+    virtual ~skyvoThreadRunner(){
     }
     void operator()(){
         m_skyvoThread->work();
     }
     SkyvoThread *m_skyvoThread;
-}skyvoThreadImpl_t;
+}skyvoThreadRunner_t;
 
 SkyvoThread::SkyvoThread() :
     m_status(NOT_STARTED),
+    m_runner(NULL),
     m_impl(NULL)
 {
+    m_runner = new skyvoThreadRunner_t(this);
 }
 
 SkyvoThread::SkyvoThread(SkyvoThread &&other) :
     m_status(other.m_status),
-    m_thread(std::move(other.m_thread)),
+    m_runner(other.m_runner),
     m_impl(other.m_impl)
 {
 }
 
 SkyvoThread::~SkyvoThread(){
     delete m_impl;
+    delete m_runner;
 }
 
 void SkyvoThread::start(){
     if (m_impl == NULL){
-        m_impl = new skyvoThreadImpl(this);
-        std::thread thread (std::ref((*m_impl)));
-        m_thread = std::move(thread);
+        m_impl = new skyvoThreadImpl((*m_runner));
         m_start_semaphore.wait(); //Wait for the thread to start
     }
 }
@@ -47,20 +68,20 @@ void SkyvoThread::start(){
 bool SkyvoThread::joinable() const{
     bool ret = false;
     if (m_impl != NULL){
-        ret = m_thread.joinable();
+        ret = m_impl->m_thread.joinable();
     }
     return ret;
 }
 
 void SkyvoThread::join(){
     if ((m_impl != NULL) && joinable()){
-        m_thread.join();
+        m_impl->m_thread.join();
     }
 }
 
 void SkyvoThread::detach(){
     if (m_impl != NULL){
-        m_thread.detach();
+        m_impl->m_thread.detach();
     }
 }
 

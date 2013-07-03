@@ -34,15 +34,15 @@ globalCXXReleaseFlags = ["-O3", "-Wswitch-enum"]
 globalCXXUnitTestFlags = ["-g", "-fprofile-arcs", "-ftest-coverage"]
 
 if (sys.platform == "win32"):
-    globalCXXFlags += ["-mthreads"]
+    globalCXXFlags += ["-pthread"]
 else:
     globalCXXFlags += ["-pthread"]
 
 #Linker Flags
-globalLinkerFlags = ["-static", "-Wall", "-Werror", "-std=gnu++11"]
+globalLinkerFlags = ["-Wall", "-Werror", "-std=gnu++11"]
 
 if(sys.platform == "win32"):
-    globalLinkerFlags += ["-mthreads"]
+    globalLinkerFlags += ["-static", "-pthread"]
 else:
     globalLinkerFlags += ["-pthread"]
 
