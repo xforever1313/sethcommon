@@ -1,3 +1,4 @@
+#include <functional>
 #include <iostream>
 #include <thread>
 
@@ -6,61 +7,43 @@
 namespace SkyvoOS{
 
 typedef struct skyvoThreadImpl{
-    
-    skyvoThreadImpl(skyvoThreadRunner &runner) :
+
+    skyvoThreadImpl(std::function<void(void)> runner) :
         m_thread(std::thread(runner))
     {
     }
-    
+
     skyvoThreadImpl(skyvoThreadImpl &&other) :
         m_thread(std::move(other.m_thread))
     {
     }
-    
     virtual ~skyvoThreadImpl(){
     }
-    
+
     std::thread m_thread;
-    
+
 }skyvoThreadImpl_t;
-
-typedef struct skyvoThreadRunner{
-    skyvoThreadRunner(SkyvoThread *thread) :
-        m_skyvoThread(thread)
-    {
-    }
-
-    virtual ~skyvoThreadRunner(){
-    }
-    void operator()(){
-        m_skyvoThread->work();
-    }
-    SkyvoThread *m_skyvoThread;
-}skyvoThreadRunner_t;
 
 SkyvoThread::SkyvoThread() :
     m_status(NOT_STARTED),
-    m_runner(NULL),
     m_impl(NULL)
 {
-    m_runner = new skyvoThreadRunner_t(this);
 }
 
 SkyvoThread::SkyvoThread(SkyvoThread &&other) :
     m_status(other.m_status),
-    m_runner(other.m_runner),
     m_impl(other.m_impl)
 {
 }
 
 SkyvoThread::~SkyvoThread(){
     delete m_impl;
-    delete m_runner;
 }
 
 void SkyvoThread::start(){
     if (m_impl == NULL){
-        m_impl = new skyvoThreadImpl((*m_runner));
+        auto runFunct = std::bind(&SkyvoThread::work, this);
+        m_impl = new skyvoThreadImpl(runFunct);
         m_start_semaphore.wait(); //Wait for the thread to start
     }
 }

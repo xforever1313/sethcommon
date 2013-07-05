@@ -68,8 +68,14 @@ bool SkyvoSemaphore::tryWait(){
 }
 
 bool SkyvoSemaphore::timedWait(unsigned long millisecs){
+    #ifdef _MSC_VER
+    using namespace std::cv_status;  //This is here since MSVC fucking sucks.
+    cv_status timeout;
+    #else
+    std::cv_status timeout;
+    #endif
     bool ret = true;
-    std::cv_status timeout = std::cv_status::no_timeout;
+    timeout = std::cv_status::no_timeout;
     std::unique_lock<std::mutex> lock(m_impl->m_semaphoreCountMutex);
     if (m_impl->m_semaphoreCount == 0){
         timeout = m_impl->m_conditionVariable->wait_for(lock, std::chrono::milliseconds(millisecs));

@@ -9,18 +9,14 @@
 * \brief This class serves as a wrapper to the os threads
 * \author Seth Hendrick
 *
-* Boost thread documentation: http://www.boost.org/doc/libs/1_53_0/doc/html/thread/thread_management.html
 * \warning all functions are no-op if the thread is not started (start is not called)
 */
 namespace SkyvoOS{
 
 typedef struct skyvoThreadImpl skyvoThreadImpl_t;
-typedef struct skyvoThreadRunner skyvoThreadRunner_t;
 
 class SkyvoThread
 {
-    friend skyvoThreadRunner;
-
     public:
         enum SkyvoThreadStatus{
             NOT_STARTED,
@@ -30,10 +26,12 @@ class SkyvoThread
 
         SkyvoThread();
 
-        ///\brief forbid copy constructor (boost does this)
+		#ifndef _MSC_VER
+        ///\brief forbid copy constructor (the standard does this)
         SkyvoThread(const SkyvoThread &other) = delete;
-        ///\brief forbid copy constructor (boost does this)
+        ///\brief forbid copy constructor (the standard does this)
         SkyvoThread& operator=(const SkyvoThread &other) = delete;
+		#endif
 
         ///\brief Move Constructor
         SkyvoThread(SkyvoThread &&other);
@@ -72,7 +70,14 @@ class SkyvoThread
         virtual void run() = 0;
 
     private:
-        ///\brief what the thread executes.
+        #ifdef _MSC_VER
+        ///\brief forbid copy constructor (the standard does this)
+        SkyvoThread(const SkyvoThread &other);
+        ///\brief forbid copy constructor (the standard does this)
+        SkyvoThread& operator=(const SkyvoThread &other);
+		#endif
+
+		///\brief what the thread executes.
         void work();
 
         SkyvoSemaphore m_start_semaphore;
@@ -80,7 +85,6 @@ class SkyvoThread
 
         SkyvoMutex m_status_mutex;
 
-        skyvoThreadRunner_t *m_runner;
         skyvoThreadImpl_t *m_impl; ///<NULL if thread is not started
 };
 
