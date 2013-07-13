@@ -32,20 +32,8 @@ includePaths = [includeDir, os.path.join(osPath, includeDir)]
 testIncludePaths = [os.path.join(testDir, includeDir)]
 
 ###Source Files
-#if a new directory gets added, add to here
-sourceDirectories = [srcDir]
-#if a new test directory gets added, add to here
-sourceTestDirectories = [testDir, os.path.join(testDir, srcDir)]
-
-sourceFiles = []
-sourceTestFiles = []
-
-#Add all .cpp files
-for dir in sourceDirectories:
-    sourceFiles += glob.glob(os.path.join(dir, "*.cpp"))
-
-for dir in sourceTestDirectories:
-    sourceTestFiles += glob.glob(os.path.join(dir, "*.cpp"))
+sourceFiles = glob.glob(os.path.join(srcDir, "*.cpp"))
+sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.join(testDir, srcDir, "*.cpp"))
 
 coverageFiles = deepcopy(sourceFiles)
 
