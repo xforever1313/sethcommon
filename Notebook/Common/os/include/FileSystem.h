@@ -27,7 +27,9 @@ class FileSystem
         static const std::string THIS_DIR; ///<Name for the current directory (usually ".")
         static const std::string UP_DIR;  ///<Name for the directory above the current one (usually "..")
 
-        FileSystem();
+        ///\brief returns an instance of filesystem.
+        ///\warning DO NOT DELETE THE RETURNED POINTER.  It will cause invalid pointers.
+        static FileSystem *getInstance();
 
         virtual ~FileSystem();
 
@@ -78,6 +80,9 @@ class FileSystem
         #ifdef UNIT_TEST
             bool m_failListFilesInDir;
         #endif
+
+    private:
+        FileSystem();
 
 };
 

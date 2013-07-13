@@ -42,6 +42,10 @@ void createMassiveDir(SkyvoOS::FileSystem uut, std::string rootPath){
 
 }
 
+BOOST_AUTO_TEST_CASE(Filesystem_getInstanceTest){
+    BOOST_CHECK(SkyvoOS::FileSystem::getInstance() == SkyvoOS::FileSystem::getInstance());
+}
+
 ///\brief setup
 BOOST_AUTO_TEST_CASE(FilesSystem_setUp){
     //First, create the directory we are going to be in
@@ -113,7 +117,7 @@ BOOST_AUTO_TEST_CASE(FileSystem_createDirFromRootTest){
     std::string testDirLocation = uut.pathJoin(absPath, fileTestOutputPath);
     testDirLocation = uut.pathJoin(testDirLocation, testDir);
     BOOST_CHECK(uut.createDir(testDirLocation));
-    
+
     std::string relTestDirLocation = uut.pathJoin(fileTestOutputPath, testDir);
     BOOST_CHECK(uut.dirExists(relTestDirLocation));
 }
@@ -136,7 +140,7 @@ BOOST_AUTO_TEST_CASE(FileSystem_createDirDoubleSlashes){
     std::string testDirLocation = uut.pathJoin(fileTestOutputPath, testDir);
     testDirLocation = uut.pathJoin(testDirLocation, testDir);
     BOOST_CHECK(uut.createDir(testDirLocation));
-    
+
     std::string realTestDirLocation = uut.pathJoin(fileTestOutputPath, "twoSlashDir");
     BOOST_CHECK(uut.dirExists(realTestDirLocation));
 }

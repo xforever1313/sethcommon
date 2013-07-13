@@ -20,6 +20,11 @@ namespace SkyvoOS{
 const std::string FileSystem::THIS_DIR = ".";
 const std::string FileSystem::UP_DIR = "..";
 
+FileSystem *FileSystem::getInstance(){
+    static FileSystem fs;
+    return &fs;
+}
+
 FileSystem::FileSystem(){
     #ifdef UNIT_TEST
         m_failListFilesInDir = false;
@@ -67,12 +72,12 @@ bool FileSystem::createDir( const std::string dirPath ){
 
     char firstChar = ss.peek();
     //If the first character is /, it means we want to create a dir in root.
-    if (firstChar == '/'){ 
+    if (firstChar == '/'){
         std::string nextDir;
         std::getline(ss, nextDir, '/');
         if (ss.str() != ""){                //If empty string, ignore
             nextDir = "/" + nextDir;
-            dirsToMake.push_back(nextDir); 
+            dirsToMake.push_back(nextDir);
         }
         ss.peek();
     }
