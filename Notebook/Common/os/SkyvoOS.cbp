@@ -154,9 +154,6 @@
 		<Unit filename="Test/TestHelper.cpp">
 			<Option target="unit_test" />
 		</Unit>
-		<Unit filename="Test/TestHelper.h">
-			<Option target="unit_test" />
-		</Unit>
 		<Unit filename="Test/UnitTestRunner.cpp">
 			<Option target="unit_test" />
 		</Unit>
