@@ -4,6 +4,8 @@
 #include <deque>
 #include <string>
 
+#include "FileSystemInterface.h"
+
 namespace SkyvoOS{
 
 /**
@@ -14,22 +16,18 @@ namespace SkyvoOS{
 *
 * \author Seth Hendrick
 */
-class FileSystem
+class FileSystem : public FileSystemInterface
 {
     public:
-
-        enum FileStatus{
-            FILE_ERROR = -1,
-            FILE_EQUAL = 0,
-            FILE_NOT_EQUAL = 1
-        };
-
         static const std::string THIS_DIR; ///<Name for the current directory (usually ".")
         static const std::string UP_DIR;  ///<Name for the directory above the current one (usually "..")
 
+        ///\return "parent/child"
+        static std::string pathJoin(const std::string parent, const std::string child);
+
         ///\brief returns an instance of filesystem.
         ///\warning DO NOT DELETE THE RETURNED POINTER.  It will cause invalid pointers.
-        static FileSystem *getInstance();
+        static FileSystemInterface *getInstance();
 
         virtual ~FileSystem();
 
@@ -67,15 +65,12 @@ class FileSystem
         virtual bool listFilesInDir(const std::string dirPath, std::deque<std::string> &fileNamesInDir);
 
         ///\return FILE_EQUAL if same, FILE_NOT_EQUAL if not same, FILE_ERROR if error
-        ///\details Returns based on file contents, not given names
+        ///\note Returns based on file contents, not given names
         virtual FileStatus compareFiles (const std::string fileOne, const std::string fileTwo);
 
         ///\return FILE_EQUAL if same, FILE_NOT_EQUAL if not same, FILE_ERROR if error
-        ///\details Returns based on directory contents, not given file names.  However, file and dir names within the directory must match
+        ///\note Returns based on directory contents, not given file names.  However, file and dir names within the directory must match
         virtual FileStatus compareDirs (const std::string fileOne, const std::string fileTwo);
-
-        ///\return "parent/child"
-        virtual std::string pathJoin(const std::string parent, const std::string child);
 
         #ifdef UNIT_TEST
             bool m_failListFilesInDir;

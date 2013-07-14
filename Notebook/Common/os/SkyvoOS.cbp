@@ -191,6 +191,11 @@
 			<Option target="Release" />
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="include/FileSystemInterface.h">
+			<Option target="Debug" />
+			<Option target="Release" />
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="include/SkyvoMutex.h">
 			<Option target="Debug" />
 			<Option target="Release" />

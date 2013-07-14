@@ -15,30 +15,30 @@ void createMassiveDir(SkyvoOS::FileSystem uut, std::string rootPath){
     BOOST_CHECK(uut.createDir(rootPath));
     BOOST_CHECK(uut.dirExists(rootPath));
 
-    BOOST_CHECK(uut.createDir(uut.pathJoin(rootPath, "dir1/dir1Child")));
-    BOOST_CHECK(uut.dirExists(uut.pathJoin(rootPath, "dir1")));
-    BOOST_CHECK(uut.dirExists(uut.pathJoin(rootPath, "dir1/dir1Child")));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(rootPath, "dir1/test1.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(rootPath, "dir1/test1.txt")));
+    BOOST_CHECK(uut.createDir(SkyvoOS::FileSystem::pathJoin(rootPath, "dir1/dir1Child")));
+    BOOST_CHECK(uut.dirExists(SkyvoOS::FileSystem::pathJoin(rootPath, "dir1")));
+    BOOST_CHECK(uut.dirExists(SkyvoOS::FileSystem::pathJoin(rootPath, "dir1/dir1Child")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(rootPath, "dir1/test1.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(rootPath, "dir1/test1.txt")));
     std::ofstream outFile1;
     outFile1.open("dir1/dir1Child/test1.txt");
     outFile1<<"Test File!\n\nYAY!";
     outFile1.close();
 
-    BOOST_CHECK(uut.createDir(uut.pathJoin(rootPath, "dir2/dir2Child/dir2ChildChild")));
-    BOOST_CHECK(uut.dirExists(uut.pathJoin(rootPath, "dir2")));
-    BOOST_CHECK(uut.dirExists(uut.pathJoin(rootPath, "dir2/dir2Child")));
-    BOOST_CHECK(uut.dirExists(uut.pathJoin(rootPath, "dir2/dir2Child/dir2ChildChild")));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(rootPath, "dir2/dir2Child/test.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(rootPath, "dir2/dir2Child/test.txt")));
+    BOOST_CHECK(uut.createDir(SkyvoOS::FileSystem::pathJoin(rootPath, "dir2/dir2Child/dir2ChildChild")));
+    BOOST_CHECK(uut.dirExists(SkyvoOS::FileSystem::pathJoin(rootPath, "dir2")));
+    BOOST_CHECK(uut.dirExists(SkyvoOS::FileSystem::pathJoin(rootPath, "dir2/dir2Child")));
+    BOOST_CHECK(uut.dirExists(SkyvoOS::FileSystem::pathJoin(rootPath, "dir2/dir2Child/dir2ChildChild")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(rootPath, "dir2/dir2Child/test.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(rootPath, "dir2/dir2Child/test.txt")));
     std::ofstream outFile2;
     outFile2.open("dir2/dir2Child/dir2ChildChild/test1.txt");
     outFile2<<"Test File2!\n\nYAY!";
     outFile2.close();
 
     //Create files
-    BOOST_CHECK(uut.createFile(uut.pathJoin(rootPath, "testFile1.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(rootPath, "testFile1.txt")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(rootPath, "testFile1.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(rootPath, "testFile1.txt")));
 
 }
 
@@ -82,7 +82,7 @@ BOOST_AUTO_TEST_CASE(FileSystem_createDirTest){
     std::string testDirChild2 = "createdDirChild2";
 
     SkyvoOS::FileSystem uut;
-    std::string testDirLocation1 = uut.pathJoin(fileTestOutputPath, testDir1);
+    std::string testDirLocation1 = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, testDir1);
 
     BOOST_CHECK(uut.createDir(testDirLocation1));
     BOOST_CHECK(uut.dirExists(testDirLocation1));
@@ -91,19 +91,19 @@ BOOST_AUTO_TEST_CASE(FileSystem_createDirTest){
     BOOST_CHECK(!uut.createDir(""));
 
     //Test the case where we want to create a directory within a directory
-    std::string testDirLocation2 = uut.pathJoin(fileTestOutputPath, testDir2);
-    testDirLocation2 = uut.pathJoin(testDirLocation2, testDirChild1);
+    std::string testDirLocation2 = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, testDir2);
+    testDirLocation2 = SkyvoOS::FileSystem::pathJoin(testDirLocation2, testDirChild1);
     BOOST_CHECK(uut.createDir(testDirLocation2));
     BOOST_CHECK(uut.dirExists(testDirLocation2));
 
     //Test the case where we want to create a directory within an existing diretory
-    std::string testDirLocation3 = uut.pathJoin(fileTestOutputPath, testDir2);
-    testDirLocation3 = uut.pathJoin(testDirLocation3, testDirChild2);
+    std::string testDirLocation3 = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, testDir2);
+    testDirLocation3 = SkyvoOS::FileSystem::pathJoin(testDirLocation3, testDirChild2);
     BOOST_CHECK(uut.createDir(testDirLocation3));
     BOOST_CHECK(uut.dirExists(testDirLocation3));
 
 	#ifdef _WIN32
-    BOOST_CHECK(!uut.createDir(uut.pathJoin(fileTestOutputPath, illegalDir)));
+    BOOST_CHECK(!uut.createDir(SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, illegalDir)));
     #else
     BOOST_CHECK(!uut.createDir(illegalDir));
     #endif
@@ -114,11 +114,11 @@ BOOST_AUTO_TEST_CASE(FileSystem_createDirFromRootTest){
     SkyvoOS::FileSystem uut;
     std::string testDir = "absDir";
     std::string absPath = uut.getCWD();
-    std::string testDirLocation = uut.pathJoin(absPath, fileTestOutputPath);
-    testDirLocation = uut.pathJoin(testDirLocation, testDir);
+    std::string testDirLocation = SkyvoOS::FileSystem::pathJoin(absPath, fileTestOutputPath);
+    testDirLocation = SkyvoOS::FileSystem::pathJoin(testDirLocation, testDir);
     BOOST_CHECK(uut.createDir(testDirLocation));
 
-    std::string relTestDirLocation = uut.pathJoin(fileTestOutputPath, testDir);
+    std::string relTestDirLocation = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, testDir);
     BOOST_CHECK(uut.dirExists(relTestDirLocation));
 }
 
@@ -137,11 +137,11 @@ BOOST_AUTO_TEST_CASE(FileSystem_createDirInRootTest){
 BOOST_AUTO_TEST_CASE(FileSystem_createDirDoubleSlashes){
     SkyvoOS::FileSystem uut;
     std::string testDir = "//twoSlashDir";
-    std::string testDirLocation = uut.pathJoin(fileTestOutputPath, testDir);
-    testDirLocation = uut.pathJoin(testDirLocation, testDir);
+    std::string testDirLocation = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, testDir);
+    testDirLocation = SkyvoOS::FileSystem::pathJoin(testDirLocation, testDir);
     BOOST_CHECK(uut.createDir(testDirLocation));
 
-    std::string realTestDirLocation = uut.pathJoin(fileTestOutputPath, "twoSlashDir");
+    std::string realTestDirLocation = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, "twoSlashDir");
     BOOST_CHECK(uut.dirExists(realTestDirLocation));
 }
 
@@ -205,8 +205,8 @@ BOOST_AUTO_TEST_CASE(FileSystem_copyFileTest){
     BOOST_CHECK(!uut.copyFile("derp.txt", copySS.str()));
 
     //Test two empty files
-    std::string blankFile1 = uut.pathJoin(fileTestOutputPath, "blankFile1");
-    std::string blankFile2 = uut.pathJoin(fileTestOutputPath, "blankFile2");
+    std::string blankFile1 = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, "blankFile1");
+    std::string blankFile2 = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, "blankFile2");
 
     BOOST_CHECK(uut.createFile(blankFile1));
     BOOST_CHECK(uut.fileExists(blankFile1));
@@ -220,8 +220,8 @@ BOOST_AUTO_TEST_CASE(FileSystem_copyFileTest){
 BOOST_AUTO_TEST_CASE(FileSystem_copyDirTest){
     SkyvoOS::FileSystem uut;
 
-    std::string testDir = uut.pathJoin(fileTestOutputPath, "copyDir1");
-    std::string copiedDir = uut.pathJoin(fileTestOutputPath, "copyDir2");
+    std::string testDir = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, "copyDir1");
+    std::string copiedDir = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, "copyDir2");
     createMassiveDir(uut, testDir);
     BOOST_CHECK(uut.copyDir(testDir, copiedDir));
     BOOST_CHECK_EQUAL(uut.compareDirs(testDir, copiedDir), SkyvoOS::FileSystem::FILE_EQUAL);
@@ -236,14 +236,14 @@ BOOST_AUTO_TEST_CASE(FileSystem_copyDirTest){
 
     //Tests the case where we are copying to an illegal directory
     #ifdef _WIN32
-    BOOST_CHECK(!uut.copyDir(testDir, uut.pathJoin(fileTestOutputPath, illegalDir)));
+    BOOST_CHECK(!uut.copyDir(testDir, SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, illegalDir)));
 	#else
 	BOOST_CHECK(!uut.copyDir(testDir, illegalDir));
 	#endif
 
     //Test the case where listFiles fail
     uut.m_failListFilesInDir = true;
-    copiedDir = uut.pathJoin(fileTestOutputPath, "copyDir3");
+    copiedDir = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, "copyDir3");
     BOOST_CHECK(!uut.copyDir(testDir, copiedDir));
 }
 
@@ -408,7 +408,7 @@ BOOST_AUTO_TEST_CASE(FileSystem_removeDirTest){
     BOOST_CHECK(!uut.deleteDir("derp"));
 
     //Check for a massive dir
-    std::string massiveDir = uut.pathJoin(fileTestOutputPath,"massiveToBeDeleted");
+    std::string massiveDir = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath,"massiveToBeDeleted");
     createMassiveDir(uut, massiveDir);
     BOOST_CHECK(uut.deleteDir(massiveDir));
     BOOST_CHECK(!uut.dirExists(massiveDir));
@@ -423,12 +423,12 @@ BOOST_AUTO_TEST_CASE(FileSystem_listFilesInDirTest){
     std::string testDir = "listDirTest";
 
     SkyvoOS::FileSystem uut;
-    std::string uutDir = uut.pathJoin(fileTestOutputPath, testDir);
+    std::string uutDir = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, testDir);
     BOOST_CHECK(uut.createDir(uutDir));
-    BOOST_CHECK(uut.createDir(uut.pathJoin(uutDir, testDirFile)));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(uutDir, testFile1)));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(uutDir, testFile2)));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(uutDir, testFile3)));
+    BOOST_CHECK(uut.createDir(SkyvoOS::FileSystem::pathJoin(uutDir, testDirFile)));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1)));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(uutDir, testFile2)));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(uutDir, testFile3)));
 
     std::deque <std::string> files;
     BOOST_CHECK(uut.listFilesInDir(uutDir, files));
@@ -443,11 +443,11 @@ BOOST_AUTO_TEST_CASE(FileSystem_compareFilesTest){
     std::string testDir = "compareFileTest";
 
     SkyvoOS::FileSystem uut;
-    std::string uutDir = uut.pathJoin(fileTestOutputPath, testDir);
+    std::string uutDir = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, testDir);
     BOOST_CHECK(uut.createDir(uutDir));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(uutDir, testFile1)));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(uutDir, testFile2)));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(uutDir, testFile3)));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1)));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(uutDir, testFile2)));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(uutDir, testFile3)));
 
     std::string sameString = "Hello, this string is between two files\n\ncool huh?";
     std::string differentString = "Different String!";
@@ -455,30 +455,30 @@ BOOST_AUTO_TEST_CASE(FileSystem_compareFilesTest){
     std::ofstream sameFile1;
     std::ofstream sameFile2;
     std::ofstream differentFile;
-    sameFile1.open(uut.pathJoin(uutDir, testFile1).c_str());
+    sameFile1.open(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1).c_str());
     sameFile1 << sameString;
     sameFile1.close();
 
-    sameFile2.open(uut.pathJoin(uutDir, testFile2).c_str());
+    sameFile2.open(SkyvoOS::FileSystem::pathJoin(uutDir, testFile2).c_str());
     sameFile2 << sameString;
     sameFile2.close();
 
-    differentFile.open(uut.pathJoin(uutDir, testFile3).c_str());
+    differentFile.open(SkyvoOS::FileSystem::pathJoin(uutDir, testFile3).c_str());
     differentFile << differentString;
     differentFile.close();
 
-    BOOST_CHECK_EQUAL(uut.compareFiles(uut.pathJoin(uutDir, testFile1), uut.pathJoin(uutDir, testFile2)), SkyvoOS::FileSystem::FILE_EQUAL);
+    BOOST_CHECK_EQUAL(uut.compareFiles(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1), SkyvoOS::FileSystem::pathJoin(uutDir, testFile2)), SkyvoOS::FileSystem::FILE_EQUAL);
 
-    BOOST_CHECK_EQUAL(uut.compareFiles(uut.pathJoin(uutDir, testFile1), uut.pathJoin(uutDir, testFile3)), SkyvoOS::FileSystem::FILE_NOT_EQUAL);
+    BOOST_CHECK_EQUAL(uut.compareFiles(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1), SkyvoOS::FileSystem::pathJoin(uutDir, testFile3)), SkyvoOS::FileSystem::FILE_NOT_EQUAL);
 
-    BOOST_CHECK_EQUAL(uut.compareFiles(uut.pathJoin(uutDir, testFile1),uut.pathJoin(uutDir, testFile1)), SkyvoOS::FileSystem::FILE_EQUAL);
+    BOOST_CHECK_EQUAL(uut.compareFiles(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1),SkyvoOS::FileSystem::pathJoin(uutDir, testFile1)), SkyvoOS::FileSystem::FILE_EQUAL);
 
     //Test the bad param cases
-    BOOST_CHECK_EQUAL(uut.compareFiles(testFileDirectory, uut.pathJoin(uutDir, testFile1)), SkyvoOS::FileSystem::FILE_ERROR);
-    BOOST_CHECK_EQUAL(uut.compareFiles(uut.pathJoin(uutDir, testFile1), testFileDirectory), SkyvoOS::FileSystem::FILE_ERROR);
+    BOOST_CHECK_EQUAL(uut.compareFiles(testFileDirectory, SkyvoOS::FileSystem::pathJoin(uutDir, testFile1)), SkyvoOS::FileSystem::FILE_ERROR);
+    BOOST_CHECK_EQUAL(uut.compareFiles(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1), testFileDirectory), SkyvoOS::FileSystem::FILE_ERROR);
     BOOST_CHECK_EQUAL(uut.compareFiles(testFileDirectory, testFileDirectory), SkyvoOS::FileSystem::FILE_ERROR);
-    BOOST_CHECK_EQUAL(uut.compareFiles("DERP.txt", uut.pathJoin(uutDir, testFile3)), SkyvoOS::FileSystem::FILE_ERROR);
-    BOOST_CHECK_EQUAL(uut.compareFiles(uut.pathJoin(uutDir, testFile1), "HERP.txt"), SkyvoOS::FileSystem::FILE_ERROR);
+    BOOST_CHECK_EQUAL(uut.compareFiles("DERP.txt", SkyvoOS::FileSystem::pathJoin(uutDir, testFile3)), SkyvoOS::FileSystem::FILE_ERROR);
+    BOOST_CHECK_EQUAL(uut.compareFiles(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1), "HERP.txt"), SkyvoOS::FileSystem::FILE_ERROR);
     BOOST_CHECK_EQUAL(uut.compareFiles("DERP.txt", "HERP.txt"), SkyvoOS::FileSystem::FILE_ERROR);
 }
 
@@ -486,7 +486,7 @@ BOOST_AUTO_TEST_CASE(FileSystem_compareFilesTest){
 BOOST_AUTO_TEST_CASE(FileSystem_compareDirsTest){
     SkyvoOS::FileSystem uut;
 
-    std::string testDir = uut.pathJoin(fileTestOutputPath,"compareDirTest");
+    std::string testDir = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath,"compareDirTest");
     //Setup
     BOOST_CHECK(uut.createDir(testDir));
     BOOST_CHECK(uut.dirExists(testDir));
@@ -507,98 +507,98 @@ BOOST_AUTO_TEST_CASE(FileSystem_compareDirsTest){
     BOOST_CHECK_EQUAL(uut.compareDirs("derp", testDir), SkyvoOS::FileSystem::FILE_ERROR);
 
     //Set up two dirs with different number of files in each
-    std::string differentSizeDir = uut.pathJoin(testDir, "differentSizeDirTest");
+    std::string differentSizeDir = SkyvoOS::FileSystem::pathJoin(testDir, "differentSizeDirTest");
     BOOST_CHECK(uut.createDir(differentSizeDir));
     BOOST_CHECK(uut.dirExists(differentSizeDir));
 
-    std::string differentSizeDir1 = uut.pathJoin(differentSizeDir, "differentSizeDir1");
+    std::string differentSizeDir1 = SkyvoOS::FileSystem::pathJoin(differentSizeDir, "differentSizeDir1");
     BOOST_CHECK(uut.createDir(differentSizeDir1));
     BOOST_CHECK(uut.dirExists(differentSizeDir1));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(differentSizeDir1, "test1.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(differentSizeDir1, "test1.txt")));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(differentSizeDir1, "test2.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(differentSizeDir1, "test2.txt")));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(differentSizeDir1, "test3.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(differentSizeDir1, "test3.txt")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(differentSizeDir1, "test1.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(differentSizeDir1, "test1.txt")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(differentSizeDir1, "test2.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(differentSizeDir1, "test2.txt")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(differentSizeDir1, "test3.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(differentSizeDir1, "test3.txt")));
 
-    std::string differentSizeDir2 = uut.pathJoin(differentSizeDir, "differentSizeDir2");
+    std::string differentSizeDir2 = SkyvoOS::FileSystem::pathJoin(differentSizeDir, "differentSizeDir2");
     BOOST_CHECK(uut.createDir(differentSizeDir2));
     BOOST_CHECK(uut.dirExists(differentSizeDir2));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(differentSizeDir2, "test1.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(differentSizeDir2, "test1.txt")));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(differentSizeDir2, "test2.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(differentSizeDir2, "test2.txt")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(differentSizeDir2, "test1.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(differentSizeDir2, "test1.txt")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(differentSizeDir2, "test2.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(differentSizeDir2, "test2.txt")));
 
     BOOST_CHECK_EQUAL(uut.compareDirs(differentSizeDir1, differentSizeDir2), SkyvoOS::FileSystem::FILE_NOT_EQUAL);
 
     //Set up two directories with miss matching names
-    std::string differentFileNameDir = uut.pathJoin(testDir, "differentFileNames");
+    std::string differentFileNameDir = SkyvoOS::FileSystem::pathJoin(testDir, "differentFileNames");
     BOOST_CHECK(uut.createDir(differentFileNameDir));
     BOOST_CHECK(uut.dirExists(differentFileNameDir));
 
-    std::string differentFileNameDir1 = uut.pathJoin(differentFileNameDir, "differentFileNameDir1");
+    std::string differentFileNameDir1 = SkyvoOS::FileSystem::pathJoin(differentFileNameDir, "differentFileNameDir1");
     BOOST_CHECK(uut.createDir(differentFileNameDir1));
     BOOST_CHECK(uut.dirExists(differentFileNameDir1));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(differentFileNameDir1, "test1.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(differentFileNameDir1, "test1.txt")));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(differentFileNameDir1, "LOL.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(differentFileNameDir1, "LOL.txt")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(differentFileNameDir1, "test1.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(differentFileNameDir1, "test1.txt")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(differentFileNameDir1, "LOL.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(differentFileNameDir1, "LOL.txt")));
 
-    std::string differentFileNameDir2 = uut.pathJoin(differentFileNameDir, "differentFileNameDir2");
+    std::string differentFileNameDir2 = SkyvoOS::FileSystem::pathJoin(differentFileNameDir, "differentFileNameDir2");
     BOOST_CHECK(uut.createDir(differentFileNameDir2));
     BOOST_CHECK(uut.dirExists(differentFileNameDir2));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(differentFileNameDir2, "test1.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(differentFileNameDir2, "test1.txt")));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(differentFileNameDir2, "test2.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(differentFileNameDir2, "test2.txt")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(differentFileNameDir2, "test1.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(differentFileNameDir2, "test1.txt")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(differentFileNameDir2, "test2.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(differentFileNameDir2, "test2.txt")));
 
     BOOST_CHECK_EQUAL(uut.compareDirs(differentFileNameDir1, differentFileNameDir2), SkyvoOS::FileSystem::FILE_NOT_EQUAL);
 
     //Set up two directories with miss matching types, but same names
-    std::string differentFileTypesDir = uut.pathJoin(testDir, "differentFileTypesDir");
+    std::string differentFileTypesDir = SkyvoOS::FileSystem::pathJoin(testDir, "differentFileTypesDir");
     BOOST_CHECK(uut.createDir(differentFileTypesDir));
     BOOST_CHECK(uut.dirExists(differentFileTypesDir));
 
-    std::string differentFileTypesDir1 = uut.pathJoin(differentFileTypesDir, "differentFileTypesDir1");
+    std::string differentFileTypesDir1 = SkyvoOS::FileSystem::pathJoin(differentFileTypesDir, "differentFileTypesDir1");
     BOOST_CHECK(uut.createDir(differentFileTypesDir1));
     BOOST_CHECK(uut.dirExists(differentFileTypesDir1));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(differentFileTypesDir1, "test1.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(differentFileTypesDir1, "test1.txt")));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(differentFileTypesDir1, "test2")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(differentFileTypesDir1, "test2")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir1, "test1.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir1, "test1.txt")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir1, "test2")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir1, "test2")));
 
-    std::string differentFileTypesDir2 = uut.pathJoin(differentFileTypesDir, "differentFileTypesDir2");
+    std::string differentFileTypesDir2 = SkyvoOS::FileSystem::pathJoin(differentFileTypesDir, "differentFileTypesDir2");
     BOOST_CHECK(uut.createDir(differentFileTypesDir2));
     BOOST_CHECK(uut.dirExists(differentFileTypesDir2));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(differentFileTypesDir2, "test1.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(differentFileTypesDir2, "test1.txt")));
-    BOOST_CHECK(uut.createDir(uut.pathJoin(differentFileTypesDir2, "test2")));
-    BOOST_CHECK(uut.dirExists(uut.pathJoin(differentFileTypesDir2, "test2")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir2, "test1.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir2, "test1.txt")));
+    BOOST_CHECK(uut.createDir(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir2, "test2")));
+    BOOST_CHECK(uut.dirExists(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir2, "test2")));
 
     BOOST_CHECK_EQUAL(uut.compareDirs(differentFileTypesDir1, differentFileTypesDir2), SkyvoOS::FileSystem::FILE_NOT_EQUAL);
 
     //Set up two directories with just files
-    std::string sameDirWithJustFiles = uut.pathJoin(testDir, "sameDirWithJustFiles");
+    std::string sameDirWithJustFiles = SkyvoOS::FileSystem::pathJoin(testDir, "sameDirWithJustFiles");
     BOOST_CHECK(uut.createDir(sameDirWithJustFiles));
     BOOST_CHECK(uut.dirExists(sameDirWithJustFiles));
 
-    std::string sameDirWithJustFiles1 = uut.pathJoin(sameDirWithJustFiles, "sameDirWithJustFiles1");
+    std::string sameDirWithJustFiles1 = SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles, "sameDirWithJustFiles1");
     BOOST_CHECK(uut.createDir(sameDirWithJustFiles1));
     BOOST_CHECK(uut.dirExists(sameDirWithJustFiles1));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(sameDirWithJustFiles1, "test1.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(sameDirWithJustFiles1, "test1.txt")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles1, "test1.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles1, "test1.txt")));
     std::ofstream outFile1;
-    outFile1.open((uut.pathJoin(sameDirWithJustFiles1, "test2.txt").c_str()));
+    outFile1.open((SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles1, "test2.txt").c_str()));
     outFile1 << sameDirWithJustFiles << "\n\n" << sameDirWithJustFiles;
     outFile1.close();
 
-    std::string sameDirWithJustFiles2 = uut.pathJoin(sameDirWithJustFiles, "sameDirWithJustFiles2");
+    std::string sameDirWithJustFiles2 = SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles, "sameDirWithJustFiles2");
     BOOST_CHECK(uut.createDir(sameDirWithJustFiles2));
     BOOST_CHECK(uut.dirExists(sameDirWithJustFiles2));
-    BOOST_CHECK(uut.createFile(uut.pathJoin(sameDirWithJustFiles2, "test1.txt")));
-    BOOST_CHECK(uut.fileExists(uut.pathJoin(sameDirWithJustFiles2, "test1.txt")));
+    BOOST_CHECK(uut.createFile(SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles2, "test1.txt")));
+    BOOST_CHECK(uut.fileExists(SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles2, "test1.txt")));
     std::ofstream outFile2;
-    outFile2.open((uut.pathJoin(sameDirWithJustFiles2, "test2.txt").c_str()));
+    outFile2.open((SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles2, "test2.txt").c_str()));
     outFile2 << sameDirWithJustFiles << "\n\n" << sameDirWithJustFiles;
     outFile2.close();
 
@@ -618,6 +618,5 @@ BOOST_AUTO_TEST_CASE(FileSystem_pathJoinTest){
     std::stringstream ss;
     ss << parent << "/" << child;
 
-    SkyvoOS::FileSystem uut;
-    BOOST_CHECK_EQUAL(uut.pathJoin(parent, child),ss.str());
+    BOOST_CHECK_EQUAL(SkyvoOS::FileSystem::pathJoin(parent, child),ss.str());
 }

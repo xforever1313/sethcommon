@@ -2,9 +2,9 @@
 <CodeBlocks_workspace_file>
 	<Workspace title="Workspace">
 		<Project filename="SkyWrite-Core/SkyWriteCore.cbp" />
-		<Project filename="Notebook-Core/Core.cbp" />
 		<Project filename="Common/os/SkyvoOS.cbp" />
 		<Project filename="Common/common_classes/SkyvoCommon.cbp" />
 		<Project filename="Notebook-CLI/Notebook-CLI.cbp" />
+		<Project filename="Notebook-Core/Core.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

@@ -20,9 +20,13 @@ namespace SkyvoOS{
 const std::string FileSystem::THIS_DIR = ".";
 const std::string FileSystem::UP_DIR = "..";
 
-FileSystem *FileSystem::getInstance(){
+FileSystemInterface *FileSystem::getInstance(){
     static FileSystem fs;
     return &fs;
+}
+
+std::string FileSystem::pathJoin(const std::string parent, const std::string child){
+    return std::string(parent + "/" + child);
 }
 
 FileSystem::FileSystem(){
@@ -446,12 +450,6 @@ FileSystem::FileStatus FileSystem::compareDirs(const std::string dirOne, const s
         status = FILE_ERROR;
     }
     return status;
-}
-
-std::string FileSystem::pathJoin(const std::string parent, const std::string child){
-    std::stringstream ss;
-    ss << parent << "/" << child;
-    return ss.str();
 }
 
 }
