@@ -28,7 +28,7 @@ globalUnitTestDefines = ["-DUNIT_TEST"]
 
 
 #Compile Flags
-globalCXXFlags = ["-pedantic-errors", "-Werror", "-std=gnu++11", "-Wall", "-Wdouble-promotion", "-Wclobbered", "-Wcast-align", "-Wsign-compare", "-Wempty-body", "-Wcast-qual", "-Wmissing-field-initializers", "-Wtype-limits"]
+globalCXXFlags = ["-pedantic-errors", "-Werror", "-std=gnu++11", "-Wall", "-Wdouble-promotion", "-Wclobbered", "-Wcast-align", "-Wsign-compare", "-Wempty-body", "-Wcast-qual", "-Wmissing-field-initializers", "-Wtype-limits", "-fstack-protector-all"]
 globalCXXDebugFlags = ["-g", "-Wswitch-enum"]
 globalCXXReleaseFlags = ["-O3", "-Wswitch-enum"]
 globalCXXUnitTestFlags = ["-g", "-fprofile-arcs", "-ftest-coverage"]
@@ -47,9 +47,9 @@ else:
     globalLinkerFlags += ["-pthread"]
 
 #Libs
-globalLibsDebug = []
-globalLibsRelease = []
-globalLibsUnitTest = ["gcov", "gtest", "gmock", "boost_unit_test_framework", "boost_system"]
+globalLibsDebug = ["ssp"]
+globalLibsRelease = ["ssp"]
+globalLibsUnitTest = ["gcov", "gtest", "gmock", "boost_unit_test_framework", "boost_system", "ssp"]
 if (sys.platform == "win32"):
     globalLibsDebug += ["debug_new"]
     globalLibsUnitTest += ["debug_new"]
