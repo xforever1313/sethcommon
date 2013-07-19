@@ -29,26 +29,6 @@ def parseArguments():
         if (sys.argv[1] == "arm"):
             arm = True
     return arm
-    
-
-def getCommonClassesPath(env):
-    return os.path.join(getCommonPath(env), "common_classes")
-
-def getCommonPath(env):
-    return os.path.join(env['NOTEBOOK_ROOT'], "Common")
-
-def getNotebookCorePath(env):
-    return os.path.join(env['NOTEBOOK_ROOT'], "Notebook-Core")
-    
-def getSCSVPath(env):
-    return os.path.join(getCommonPath(env), "SCSV")
-    
-def getSkyvoOSPath(env):
-    return os.path.join(getCommonPath(env), "os")
-
-def getCppUTestPath(env):
-    return os.path.join(env['NOTEBOOK_ROOT'], fitNesseDir, "fixtures", "CppUTest")
-
 
 def getRedirectString(file):
     if(sys.platform == "win32"):

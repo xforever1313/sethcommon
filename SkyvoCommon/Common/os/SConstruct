@@ -13,6 +13,7 @@ baseDir = os.path.abspath("../../")
 sys.path.append(baseDir) #Get globals
 from Globals import *
 from SConstructGlobals import parseArguments
+from SkyvoCommonGlobals import *
 
 armBuild = parseArguments(ARGUMENTS)
 

@@ -6,6 +6,7 @@ import sys
 sys.path.append("../../") #Get globals
 from Globals import *
 from SConstructGlobals import *
+from SkyvoCommonGlobals import *
 
 if (sys.platform == "win32"):
     env = Environment(tools = ["mingw"])

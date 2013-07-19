@@ -12,6 +12,7 @@ from copy import deepcopy
 baseDir = os.path.abspath("../../")
 sys.path.append(baseDir) #Get globals
 from Globals import *
+from SkyvoCommonGlobals import *
 from SConstructGlobals import parseArguments
 
 armBuild = parseArguments(ARGUMENTS)
@@ -21,7 +22,7 @@ from SConstructGlobals import *
 #Make common environment
 envBase = createBaseEnvironment(baseDir, armBuild)
 
-osPath = getSkyvoOSPath(envBase)
+osPath = getSkyvoOSPath(baseDir)
 
 ###
 # Files to compile
