@@ -6,11 +6,17 @@ def getCommonClassesPath(baseDir):
 def getCommonPath(baseDir):
     return os.path.join(baseDir, "Common")
 
-def getNotebookCorePath(env):
-    return os.path.join(env['NOTEBOOK_ROOT'], "Notebook-Core")
+def getDebugNewPath(baseDir):
+    return os.path.join(getCommonPath(baseDir), "debug_new")
     
+def getMathPath(baseDir):
+    return os.path.join(getCommonPath(baseDir), "math")
+
 def getSCSVPath(baseDir):
     return os.path.join(getCommonPath(baseDir), "SCSV")
     
 def getSkyvoOSPath(baseDir):
     return os.path.join(getCommonPath(baseDir), "os")
+
+def getRapidXMLPath(baseDir):
+    return os.path.join(getCommonPath(baseDir), "rapidxml")

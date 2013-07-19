@@ -2,6 +2,8 @@ import os
 import sys
 
 #Globals.py
+thisDir = os.getcwd()
+
 codeCoverageDir = "CodeCoverage"
 profilingDataFile = os.path.join(codeCoverageDir, "profiling_data.txt")
 apiDir = "api"
@@ -20,6 +22,7 @@ debugDir = "debug"
 releaseDir = "release"
 unitTestDir = "unit_test"
 
+buildDir = "build"
 fitNesseDir = "fitnesse"
 
 #Determines if the first argument is arm
@@ -30,6 +33,14 @@ def parseArguments():
             arm = True
     return arm
 
+#Returns version string and version Number
+def getVersion(baseDir):
+    versionFile = open(os.path.join(baseDir, buildDir, "Version.txt"))
+    versionString = versionFile.readline()
+    versionFile.close()
+    splitString = versionString.split(' ')
+    return (splitString[0], splitString[1])
+    
 def getRedirectString(file):
     if(sys.platform == "win32"):
         redirectString = " > " + str(file) + " 2>&1 "
