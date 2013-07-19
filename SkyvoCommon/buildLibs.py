@@ -6,7 +6,7 @@ import subprocess
 import sys
 
 #Add to here the directories that contain libs that need to be built
-libDirs = [os.path.join("Common", "os"), os.path.join("Common", "SCSV"), "Notebook-Core", "SkyWrite-Core"]
+libDirs = [os.path.join("Common", "os"), os.path.join("Common", "SCSV")]
 
 thisDir = os.getcwd()
 
