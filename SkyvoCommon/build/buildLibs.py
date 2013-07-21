@@ -19,9 +19,9 @@ i = 0
 while (i < len(targetLocations)):
     os.chdir(targetLocations[i])
     if (arm): 
-        commandStr = "scons create_lib arm_build=1"
+        commandStr = "scons release_lib arm_build=1"
     else:
-        commandStr = "scons create_lib -j4 arm_build=0"
+        commandStr = "scons release_lib -j4 arm_build=0"
     print("Building library for" + targetNames[i])
     status = subprocess.call(commandStr, shell=True)
 
