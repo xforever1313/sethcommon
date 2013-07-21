@@ -13,12 +13,6 @@ from Globals import *
 from SkyvoCommonGlobals import *
 from jobs import *
 
-print "Running Nightly"
-
-status = subprocess.call("python runNightly.py", shell=True)
-if (status != 0):
-    raise Exception("Nightly failed, will not create release")
-
 (versionString, versionNumber) = getVersion(baseDir)
 tarFileName = "SkyvoCommon-" + versionNumber + ".tar"
 

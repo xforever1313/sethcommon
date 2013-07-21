@@ -31,7 +31,7 @@ testIncludePaths = [os.path.join(testDir, includeDir)]
 sourceFiles = glob.glob(os.path.join(srcDir, "*.cpp"))
 sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.join(testDir, srcDir, "*.cpp"))
 coverageFiles = deepcopy(sourceFiles)
-    
+
 ###Libs
 libs = []
 testLibs = ["pthread"] + libs
@@ -76,7 +76,7 @@ doxygenFiles = sourceFiles + sourceTestFiles + glob.glob(os.path.join(includeDir
 # Test outputs
 ###
 createTestOutputFolder(envBase)
-    
+
 #make unEditableFile.txt and uneditableDir unwritable, and unReadableFile.txt unreadable
 try:
     os.chmod(os.path.join(".", "Test", "unEditableFile.txt"), stat.S_IREAD)
@@ -92,15 +92,13 @@ debugTarget = createStaticLib(debugEnvironment, "SkyvoOS-d", sourceFiles)
 releaseTarget = createStaticLib(releaseEnvironment, "SkyvoOS", sourceFiles)
 (unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles, armBuild)
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
-#TODO move this to globals
-Clean(doxygenTarget, os.path.join(envBase['PROJECT_ROOT'], doxygenDir))
 
 if (not armBuild):
     Depends(runTestTarget, unitTestTarget)
 
-Alias("debug", debugTarget)
-Alias("release", releaseTarget)
-Alias ("create_lib", ["debug", "release"])
+Alias("debug_lib", debugTarget)
+Alias("release_lib", releaseTarget)
+Alias ("create_lib", [debugTarget, releaseTarget])
 Alias("doxygen", doxygenTarget)
 Alias("unit_test", unitTestTarget)
 Alias("run_unit_test", runTestTarget)
@@ -109,10 +107,10 @@ Alias("run_test", [unitTestTarget, runTestTarget])
 #used by auto build
 if (armBuild):
     print("WARNING! Unit tests are not going to be run on an ARM nightly/delta build")
-    Alias ("nightly", ["debug", "release", "doxygen", "unit_test"])
-    Alias ("delta", ["release", "unit_test"])
+    Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, unitTestTarget])
+    Alias ("delta", [releaseTarget, unitTestTarget])
 else:
-    Alias ("nightly", ["debug", "release", "doxygen", "run_test"])
-    Alias ("delta", ["release", "run_test"])
+    Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, runTestTarget])
+    Alias ("delta", [releaseTarget, runTestTarget])
 
 Default(["debug"])

@@ -16,7 +16,7 @@
 			<SilentBuild command=" &gt; $(CMD_NULL)" />
 		</MakeCommands>
 		<Build>
-			<Target title="Debug">
+			<Target title="Debug_lib">
 				<Option output="bin/Debug/SkyvoOS" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin/Debug/" />
 				<Option object_output="obj/Debug/" />
@@ -31,15 +31,15 @@
 					<Add library="debug_new" />
 				</Linker>
 				<MakeCommands>
-					<Build command="$make debug" />
-					<CompileFile command="$make debug $file" />
-					<Clean command="$make debug --clean" />
+					<Build command="$make debug_lib" />
+					<CompileFile command="$make debug_lib $file" />
+					<Clean command="$make debug_lib --clean" />
 					<DistClean command="$make -f $makefile distclean$target" />
-					<AskRebuildNeeded command="$make debug -q" />
-					<SilentBuild command="$make debug &gt; $(CMD_NULL)" />
+					<AskRebuildNeeded command="$make debug_lib -q" />
+					<SilentBuild command="$make debug_lib &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
-			<Target title="Release">
+			<Target title="Release_lib">
 				<Option output="bin/Release/SkyvoOS" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="bin/Release/" />
 				<Option object_output="obj/Release/" />
@@ -52,12 +52,12 @@
 					<Add option="-s" />
 				</Linker>
 				<MakeCommands>
-					<Build command="$make release" />
-					<CompileFile command="$make release $file" />
-					<Clean command="$make release --clean" />
+					<Build command="$make release_lib" />
+					<CompileFile command="$make release_lib $file" />
+					<Clean command="$make release_lib --clean" />
 					<DistClean command="$make -f $makefile distclean$target" />
-					<AskRebuildNeeded command="$make release -q" />
-					<SilentBuild command="$make release &gt; $(CMD_NULL)" />
+					<AskRebuildNeeded command="$make release_lib -q" />
+					<SilentBuild command="$make release_lib &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 			<Target title="unit_test">
@@ -179,57 +179,57 @@
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/Date.h">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/FileSystem.h">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/FileSystemInterface.h">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/SkyvoMutex.h">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/SkyvoSemaphore.h">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/SkyvoThread.h">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 		</Unit>
 		<Unit filename="src/Date.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="src/FileSystem.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="src/SkyvoMutex.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="src/SkyvoSemaphore.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="src/SkyvoThread.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 		</Unit>
 		<Extensions>
 			<code_completion />

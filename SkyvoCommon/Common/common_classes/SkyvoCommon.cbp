@@ -16,7 +16,7 @@
 			<SilentBuild command=" &gt; $(CMD_NULL)" />
 		</MakeCommands>
 		<Build>
-			<Target title="Debug">
+			<Target title="Debug_lib">
 				<Option output="./bin/debug/skyvoCommon" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Debug/" />
 				<Option type="1" />
@@ -25,15 +25,15 @@
 					<Add option="-g" />
 				</Compiler>
 				<MakeCommands>
-					<Build command="$make debug" />
-					<CompileFile command="$make debug $file" />
-					<Clean command="$make debug --clean" />
+					<Build command="$make debug_lib" />
+					<CompileFile command="$make debug_lib $file" />
+					<Clean command="$make debug_lib --clean" />
 					<DistClean command="$make -f $makefile distclean$target" />
-					<AskRebuildNeeded command="$make -q debug" />
-					<SilentBuild command="$make debug &gt; $(CMD_NULL)" />
+					<AskRebuildNeeded command="$make -q debug_lib" />
+					<SilentBuild command="$make debug_lib &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
-			<Target title="Release">
+			<Target title="Release_lib">
 				<Option output="./bin/release/SkyWriteGUI-/skyvoCommon" prefix_auto="1" extension_auto="1" />
 				<Option object_output="obj/Release/" />
 				<Option type="1" />
@@ -45,12 +45,12 @@
 					<Add option="-s" />
 				</Linker>
 				<MakeCommands>
-					<Build command="$make release" />
-					<CompileFile command="$make release $file" />
-					<Clean command="$make release --clean" />
+					<Build command="$make release_lib" />
+					<CompileFile command="$make release_lib $file" />
+					<Clean command="$make release_lib --clean" />
 					<DistClean command="$make -f $makefile distclean$target" />
-					<AskRebuildNeeded command="$make -q release" />
-					<SilentBuild command="$make release &gt; $(CMD_NULL)" />
+					<AskRebuildNeeded command="$make -q release_lib" />
+					<SilentBuild command="$make release_lib &gt; $(CMD_NULL)" />
 				</MakeCommands>
 			</Target>
 			<Target title="unit_test">
@@ -113,48 +113,48 @@
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/EventExecutor.h">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/EventExecutorInterface.h">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/EventInterface.h">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/FilenameChecker.h">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/FilenameCheckerException.h">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/SkyvoUI.h">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="src/EventExecutor.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="src/FilenameChecker.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="src/FilenameCheckerException.cpp">
-			<Option target="Debug" />
-			<Option target="Release" />
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Extensions>

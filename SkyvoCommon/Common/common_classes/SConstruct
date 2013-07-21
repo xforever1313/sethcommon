@@ -90,9 +90,9 @@ releaseTarget = createStaticLib(releaseEnvironment, "SkyvoCommon", sourceFiles)
 (unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles, armBuild)
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
 
-Alias("debug", debugTarget)
-Alias("release", releaseTarget)
-Alias ("create_lib", ["debug", "release"])
+Alias("debug_lib", debugTarget)
+Alias("release_lib", releaseTarget)
+Alias ("create_lib", [debugTarget, releaseTarget])
 Alias("doxygen", doxygenTarget)
 Alias("unit_test", unitTestTarget)
 Alias("run_unit_test", runTestTarget)
@@ -101,10 +101,11 @@ Alias("run_test", [unitTestTarget, runTestTarget])
 #used by auto build
 if (armBuild):
     print("WARNING! Unit tests are not going to be run on an ARM nightly/delta build")
-    Alias ("nightly", ["create_lib", "doxygen", "unit_test"])
-    Alias ("delta", ["create_lib", "unit_test"])
+    Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, unitTestTarget])
+    Alias ("delta", [releaseTarget, unitTestTarget])
 else:
-    Alias ("nightly", ["create_lib", "doxygen", "run_test"])
-    Alias ("delta", ["create_lib", "run_test"])
+    Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, runTestTarget])
+    Alias ("delta", [releaseTarget, runTestTarget])
 
 Default(["debug"])
+
