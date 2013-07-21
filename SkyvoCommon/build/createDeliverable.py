@@ -22,12 +22,14 @@ if os.path.exists(tarFileName):
 releaseFiles = []
 for directory, dirnames, filenames in os.walk(getCommonPath(baseDir)):
     if (os.path.basename(directory) != ("debug_new" or "math" or "rapidxml")):
-        if ((os.path.basename(directory) == includeDir) and (testDir not in directory)):
+        if (os.path.basename(directory) == includeDir):
             releaseFiles += [directory]
         elif ((os.path.basename(directory) == srcDir) and (testDir not in directory)):
             releaseFiles += [directory]
         if ("SConstruct" in filenames):
             releaseFiles += [os.path.join(directory, "SConstruct")]
+        if ("Doxyfile" in filenames):
+            releaseFiles += [os.path.join(directory, "Doxyfile")]
 
 debugNewFiles = glob.glob(os.path.join(getDebugNewPath(baseDir), "*.h")) + \
 glob.glob(os.path.join(getDebugNewPath(baseDir), "*.cpp")) + \

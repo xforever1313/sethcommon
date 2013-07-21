@@ -19,9 +19,9 @@ i = 0
 while (i < len(targetLocations)):
     os.chdir(targetLocations[i])
     if (arm): 
-        commandStr = "scons release_lib doxygen arm_build=1"
+        commandStr = "scons create_lib doxygen arm_build=1"
     else:
-        commandStr = "scons release_lib doxygen -j4 arm_build=0"
+        commandStr = "scons create_lib doxygen -j4 arm_build=0"
     print("Building library for" + targetNames[i])
     status = subprocess.call(commandStr, shell=True)
 
