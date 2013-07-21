@@ -1,7 +1,7 @@
 About Build:
 
-buildLibs.py:
-Builds all the release libs.  To be used by an adopter
+buildRelease.py:
+Builds all the release libs and doxygen documentation.  To be used by an adopter
 
 createDeliverable.py
 Creates an adopter deliverable in tar.gz form.

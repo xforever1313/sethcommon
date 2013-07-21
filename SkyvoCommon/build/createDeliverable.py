@@ -42,7 +42,7 @@ releaseFiles += [os.path.join(baseDir, "Globals.py")]
 releaseFiles += [os.path.join(baseDir, "SConstructGlobals.py")]
 releaseFiles += [os.path.join(baseDir, "SkyvoCommonGlobals.py")]
 
-buildFiles = ["jobs.py", "buildLibs.py"]
+buildFiles = ["jobs.py", "buildRelease.py"]
 
 tar = tarfile.open(tarFileName, 'w:gz')
 for file in releaseFiles:
