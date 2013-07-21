@@ -14,7 +14,7 @@ from SkyvoCommonGlobals import *
 from jobs import *
 
 (versionString, versionNumber) = getVersion(baseDir)
-tarFileName = "SkyvoCommon-" + versionNumber + ".tar"
+tarFileName = "SkyvoCommon-" + versionNumber + ".tar.gz"
 
 if os.path.exists(tarFileName):
     os.remove(tarFileName)
@@ -44,7 +44,7 @@ releaseFiles += [os.path.join(baseDir, "SkyvoCommonGlobals.py")]
 
 buildFiles = ["jobs.py", "buildLibs.py"]
 
-tar = tarfile.open(tarFileName, 'w')
+tar = tarfile.open(tarFileName, 'w:gz')
 for file in releaseFiles:
     tar.add(file, arcname=file.strip(baseDir))
 for file in buildFiles:
