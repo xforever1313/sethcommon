@@ -87,9 +87,6 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 		</Compiler>
-		<Unit filename="../../Notebook-Core/Test/api/NotebookAPITest.cpp">
-			<Option target="unit_test" />
-		</Unit>
 		<Unit filename="SConstruct" />
 		<Unit filename="Test/EventExecutorTest.cpp">
 			<Option target="unit_test" />
@@ -98,6 +95,11 @@
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="Test/FilenameCheckerTest.cpp">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="Test/StringOpsTest.cpp">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="Test/UnitTestRunner.cpp">
@@ -142,6 +144,11 @@
 			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="include/StringOps.h">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="src/EventExecutor.cpp">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
@@ -153,6 +160,11 @@
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="src/FilenameCheckerException.cpp">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="src/StringOps.cpp">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
 			<Option target="unit_test" />
