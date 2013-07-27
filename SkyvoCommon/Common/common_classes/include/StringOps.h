@@ -1,7 +1,10 @@
 #ifndef STRINGOPS_H
 #define STRINGOPS_H
 
+#include <deque>
+#include <list>
 #include <string>
+#include <vector>
 
 namespace Common{
 
@@ -55,9 +58,43 @@ class StringOps
         */
         static std::string replaceTabsWithSpacesCopy(std::string s);
 
+        /**
+        * \brief takes a vector of strings, and puts it in alphabetical order.  This modifies the passed in vector
+        */
+        static void toAlphabeticalOrderModify(std::vector<std::string> &v);
+
+        /**
+        * \brief takes a vector of strings, and puts it in alphabetical order.  Does not modify the passed in vector
+        * \return a vector in alphabetical order
+        */
+        static std::vector<std::string> toAlphabeticalOrderCopy(std::vector<std::string> v);
+
+        /**
+        * \brief takes a deque of strings, and puts it in alphabetical order.  This modifies the passed in deque
+        */
+        static void toAlphabeticalOrderModify(std::deque<std::string> &d);
+
+        /**
+        * \brief takes a deque of strings, and puts it in alphabetical order.  Does not modify the passed in deque
+        * \return a deque in alphabetical order
+        */
+        static std::deque<std::string> toAlphabeticalOrderCopy(std::deque<std::string> d);
+
+        /**
+        * \brief takes a list of strings, and puts it in alphabetical order.  This modifies the passed in list
+        */
+        static void toAlphabeticalOrderModify(std::list<std::string> &l);
+
+        /**
+        * \brief takes a list of strings, and puts it in alphabetical order.  Does not modify the passed in list
+        * \return a list in alphabetical order
+        */
+        static std::list<std::string> toAlphabeticalOrderCopy(std::list<std::string> l);
+
     private:
         StringOps();
         virtual ~StringOps();
+        static bool stringCompare(const std::string &s1, const std::string &s2);
 };
 
 }

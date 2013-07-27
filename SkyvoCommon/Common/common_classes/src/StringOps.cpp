@@ -1,5 +1,9 @@
+#include <algorithm>
 #include <cctype>
+#include <deque>
+#include <list>
 #include <string>
+#include <vector>
 
 #include "StringOps.h"
 
@@ -55,6 +59,61 @@ void StringOps::replaceTabsWithSpacesModify(std::string &s){
 std::string StringOps::replaceTabsWithSpacesCopy(std::string s){
     replaceTabsWithSpacesModify(s);
     return s;
+}
+
+void StringOps::toAlphabeticalOrderModify(std::vector<std::string> &v){
+    std::sort(v.begin(), v.end(), &StringOps::stringCompare);
+}
+
+std::vector<std::string> StringOps::toAlphabeticalOrderCopy(std::vector<std::string> v){
+    toAlphabeticalOrderModify(v);
+    return v;
+}
+
+void StringOps::toAlphabeticalOrderModify(std::deque<std::string> &d){
+    std::sort(d.begin(), d.end(), &StringOps::stringCompare);
+}
+
+std::deque<std::string> StringOps::toAlphabeticalOrderCopy(std::deque<std::string> d){
+    toAlphabeticalOrderModify(d);
+    return d;
+}
+
+void StringOps::toAlphabeticalOrderModify(std::list<std::string> &l){
+    l.sort(&stringCompare);
+}
+
+std::list<std::string> StringOps::toAlphabeticalOrderCopy(std::list<std::string> l){
+    toAlphabeticalOrderModify(l);
+    return l;
+}
+
+bool StringOps::stringCompare(const std::string &s1, const std::string &s2){
+    bool lessThan = false;
+    bool keepGoing = true;
+
+    //First, check for letter order
+    for (size_t i = 0; keepGoing && (i < s1.size()) && (i < s2.size()); ++i){
+        if (::tolower(s1[i]) < ::tolower(s2[i])){
+            keepGoing = false;
+            lessThan = true;
+        }
+        else if (::tolower(s1[i]) > ::tolower(s2[i])){
+            keepGoing = false;
+            lessThan = false;
+        }
+    }
+
+    //If all letters match, check size.
+    if (keepGoing){
+        if (s1.size() == s2.size()){ //If they are the same size, compare using capital letters
+            lessThan = s1 < s2;
+        }
+        else{
+            lessThan = (s1.size() < s2.size());  //Otherwise, compare by length.
+        }
+    }
+    return lessThan;
 }
 
 }
