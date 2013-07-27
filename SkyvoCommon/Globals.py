@@ -1,4 +1,5 @@
 import os
+import subprocess
 import sys
 
 #Globals.py
@@ -33,13 +34,18 @@ def parseArguments():
             arm = True
     return arm
 
+def getRevisionNumber():
+    revProc = subprocess.Popen("git rev-list --count HEAD", shell=True, stdout=subprocess.PIPE)
+    rawString = revProc.communicate()[0]
+    return rawString.rstrip('\n')
+
 #Returns version string and version Number
 def getVersion(baseDir):
     versionFile = open(os.path.join(baseDir, buildDir, "Version.txt"))
     versionString = versionFile.readline()
     versionFile.close()
     splitString = versionString.split(' ')
-    return (splitString[0], splitString[1])
+    return (splitString[1] + '+' + getRevisionNumber())
     
 def getRedirectString(file):
     if(sys.platform == "win32"):
