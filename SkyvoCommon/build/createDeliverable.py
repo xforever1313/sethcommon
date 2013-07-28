@@ -43,6 +43,7 @@ releaseFiles += [getRapidXMLPath(baseDir)]
 releaseFiles += [os.path.join(baseDir, "Globals.py")]
 releaseFiles += [os.path.join(baseDir, "SConstructGlobals.py")]
 releaseFiles += [os.path.join(baseDir, "SkyvoCommonGlobals.py")]
+releaseFiles += [os.path.join(baseDir, "tools")]
 
 buildFiles = ["jobs.py", "buildRelease.py"]
 
