@@ -43,7 +43,6 @@ releaseFiles += [getRapidXMLPath(baseDir)]
 releaseFiles += [os.path.join(baseDir, "Globals.py")]
 releaseFiles += [os.path.join(baseDir, "SConstructGlobals.py")]
 releaseFiles += [os.path.join(baseDir, "SkyvoCommonGlobals.py")]
-releaseFiles += [os.path.join(baseDir, "tools")]
 
 buildFiles = ["jobs.py", "buildRelease.py"]
 
@@ -53,4 +52,5 @@ for file in releaseFiles:
 for file in buildFiles:
     tar.add(file, arcname=os.path.join("Common", file))
 tar.add("Version.txt", arcname="Common/Version.txt")
+tar.add(os.path.join(baseDir, "tools"), arcname=("Common/tools"))
 tar.close()
