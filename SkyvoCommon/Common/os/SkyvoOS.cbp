@@ -157,6 +157,9 @@
 		<Unit filename="Test/UnitTestRunner.cpp">
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="Test/cstdioWrapperTest.cpp">
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="Test/include/MockFilesystem.h">
 			<Option target="unit_test" />
 		</Unit>
@@ -207,6 +210,16 @@
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
 		</Unit>
+		<Unit filename="include/cstdioWrapper.h">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="include/cstdioWrapperInterface.h">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="src/Date.cpp">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
@@ -230,6 +243,11 @@
 		<Unit filename="src/SkyvoThread.cpp">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
+		</Unit>
+		<Unit filename="src/cstdioWrapper.cpp">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
 		</Unit>
 		<Extensions>
 			<code_completion />
