@@ -30,7 +30,7 @@ globalUnitTestDefines = ["-DUNIT_TEST"]
 #Compile Flags
 globalCXXFlags = ["-pedantic-errors", "-Werror", "-std=gnu++11", "-Wall", "-Wdouble-promotion", "-Wclobbered", "-Wcast-align", "-Wsign-compare", "-Wempty-body", "-Wcast-qual", "-Wmissing-field-initializers", "-Wtype-limits", "-fstack-protector-all"]
 globalCXXDebugFlags = ["-g", "-Wswitch-enum"]
-globalCXXReleaseFlags = ["-O3", "-Wswitch-enum"]
+globalCXXReleaseFlags = ["-O3", "-Wswitch-enum", "-fdata-sections", "-ffunction-sections", "-s"]
 globalCXXUnitTestFlags = ["-g", "-fprofile-arcs", "-ftest-coverage"]
 
 if (sys.platform == "win32"):
@@ -40,6 +40,7 @@ else:
 
 #Linker Flags
 globalLinkerFlags = ["-Wall", "-Werror", "-std=gnu++11"]
+releaseLinkerFlags = ["-Wl,--gc-sections", "-Wl,--strip-all"]
 
 if(sys.platform == "win32"):
     globalLinkerFlags += ["-static", "-pthread"]
@@ -129,7 +130,7 @@ def createReleaseEnvironment(envBase, includePaths, libs, libPath):
         CCFLAGS = globalCXXFlags + globalCXXReleaseFlags,
         LIBS = libs + globalLibsRelease, 
         LIBPATH = libPath,
-        LINKFLAGS = globalLinkerFlags,
+        LINKFLAGS = globalLinkerFlags + releaseLinkerFlags,
         OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, releaseDir)) + '/',
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, releaseDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, releaseDir))
