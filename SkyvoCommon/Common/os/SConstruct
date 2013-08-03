@@ -114,4 +114,4 @@ else:
     Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, runTestTarget])
     Alias ("delta", [releaseTarget, runTestTarget])
 
-Default(["debug"])
+Default([debugTarget])

@@ -12,7 +12,7 @@
 
 #include "SCSVConstants.h"
 
-namespace Common{
+namespace SCSV{
 
 class SCSVParser{
 

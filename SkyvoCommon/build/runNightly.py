@@ -36,16 +36,16 @@ while (i < len(targetLocations)):
     redirectString = getRedirectString(logFile)
     
     if (arm): 
-        commandStr = "scons nightly arm_build=1 --clean" 
+        commandStr = "scons nightly arm_build=1 release_build=1 --clean" 
     else:
-        commandStr = "scons nightly arm_build=0 --clean"
+        commandStr = "scons nightly arm_build=0 release_build=1 --clean"
     print ("Running scons nightly --clean for " + targetNames[i])
     subprocess.call(commandStr, shell=True)
     
     if (arm): 
-        commandStr = "scons nightly arm_build=1" + redirectString
+        commandStr = "scons nightly arm_build=1 release_build=1" + redirectString
     else:
-        commandStr = "scons nightly -j4 arm_build=0" + redirectString
+        commandStr = "scons nightly -j4 arm_build=0 release_build=1" + redirectString
     print("Running scons nightly for " + targetNames[i])
     status = subprocess.call(commandStr, shell=True)
 
