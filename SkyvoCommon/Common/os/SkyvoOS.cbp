@@ -145,6 +145,9 @@
 		<Unit filename="Test/FileSystemTest.cpp">
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="Test/SkyvoOSDateVersionTest.cpp">
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="Test/SkyvoSemaphoreTest.cpp">
 			<Option target="unit_test" />
 		</Unit>
@@ -201,6 +204,11 @@
 			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="include/SkyvoOSDateVersion.h">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="include/SkyvoSemaphore.h">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
@@ -231,6 +239,11 @@
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="src/SkyvoMutex.cpp">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="src/SkyvoOSDateVersion.cpp">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
 			<Option target="unit_test" />
