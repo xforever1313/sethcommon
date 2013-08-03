@@ -29,14 +29,14 @@ osPath = getSkyvoOSPath(baseDir)
 ###
 
 ###include paths:
-includePaths = [includeDir, os.path.join(osPath, includeDir)]
+includePaths = [includeDir, os.path.join(osPath, includeDir), getDateVersionPath(baseDir)]
 testIncludePaths = [os.path.join(testDir, includeDir)]
 
 ###Source Files
-sourceFiles = glob.glob(os.path.join(srcDir, "*.cpp"))
+dateVersionFile = (os.path.join(srcDir, 'SkyvoCommonDateVersion.cpp'))
+sourceFiles = filterSourceFiles(glob.glob(os.path.join(srcDir, "*.cpp")), [dateVersionFile])
 sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.join(testDir, srcDir, "*.cpp"))
-
-coverageFiles = deepcopy(sourceFiles)
+coverageFiles = deepcopy(sourceFiles + [dateVersionFile])
 
 ###Libs
 libs = [] #Only need debug lib for unit tests.
@@ -74,7 +74,7 @@ releaseEnvironment = createReleaseEnvironment(envBase, includePaths, libs, libPa
 testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, testLibs, libPath)
 
 #Doxygen
-doxygenFiles = sourceFiles + sourceTestFiles + glob.glob(os.path.join(includeDir, "*h")) + glob.glob(os.path.join(testDir, includeDir, "*h"))
+doxygenFiles = [dateVersionFile] + sourceFiles + sourceTestFiles + glob.glob(os.path.join(includeDir, "*h")) + glob.glob(os.path.join(testDir, includeDir, "*h"))
 
 ###
 # Test outputs
@@ -85,9 +85,22 @@ createTestOutputFolder(envBase)
 # Targets
 ###
 
-debugTarget = createStaticLib(debugEnvironment, "SkyvoCommon-d", sourceFiles)
-releaseTarget = createStaticLib(releaseEnvironment, "SkyvoCommon", sourceFiles)
-(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles, armBuild)
+debugTarget = createStaticLib(debugEnvironment, "SkyvoCommon-d", getCompiledObjectsWithDateVersionObject(debugEnvironment, 
+                                                                                                         sourceFiles, 
+                                                                                                         dateVersionFile,
+                                                                                                         ARGUMENTS))
+releaseTarget = createStaticLib(releaseEnvironment, "SkyvoCommon", getCompiledObjectsWithDateVersionObject(releaseEnvironment, 
+                                                                                                           sourceFiles, 
+                                                                                                           dateVersionFile, 
+                                                                                                           ARGUMENTS))
+(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, 
+                                                    getCompiledObjectsWithDateVersionObject(testEnvironment, 
+                                                                                            sourceFiles + sourceTestFiles, 
+                                                                                            dateVersionFile, 
+                                                                                            ARGUMENTS), 
+                                                    coverageFiles, 
+                                                    armBuild)
+                                                    
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
 
 Alias("debug_lib", debugTarget)

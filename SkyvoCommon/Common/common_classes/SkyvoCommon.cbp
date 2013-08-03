@@ -97,6 +97,9 @@
 		<Unit filename="Test/FilenameCheckerTest.cpp">
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="Test/SkyvoCommonDateVersionTest.cpp">
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="Test/StringOpsTest.cpp">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
@@ -139,6 +142,11 @@
 			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="include/SkyvoCommonDateVersion.h">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="include/SkyvoUI.h">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
@@ -160,6 +168,11 @@
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="src/FilenameCheckerException.cpp">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="src/SkyvoCommonDateVersion.cpp">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
 			<Option target="unit_test" />
