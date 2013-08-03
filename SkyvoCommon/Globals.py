@@ -1,4 +1,6 @@
+import getpass
 import os
+import string
 import subprocess
 import sys
 
@@ -34,19 +36,27 @@ def parseArguments():
             arm = True
     return arm
 
+def replaceSpacesWithUnderscores(s):
+    return string.replace(s, ' ', '_')
+    
 def getRevisionNumber():
     revProc = subprocess.Popen("git rev-list --count HEAD", shell=True, stdout=subprocess.PIPE)
     rawString = revProc.communicate()[0]
     return rawString.rstrip('\n')
 
-#Returns version string and version Number
+def getUserName():
+    return getpass.getuser()
+    
 def getVersion(baseDir):
     versionFile = open(os.path.join(baseDir, buildDir, "Version.txt"))
     versionString = versionFile.readline()
     versionFile.close()
     splitString = versionString.split(' ')
-    return (splitString[1] + '+' + getRevisionNumber())
-    
+    return splitString[1]
+
+def getReleaseVersionNumber(baseDir):
+    return getVersion(baseDir) + '+' + getRevisionNumber()
+
 def getRedirectString(file):
     if(sys.platform == "win32"):
         redirectString = " > " + str(file) + " 2>&1 "

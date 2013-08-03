@@ -106,7 +106,7 @@ def createBaseEnvironment (rootDir, isArm):
         PROJECT_ROOT = os.path.abspath("."),
         ENV = {'PATH' : os.environ['PATH']}, #Look in path for tools
     )
-    baseEnvironment['NOTEBOOK_ROOT'] = os.path.abspath(rootDir)
+    baseEnvironment['BASE_DIR'] = os.path.abspath(rootDir)
     return baseEnvironment
     
 def createDebugEnvironment(envBase, includePaths, libs, libPath):
@@ -157,7 +157,7 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
 ###
 # Create targets
 ###
-    
+
 def createExe(env, exeName, sourceFiles):
     exeTarget = env.Program(target = os.path.join(env['BINDIR'], exeName), source = sourceFiles)
     return exeTarget
@@ -201,6 +201,24 @@ def createApiMoveTarget(env, apiFiles):
 # Other helper functions
 ###
 
+def getDateVersionDefine(baseDir, args):
+    dateVersionString = getVersion(baseDir) + '+'
+    releaseBuild = (args.get('release_build', '0') == '1')
+    if (releaseBuild):
+        dateVersionString += getRevisionNumber()
+    else:
+        dateVersionString += replaceSpacesWithUnderscores(getUserName())
+    return 'VERSION="\\"' + dateVersionString + '\\""'
+
+def getCompiledObjectsWithDateVersionObject(env, sources, dateVersionFile, args):
+    compiledObjects = env.Object(sources)
+    
+    dateVersionEnvironment = env.Clone()
+    dateVersionEnvironment.Append(CPPDEFINES = getDateVersionDefine(env['BASE_DIR'], args))
+    dateVersionObject = dateVersionEnvironment.Object(dateVersionFile)
+    Depends(dateVersionObject, compiledObjects)
+    return compiledObjects + dateVersionObject
+    
 #Copies the API include files (given as source) to project_root/api
 def apiBuilder(target, source, env):
     readmeText='''

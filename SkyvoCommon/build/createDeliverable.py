@@ -13,7 +13,7 @@ from Globals import *
 from SkyvoCommonGlobals import *
 from jobs import *
 
-versionNumber = getVersion(baseDir)
+versionNumber = getReleaseVersionNumber(baseDir)
 tarFileName = "SkyvoCommon-" + versionNumber + ".tar.gz"
 
 if os.path.exists(tarFileName):

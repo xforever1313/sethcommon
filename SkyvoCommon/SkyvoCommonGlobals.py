@@ -6,6 +6,9 @@ def getCommonClassesPath(baseDir):
 def getCommonPath(baseDir):
     return os.path.join(baseDir, "Common")
 
+def getDateVersionPath(baseDir):
+    return os.path.join(getCommonPath(baseDir), 'date_version')
+    
 def getDebugNewPath(baseDir):
     return os.path.join(getCommonPath(baseDir), "debug_new")
     

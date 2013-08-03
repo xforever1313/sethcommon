@@ -24,13 +24,14 @@ from SConstructGlobals import *
 ###
 
 ###include paths:
-includePaths = [includeDir]
+includePaths = [includeDir, getDateVersionPath(baseDir)]
 testIncludePaths = [os.path.join(testDir, includeDir)]
 
 ###Source Files
-sourceFiles = glob.glob(os.path.join(srcDir, "*.cpp"))
+dateVersionFile = (os.path.join(srcDir, 'SkyvoOSDateVersion.cpp'))
+sourceFiles = filterSourceFiles(glob.glob(os.path.join(srcDir, "*.cpp")), [dateVersionFile])
 sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.join(testDir, srcDir, "*.cpp"))
-coverageFiles = deepcopy(sourceFiles)
+coverageFiles = deepcopy(sourceFiles + [dateVersionFile])
 
 ###Libs
 libs = []
@@ -44,8 +45,8 @@ Help(
 SConstruct file for Skyvo OS project
 
 Targets:
-    debug          Builds the project for Debug lib (Default)
-    release        Builds the project for Release lib
+    debug_lib      Builds the project for Debug lib (Default)
+    release_lib    Builds the project for Release lib
     create_lib     Builds both the debug and release libs
     doxygen        Builds the doxygen documentation
     unit_test      Builds the project for Unit Tests
@@ -88,9 +89,9 @@ except OSError:
 # Targets
 ###
 
-debugTarget = createStaticLib(debugEnvironment, "SkyvoOS-d", sourceFiles)
-releaseTarget = createStaticLib(releaseEnvironment, "SkyvoOS", sourceFiles)
-(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles, armBuild)
+debugTarget = createStaticLib(debugEnvironment, "SkyvoOS-d", getCompiledObjectsWithDateVersionObject(debugEnvironment, sourceFiles, dateVersionFile, ARGUMENTS))
+releaseTarget = createStaticLib(releaseEnvironment, "SkyvoOS", getCompiledObjectsWithDateVersionObject(releaseEnvironment, sourceFiles, dateVersionFile, ARGUMENTS))
+(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, getCompiledObjectsWithDateVersionObject(testEnvironment, sourceFiles + sourceTestFiles, dateVersionFile, ARGUMENTS), coverageFiles, armBuild)
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
 
 if (not armBuild):
