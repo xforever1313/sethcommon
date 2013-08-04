@@ -6,5 +6,5 @@ html
 
 log
 *.log
-
+revision.txt
 *.tar.gz

@@ -11,6 +11,17 @@ from Globals import thisDir
 
 arm = False
 
+def getVersionString():
+    versionFile = open('version.txt', 'r')
+    versionString = versionFile.readline()
+    versionFile.close()
+    revisionFile = open('revision.txt', 'r')
+    versionString += '+' + revisionFile.readline()
+    revisionFile.close()
+    return versionString
+
+versionString = getVersionString() 
+
 if (len(sys.argv) == 2):
     if (sys.argv[1] == "arm"):
         arm = True
@@ -19,10 +30,11 @@ i = 0
 while (i < len(targetLocations)):
     os.chdir(targetLocations[i])
     if (arm): 
-        commandStr = "scons create_lib doxygen arm_build=1 release_build=1"
+        commandStr = 'scons create_lib doxygen arm_build=1 version="' + versionString + '"'
     else:
-        commandStr = "scons create_lib doxygen -j4 arm_build=0 release_build=1"
+        commandStr = 'scons create_lib doxygen -j4 arm_build=0 version="' + versionString + '"'
     print("Building library for" + targetNames[i])
+    print(commandStr)
     status = subprocess.call(commandStr, shell=True)
 
     os.chdir(thisDir)

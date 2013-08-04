@@ -51,8 +51,7 @@ def getVersion(baseDir):
     versionFile = open(os.path.join(baseDir, buildDir, "Version.txt"))
     versionString = versionFile.readline()
     versionFile.close()
-    splitString = versionString.split(' ')
-    return splitString[1]
+    return versionString
 
 def getReleaseVersionNumber(baseDir):
     return getVersion(baseDir) + '+' + getRevisionNumber()

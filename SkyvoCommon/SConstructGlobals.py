@@ -202,12 +202,10 @@ def createApiMoveTarget(env, apiFiles):
 ###
 
 def getDateVersionDefine(baseDir, args):
-    dateVersionString = getVersion(baseDir) + '+'
-    releaseBuild = (args.get('release_build', '0') == '1')
-    if (releaseBuild):
-        dateVersionString += getRevisionNumber()
+    if (args.get('version', '0') == '0'):
+        dateVersionString = getVersion(baseDir) + '+' + replaceSpacesWithUnderscores(getUserName())
     else:
-        dateVersionString += replaceSpacesWithUnderscores(getUserName())
+        dateVersionString = args.get('version')
     return 'VERSION="\\"' + dateVersionString + '\\""'
 
 def getCompiledObjectsWithDateVersionObject(env, sources, dateVersionFile, args):

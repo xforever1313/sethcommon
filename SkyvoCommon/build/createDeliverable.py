@@ -13,8 +13,16 @@ from Globals import *
 from SkyvoCommonGlobals import *
 from jobs import *
 
+revisionFile = 'revision.txt'
+
+def createRevisionFile():
+    revFile = open(revisionFile, 'w')
+    revFile.write(getRevisionNumber())
+    revFile.close()
+
 versionNumber = getReleaseVersionNumber(baseDir)
 tarFileName = "SkyvoCommon-" + versionNumber + ".tar.gz"
+createRevisionFile()
 
 if os.path.exists(tarFileName):
     os.remove(tarFileName)
@@ -32,17 +40,22 @@ for directory, dirnames, filenames in os.walk(getCommonPath(baseDir)):
             releaseFiles += [os.path.join(directory, "Doxyfile")]
 
 debugNewFiles = glob.glob(os.path.join(getDebugNewPath(baseDir), "*.h")) + \
-glob.glob(os.path.join(getDebugNewPath(baseDir), "*.cpp")) + \
-[os.path.join(getDebugNewPath(baseDir), "SConstruct")] + \
-[os.path.join(getDebugNewPath(baseDir), "README")]
+                glob.glob(os.path.join(getDebugNewPath(baseDir), "*.cpp")) + \
+                [os.path.join(getDebugNewPath(baseDir), "SConstruct")] + \
+                [os.path.join(getDebugNewPath(baseDir), "README")]
 
+dateVersionFiles = glob.glob(os.path.join(getDateVersionPath(baseDir), '*.h')) + \
+                   glob.glob(os.path.join(getDateVersionPath(baseDir), '*.cpp'))
+                
 releaseFiles += debugNewFiles
+releaseFiles += dateVersionFiles
 releaseFiles += [getMathPath(baseDir)]
 releaseFiles += [getRapidXMLPath(baseDir)]
 
 releaseFiles += [os.path.join(baseDir, "Globals.py")]
 releaseFiles += [os.path.join(baseDir, "SConstructGlobals.py")]
 releaseFiles += [os.path.join(baseDir, "SkyvoCommonGlobals.py")]
+
 
 buildFiles = ["jobs.py", "buildRelease.py"]
 
@@ -52,5 +65,6 @@ for file in releaseFiles:
 for file in buildFiles:
     tar.add(file, arcname=os.path.join("Common", file))
 tar.add("Version.txt", arcname="Common/Version.txt")
+tar.add(revisionFile, arcname=os.path.join('Common', revisionFile))
 tar.add(os.path.join(baseDir, "tools"), arcname=("Common/tools"))
 tar.close()
