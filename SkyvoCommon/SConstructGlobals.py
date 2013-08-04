@@ -201,6 +201,13 @@ def createApiMoveTarget(env, apiFiles):
 # Other helper functions
 ###
 
+def getVersionFile(env, args):
+    if (args.get('version_file', '0') == '0'): #If version file not specified, use the default one
+        versionFile = os.path.join(env['BASE_DIR'], buildDir, 'version.txt')
+    else:
+        versionFile = args.get('version_file')
+    return versionFile
+
 def getDateVersionDefine(baseDir, args):
     if (args.get('version', '0') == '0'):
         dateVersionString = getVersion(baseDir) + '+' + replaceSpacesWithUnderscores(getUserName())
@@ -215,6 +222,7 @@ def getCompiledObjectsWithDateVersionObject(env, sources, dateVersionFile, args)
     dateVersionEnvironment.Append(CPPDEFINES = getDateVersionDefine(env['BASE_DIR'], args))
     dateVersionObject = dateVersionEnvironment.Object(dateVersionFile)
     Depends(dateVersionObject, compiledObjects)
+    Depends(dateVersionObject, getVersionFile(env, args))
     return compiledObjects + dateVersionObject
     
 #Copies the API include files (given as source) to project_root/api

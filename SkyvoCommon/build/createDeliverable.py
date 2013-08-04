@@ -64,7 +64,7 @@ for file in releaseFiles:
     tar.add(file, arcname=file.strip(baseDir))
 for file in buildFiles:
     tar.add(file, arcname=os.path.join("Common", file))
-tar.add("Version.txt", arcname="Common/Version.txt")
+tar.add("version.txt", arcname="Common/version.txt")
 tar.add(revisionFile, arcname=os.path.join('Common', revisionFile))
 tar.add(os.path.join(baseDir, "tools"), arcname=("Common/tools"))
 tar.close()

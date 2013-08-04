@@ -48,7 +48,7 @@ def getUserName():
     return getpass.getuser()
     
 def getVersion(baseDir):
-    versionFile = open(os.path.join(baseDir, buildDir, "Version.txt"))
+    versionFile = open(os.path.join(baseDir, buildDir, "version.txt"))
     versionString = versionFile.readline()
     versionFile.close()
     return versionString
