@@ -1,5 +1,5 @@
-#ifndef DATEVERSION_H
-#define DATEVERSION_H
+//Include guards are missing on purpose.  The purpose of this file is to be
+//#included in to several namespaces.  Therefore, no include guards needed.
 
 //In your namespaced DateVersion header, please #include <string> before the namespace
 
@@ -11,5 +11,3 @@ class DateVersion{
         DateVersion();
         ~DateVersion();
 };
-
-#endif // DATEVERSION_H

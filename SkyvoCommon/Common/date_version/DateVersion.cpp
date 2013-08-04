@@ -1,6 +1,3 @@
-#ifndef DATE_VERSION_CPP
-#define DATE_VERSION_CPP
-
 //In your namespaced DateVersion source, please #include <string> before the namespace
 
 const std::string DateVersion::getBuildTime(){
@@ -17,4 +14,3 @@ const std::string DateVersion::getVersionNumber(){
     return versionString;
 }
 
-#endif // DATE_VERSION_CPP
