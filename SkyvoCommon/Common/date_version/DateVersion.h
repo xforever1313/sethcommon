@@ -5,8 +5,9 @@
 
 class DateVersion{
     public:
-        static const std::string getBuildTime();
-        static const std::string getVersionNumber();
+        //Both these methods have a static string in the backend, making returning a reference safe.
+        static const std::string &getBuildTime();
+        static const std::string &getVersionNumber();
     private:
         DateVersion();
         ~DateVersion();
