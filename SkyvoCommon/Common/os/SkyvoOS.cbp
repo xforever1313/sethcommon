@@ -166,6 +166,9 @@
 		<Unit filename="Test/include/MockFilesystem.h">
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="Test/include/MockcstdioWrapper.h">
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="Test/include/SemaphorePoster.h">
 			<Option target="unit_test" />
 		</Unit>

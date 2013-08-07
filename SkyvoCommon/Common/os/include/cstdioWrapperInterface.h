@@ -16,7 +16,6 @@ class cstdioWrapperInterface{
         virtual int ferror(FILE_t *stream) = 0;
         virtual int feof(FILE_t *stream) = 0;
         virtual int fclose(FILE_t *stream) = 0;
-
 };
 
 }

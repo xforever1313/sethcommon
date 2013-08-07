@@ -79,7 +79,7 @@ class FileSystem : public FileSystemInterface
 
     private:
         FileSystem();
-        //FileSystem(const &FileSystem);
+        FileSystem(const FileSystem&);
 
         cstdioWrapperInterface *m_cstdio;
 };

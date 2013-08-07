@@ -32,7 +32,7 @@ std::string FileSystem::pathJoin(const std::string &parent, const std::string &c
 }
 
 FileSystem::FileSystem() :
-    m_cstdio(NULL)
+    m_cstdio(new cstdioWrapper)
 {
     #ifdef UNIT_TEST
         m_failListFilesInDir = false;
@@ -60,12 +60,12 @@ std::string FileSystem::getCWD(){
 
 bool FileSystem::createFile(const std::string &filePath){
     bool ret = false;
-    FILE *file = fopen(filePath.c_str(), "w");
+    FILE_t *file = m_cstdio->fopen(filePath, std::string("w"));
     if (file == NULL){
         ret = false;
     }
     else{
-        fclose(file);
+        m_cstdio->fclose(file);
         ret = true;
     }
     return ret;
@@ -120,13 +120,13 @@ bool FileSystem::createDir(const std::string &dirPath){
 
 bool FileSystem::fileExists(const std::string &filePath){
     bool ret = false;
-    FILE *file = fopen(filePath.c_str(), "r");
+    FILE_t *file = m_cstdio->fopen(filePath, std::string("r"));
     if (file == NULL){
         ret = false;
     }
     else{
         ret = true;
-        fclose(file);
+        m_cstdio->fclose(file);
     }
     return ret;
 }
@@ -270,7 +270,7 @@ bool FileSystem::renameFile(const std::string &originalFile, const std::string &
         ret = true; //No op
     }
     else{
-        int status = rename(originalFile.c_str(), newFileName.c_str());
+        int status = m_cstdio->rename(originalFile, newFileName);
         ret = (status == 0);
     }
     return ret;
@@ -281,7 +281,7 @@ bool FileSystem::renameDir(const std::string &originalDir, const std::string &ne
 }
 
 bool FileSystem::deleteFile(const std::string &filePath){
-    int status = remove(filePath.c_str());
+    int status = m_cstdio->remove(filePath);
     return status == 0;
 }
 

@@ -75,6 +75,11 @@ BOOST_AUTO_TEST_CASE(cstdioWrapper_fopenFail){
     BOOST_CHECK(file == NULL);
 }
 
+BOOST_AUTO_TEST_CASE(cstdioWrapper_fopenEmptyString){
+    SkyvoOS::FILE_t *file = m_uut->fopen(std::string(""), std::string("r"));
+    BOOST_CHECK(file == NULL);
+}
+
 BOOST_AUTO_TEST_CASE(cstdioWrapper_renameSuccessTest){
     std::string renameFile = m_testOutput + std::string("renameTest1.txt");
     std::string newFile =  m_testOutput + std::string("renamedFile.txt");

@@ -1,23 +1,33 @@
 #include <boost/test/unit_test.hpp>
+#include <gmock/gmock.h>
 #include <fstream>
 #include <sstream>
 
 #define private public
 
 #include "FileSystem.h"
+#include "MockcstdioWrapper.h"
 #include "TestHelper.h"
 
 std::string illegalDir;
 
 struct FileSystemFixture{
     FileSystemFixture() :
+        m_file("File"),
+        m_cstdio(NULL),
         m_uut(new SkyvoOS::FileSystem)
     {
     }
     virtual ~FileSystemFixture(){
         delete m_uut;
     }
-
+    void addMock(){
+        m_cstdio = new testing::StrictMock<SkyvoOS::MockcstdioWrapper>();
+        delete m_uut->m_cstdio;
+        m_uut->m_cstdio = m_cstdio;
+    }
+    std::string m_file;
+    testing::StrictMock<SkyvoOS::MockcstdioWrapper> *m_cstdio;
     SkyvoOS::FileSystem *m_uut;
 };
 
@@ -71,16 +81,27 @@ BOOST_AUTO_TEST_CASE(FilesSystem_setUp){
     #endif
 }
 
-///\brief tests the file creation method
-BOOST_AUTO_TEST_CASE(FileSystem_createFileTest){
-    std::string testFile = "createFileTest.txt";
-    std::stringstream ss;
-    ss << fileTestOutputPath << "/" << testFile;
-    //Test the empty string case
-    BOOST_CHECK(!m_uut->createFile(""));
+///\brief tests the file creation method for failure
+BOOST_AUTO_TEST_CASE(FileSystem_createFileTestFaiure){
+    addMock();
+    SkyvoOS::FILE_t *fileptr = NULL;
 
-    BOOST_CHECK(m_uut->createFile(ss.str()));
-    BOOST_CHECK(m_uut->fileExists(ss.str()));
+    //Check the case where a file is bad
+    EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("w")))
+        .WillOnce(testing::Return(fileptr));
+    BOOST_CHECK(!m_uut->createFile(m_file));
+}
+
+///\brief tests the file creation method for success
+BOOST_AUTO_TEST_CASE(FileSystem_createFileTestSuccess){
+    addMock();
+    SkyvoOS::FILE_t *fileptr = new SkyvoOS::FILE_t;
+    EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("w")))
+        .WillOnce(testing::Return(fileptr));
+    EXPECT_CALL(*m_cstdio, fclose(fileptr))
+        .WillOnce(testing::DoAll(testing::DeleteArg<0>(), testing::Return(0)));
+
+    BOOST_CHECK(m_uut->createFile(m_file));
 }
 
 ///\brief tests the create dir method
@@ -375,15 +396,18 @@ BOOST_AUTO_TEST_CASE(FileSystem_moveDirTest){
 }
 
 ///\brief tests the delete file method
-BOOST_AUTO_TEST_CASE(FileSystem_removeFileTest){
-    std::string testFile = "toBeDeleted.txt";
-    std::stringstream ss;
-    ss << fileTestOutputPath << "/" << testFile;
-    BOOST_CHECK(m_uut->createFile(ss.str().c_str()));
-    BOOST_CHECK(m_uut->fileExists(ss.str().c_str()));
-    BOOST_CHECK(m_uut->deleteFile(ss.str().c_str()));
-    BOOST_CHECK(!m_uut->fileExists(ss.str().c_str()));
-    BOOST_CHECK(!m_uut->deleteFile("derp.txt"));
+BOOST_AUTO_TEST_CASE(FileSystem_removeFileTestFailure){
+    addMock();
+    EXPECT_CALL(*m_cstdio, remove(m_file))
+        .WillOnce(testing::Return(1));
+    BOOST_CHECK(!m_uut->deleteFile(m_file));
+}
+
+BOOST_AUTO_TEST_CASE(FileSystem_removeFileTestSuccess){
+    addMock();
+    EXPECT_CALL(*m_cstdio, remove(m_file))
+        .WillOnce(testing::Return(0));
+    BOOST_CHECK(m_uut->deleteFile(m_file));
 }
 
 ///\brief tests the delete dir method
