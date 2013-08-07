@@ -14,6 +14,8 @@
 #include <windows.h>
 #endif
 
+#include "cstdioWrapper.h"
+#include "cstdioWrapperInterface.h"
 #include "FileSystem.h"
 
 namespace SkyvoOS{
@@ -25,17 +27,20 @@ FileSystemInterface *FileSystem::getInstance(){
     return &fs;
 }
 
-std::string FileSystem::pathJoin(const std::string parent, const std::string child){
+std::string FileSystem::pathJoin(const std::string &parent, const std::string &child){
     return std::string(parent + "/" + child);
 }
 
-FileSystem::FileSystem(){
+FileSystem::FileSystem() :
+    m_cstdio(NULL)
+{
     #ifdef UNIT_TEST
         m_failListFilesInDir = false;
     #endif
 }
 
 FileSystem::~FileSystem(){
+    delete m_cstdio;
 }
 
 std::string FileSystem::getCWD(){
@@ -53,7 +58,7 @@ std::string FileSystem::getCWD(){
     return ret;
 }
 
-bool FileSystem::createFile( const std::string filePath ){
+bool FileSystem::createFile(const std::string &filePath){
     bool ret = false;
     FILE *file = fopen(filePath.c_str(), "w");
     if (file == NULL){
@@ -66,7 +71,7 @@ bool FileSystem::createFile( const std::string filePath ){
     return ret;
 }
 
-bool FileSystem::createDir( const std::string dirPath ){
+bool FileSystem::createDir(const std::string &dirPath){
     //If path is blank, return false
     if (dirPath == ""){
         return false;
@@ -113,7 +118,7 @@ bool FileSystem::createDir( const std::string dirPath ){
     return true;
 }
 
-bool FileSystem::fileExists( const std::string filePath ){
+bool FileSystem::fileExists(const std::string &filePath){
     bool ret = false;
     FILE *file = fopen(filePath.c_str(), "r");
     if (file == NULL){
@@ -126,7 +131,7 @@ bool FileSystem::fileExists( const std::string filePath ){
     return ret;
 }
 
-bool FileSystem::dirExists( const std::string dirPath ){
+bool FileSystem::dirExists(const std::string &dirPath){
     bool ret = false;
     DIR *dir;
     dir = opendir(dirPath.c_str());
@@ -141,7 +146,7 @@ bool FileSystem::dirExists( const std::string dirPath ){
     return ret;
 }
 
-FileSystem::FileStatus FileSystem::isFile(const std::string filePath){
+FileSystem::FileStatus FileSystem::isFile(const std::string &filePath){
     FileSystem::FileStatus ret = FILE_NOT_EQUAL;
 
     struct stat s;
@@ -161,7 +166,7 @@ FileSystem::FileStatus FileSystem::isFile(const std::string filePath){
     return ret;
 }
 
-FileSystem::FileStatus FileSystem::isDir(const std::string dirPath){
+FileSystem::FileStatus FileSystem::isDir(const std::string &dirPath){
     FileSystem::FileStatus ret = FILE_NOT_EQUAL;
 
     struct stat s;
@@ -181,7 +186,7 @@ FileSystem::FileStatus FileSystem::isDir(const std::string dirPath){
     return ret;
 }
 
-bool FileSystem::copyFile(const std::string originalFile, const std::string destinationPath){
+bool FileSystem::copyFile(const std::string &originalFile, const std::string &destinationPath){
     bool ret = false;
     if (originalFile == destinationPath){
         ret = true; //No op
@@ -217,7 +222,7 @@ bool FileSystem::copyFile(const std::string originalFile, const std::string dest
     return ret;
 }
 
-bool FileSystem::copyDir (const std::string originalDir, const std::string destinationPath){
+bool FileSystem::copyDir (const std::string &originalDir, const std::string &destinationPath){
     bool ret = true;
     //Ensure the originalDir actually exists, and the destination does not already exist
     if ((dirExists(originalDir)) && (!dirExists(destinationPath))){
@@ -259,7 +264,7 @@ bool FileSystem::copyDir (const std::string originalDir, const std::string desti
     return ret;
 }
 
-bool FileSystem::renameFile(const std::string originalFile, const std::string newFileName){
+bool FileSystem::renameFile(const std::string &originalFile, const std::string &newFileName){
     bool ret = false;
     if (originalFile == newFileName){
         ret = true; //No op
@@ -271,16 +276,16 @@ bool FileSystem::renameFile(const std::string originalFile, const std::string ne
     return ret;
 }
 
-bool FileSystem::renameDir(const std::string originalDir, const std::string newDirName){
+bool FileSystem::renameDir(const std::string &originalDir, const std::string &newDirName){
     return renameFile(originalDir, newDirName);
 }
 
-bool FileSystem::deleteFile(const std::string filePath){
+bool FileSystem::deleteFile(const std::string &filePath){
     int status = remove(filePath.c_str());
     return status == 0;
 }
 
-bool FileSystem::deleteDir (const std::string dirPath){
+bool FileSystem::deleteDir (const std::string &dirPath){
     bool ret = true;
     std::deque<std::string> files;
     ret = listFilesInDir(dirPath, files);
@@ -305,7 +310,7 @@ bool FileSystem::deleteDir (const std::string dirPath){
     return ret;
 }
 
-bool FileSystem::listFilesInDir(const std::string dirPath, std::deque<std::string> &fileNamesInDir){
+bool FileSystem::listFilesInDir(const std::string &dirPath, std::deque<std::string> &fileNamesInDir){
 
     #ifdef UNIT_TEST
     if (m_failListFilesInDir){
@@ -332,7 +337,7 @@ bool FileSystem::listFilesInDir(const std::string dirPath, std::deque<std::strin
     return ret;
 }
 
-FileSystem::FileStatus FileSystem::compareFiles(const std::string fileOne, const std::string fileTwo){
+FileSystem::FileStatus FileSystem::compareFiles(const std::string &fileOne, const std::string &fileTwo){
 
     FileSystem::FileStatus ret = FILE_EQUAL;
 
@@ -396,7 +401,7 @@ FileSystem::FileStatus FileSystem::compareFiles(const std::string fileOne, const
     return ret;
 }
 
-FileSystem::FileStatus FileSystem::compareDirs(const std::string dirOne, const std::string dirTwo){
+FileSystem::FileStatus FileSystem::compareDirs(const std::string &dirOne, const std::string &dirTwo){
     FileSystem::FileStatus status = FILE_EQUAL;
     std::deque <std::string> dir1Contents;
     std::deque <std::string> dir2Contents;
