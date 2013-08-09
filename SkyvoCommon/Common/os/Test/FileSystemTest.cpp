@@ -6,6 +6,7 @@
 #define private public
 
 #include "FileSystem.h"
+#include "cstdioWrapper.h"
 #include "MockcstdioWrapper.h"
 #include "TestHelper.h"
 
@@ -14,6 +15,7 @@ std::string illegalDir;
 struct FileSystemFixture{
     FileSystemFixture() :
         m_file("File"),
+        m_stringToWrite("Writing!"),
         m_cstdio(NULL),
         m_uut(new SkyvoOS::FileSystem)
     {
@@ -27,6 +29,7 @@ struct FileSystemFixture{
         m_uut->m_cstdio = m_cstdio;
     }
     std::string m_file;
+    std::string m_stringToWrite;
     testing::StrictMock<SkyvoOS::MockcstdioWrapper> *m_cstdio;
     SkyvoOS::FileSystem *m_uut;
 };
@@ -79,6 +82,110 @@ BOOST_AUTO_TEST_CASE(FilesSystem_setUp){
     #else
         illegalDir = "/lost+found/derp";
     #endif
+}
+
+///\brief tests the read file method during an open error
+BOOST_AUTO_TEST_CASE(FileSystem_readFileOpenFailure){
+    addMock();
+    SkyvoOS::FILE_t *file = NULL;
+    EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("r")))
+        .WillOnce(testing::Return(file));
+    std::string buffer;
+    BOOST_CHECK(!m_uut->readFile(buffer, m_file));
+    BOOST_CHECK(buffer.empty());
+}
+
+///\brief tests the read file method during an open error
+BOOST_AUTO_TEST_CASE(FileSystem_readFileReadFailure){
+    addMock();
+    testing::InSequence dummy;
+    std::string fileString("qwerty");
+    SkyvoOS::FILE_t *file = new SkyvoOS::FILE_t;
+    EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("r")))
+        .WillOnce(testing::Return(file));
+    EXPECT_CALL(*m_cstdio, fgetc(file))
+        .WillOnce(testing::Return(fileString[0]));
+    EXPECT_CALL(*m_cstdio, fgetc(file))
+        .WillOnce(testing::Return(SkyvoOS::cstdioWrapper::END_OF_FILE));
+    EXPECT_CALL(*m_cstdio, ferror(file))
+        .WillOnce(testing::Return(13));
+    EXPECT_CALL(*m_cstdio, fclose(file))
+        .WillOnce(testing::DoAll(testing::DeleteArg<0>(), testing::Return(0)));
+
+    std::string buffer;
+    BOOST_CHECK(!m_uut->readFile(buffer, m_file));
+    BOOST_CHECK_EQUAL(buffer, "q");
+}
+
+///\brief tests the read file method during a success
+BOOST_AUTO_TEST_CASE(FileSystem_readFileSuccess){
+    addMock();
+    testing::InSequence dummy;
+    std::string expectedString = "Hello world!\n\nThis is a string!\t  cool huh?";
+    SkyvoOS::FILE_t *file = new SkyvoOS::FILE_t;
+    EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("r"))).
+        WillOnce(testing::Return(file));
+    for (size_t i = 0; i < expectedString.size(); ++i){
+        EXPECT_CALL(*m_cstdio, fgetc(file))
+            .WillOnce(testing::Return(expectedString[i]));
+    }
+    EXPECT_CALL(*m_cstdio, fgetc(file))
+        .WillOnce(testing::Return(SkyvoOS::cstdioWrapper::END_OF_FILE));
+    EXPECT_CALL(*m_cstdio, ferror(file))
+        .WillOnce(testing::Return(0));
+    EXPECT_CALL(*m_cstdio, fclose(file))
+        .WillOnce(testing::DoAll(testing::DeleteArg<0>(), testing::Return(0)));
+
+    std::string buffer;
+    BOOST_CHECK(m_uut->readFile(buffer, m_file));
+    BOOST_CHECK_EQUAL(buffer, expectedString);
+}
+
+///\brief tests the write file method during an open error
+BOOST_AUTO_TEST_CASE(FileSystem_writeFileOpenFailure){
+    addMock();
+    SkyvoOS::FILE_t *file = NULL;
+    EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("w")))
+        .WillOnce(testing::Return(file));
+    BOOST_CHECK(!m_uut->writeFile(m_stringToWrite, m_file));
+}
+
+///\brief tests the write file during a write error
+BOOST_AUTO_TEST_CASE(FileSystem_writeFileWriteFailure){
+    addMock();
+    testing::InSequence dummy;
+    SkyvoOS::FILE_t *file = new SkyvoOS::FILE_t;
+    EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("w")))
+        .WillOnce(testing::Return(file));
+    EXPECT_CALL(*m_cstdio, fputc(m_stringToWrite[0], file))
+        .WillOnce(testing::Return(m_stringToWrite[0]));
+    EXPECT_CALL(*m_cstdio, fputc(m_stringToWrite[1], file))
+        .WillOnce(testing::Return(SkyvoOS::cstdioWrapper::END_OF_FILE));
+    EXPECT_CALL(*m_cstdio, ferror(file))
+        .WillOnce(testing::Return(234));
+    EXPECT_CALL(*m_cstdio, fclose(file))
+        .WillOnce(testing::DoAll(testing::DeleteArg<0>(), testing::Return(0)));
+
+    BOOST_CHECK(!m_uut->writeFile(m_stringToWrite, m_file));
+}
+
+///\brief tests the write file during a write success
+BOOST_AUTO_TEST_CASE(FileSystem_writeFileWriteSuccess){
+    addMock();
+    testing::InSequence dummy;
+    SkyvoOS::FILE_t *file = new SkyvoOS::FILE_t;
+    EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("w")))
+        .WillOnce(testing::Return(file));
+    for (size_t i = 0; i < m_stringToWrite.size(); ++i){
+        EXPECT_CALL(*m_cstdio, fputc(m_stringToWrite[i], file))
+            .WillOnce(testing::Return(m_stringToWrite[i]));
+    }
+    EXPECT_CALL(*m_cstdio, ferror(file))
+        .WillOnce(testing::Return(0));
+    EXPECT_CALL(*m_cstdio, fclose(file))
+        .WillOnce(testing::DoAll(testing::DeleteArg<0>(), testing::Return(0)));
+
+    BOOST_CHECK(m_uut->writeFile(m_stringToWrite, m_file));
 }
 
 ///\brief tests the file creation method for failure

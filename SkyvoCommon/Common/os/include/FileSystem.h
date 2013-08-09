@@ -34,6 +34,20 @@ class FileSystem : public FileSystemInterface
 
         virtual std::string getCWD();
 
+        /**
+        * \brief Reads the file, and puts the characters in the passed in buffer string.
+        * \note This will NOT clear the buffer, it will append whatever is in the file to the passed in string
+        * \return True if no file errors, false if it could not read to file.  The string is NOT cleared in the case of a read error.
+        */
+        virtual bool readFile(std::string &buffer, const std::string &fileName);
+
+        /**
+        * \brief Writes the given string to the given file name.  This OVERWRITES the file.
+        * \warning If a write error occurs, the original file contents is lost.
+        * \return True if the file was written successfully.  False if the file wasnt opened, or a write error occured.
+        */
+        virtual bool writeFile(const std::string &stringToWrite, const std::string &fileName);
+
         ///\brief the equivalent of using "touch"
         virtual bool createFile(const std::string &filePath);
 

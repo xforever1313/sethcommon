@@ -16,6 +16,8 @@ class FileSystemInterface{
         virtual ~FileSystemInterface(){}
 
         virtual std::string getCWD() = 0;
+        virtual bool readFile(std::string &buffer, const std::string &fileName) = 0;
+        virtual bool writeFile(const std::string &stringToWrite, const std::string &fileName) = 0;
         virtual bool createFile(const std::string &filePath) = 0;
         virtual bool createDir(const std::string &dirPath) = 0;
         virtual FileStatus isFile(const std::string &filePath) = 0;

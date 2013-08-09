@@ -13,6 +13,8 @@ class MockFilesystem : public SkyvoOS::FileSystemInterface{
         virtual ~MockFilesystem(){};
 
         MOCK_METHOD0(getCWD, std::string());
+        MOCK_METHOD2(readFile, bool(std::string &buffer, const std::string &fileName));
+        MOCK_METHOD2(writeFile, bool(const std::string &stringToWrite, const std::string &fileName));
         MOCK_METHOD1(createFile, bool(const std::string filePath));
         MOCK_METHOD1(createDir, bool(std::string createDir));
         MOCK_METHOD1(isFile, SkyvoOS::FileSystemInterface::FileStatus(const std::string filePath));

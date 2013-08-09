@@ -58,6 +58,42 @@ std::string FileSystem::getCWD(){
     return ret;
 }
 
+bool FileSystem::readFile(std::string &buffer, const std::string &fileName){
+    bool ret = true;
+    FILE_t *file = m_cstdio->fopen(fileName, std::string("r"));
+    if (file == NULL){
+        ret = false;
+    }
+    else{
+        char nextChar;
+        while ((nextChar = m_cstdio->fgetc(file)) != cstdioWrapper::END_OF_FILE){
+            buffer += nextChar;
+        }
+        if (m_cstdio->ferror(file) != 0){
+            ret = false;
+        }
+        m_cstdio->fclose(file);
+    }
+    return ret;
+}
+
+bool FileSystem::writeFile(const std::string &stringToWrite, const std::string &fileName){
+    bool ret = true;
+    FILE_t *file = m_cstdio->fopen(fileName, std::string("w"));
+    if (file == NULL){
+        ret = false;
+    }
+    else{
+
+        for (size_t i = 0; (i < stringToWrite.size()) && (m_cstdio->fputc(stringToWrite[i], file) != cstdioWrapper::END_OF_FILE); ++i);
+        if (m_cstdio->ferror(file) != 0){
+            ret = false;
+        }
+        m_cstdio->fclose(file);
+    }
+    return ret;
+}
+
 bool FileSystem::createFile(const std::string &filePath){
     bool ret = false;
     FILE_t *file = m_cstdio->fopen(filePath, std::string("w"));
