@@ -7,7 +7,8 @@ from jobs import *
 
 baseDir = "../"
 sys.path.append(baseDir) #Get globals
-from Globals import getRedirectString
+from Globals import getRedirectString, timeProgram
+timeProgram()
 
 thisDir = os.getcwd()
 currentTime = time.strftime("%m_%d_%Y_%H_%M_%S")

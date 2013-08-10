@@ -48,6 +48,7 @@ Targets:
     release        Builds the project for Release lib
     create_lib     Builds both the debug and release libs
     doxygen        Builds the doxygen documentation
+    cpp_check      Runs cppcheck on the source files
     unit_test      Builds the project for Unit Tests
     run_test       Builds and runs the Unit Tests and memcheck and coverage
 '''
@@ -89,22 +90,24 @@ releaseTarget = createStaticLib(releaseEnvironment, "SCSV", getCompiledObjectsWi
                                                                                                              ARGUMENTS), 
                                                     coverageFiles, armBuild)
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
+cppCheckTarget = createCppCheckTarget(releaseEnvironment, coverageFiles)
 
 Alias("debug_lib", debugTarget)
 Alias("release_lib", releaseTarget)
 Alias ("create_lib", [debugTarget, releaseTarget])
 Alias("doxygen", doxygenTarget)
+Alias("cpp_check", cppCheckTarget)
 Alias("unit_test", unitTestTarget)
 Alias("run_unit_test", runTestTarget)
-Alias("run_test", [unitTestTarget, runTestTarget])
+Alias("run_test", [unitTestTarget, cppCheckTarget, runTestTarget])
 
 #used by auto build
 if (armBuild):
     print("WARNING! Unit tests are not going to be run on an ARM nightly/delta build")
-    Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, unitTestTarget])
-    Alias ("delta", [releaseTarget, unitTestTarget])
+    Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, unitTestTarget])
+    Alias ("delta", [debugTarget, releaseTarget, cppCheckTarget, unitTestTarget])
 else:
-    Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, runTestTarget])
-    Alias ("delta", [releaseTarget, runTestTarget])
+    Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, runTestTarget])
+    Alias ("delta", [debugTarget, releaseTarget, cppCheckTarget, runTestTarget])
 
 Default([debugTarget])

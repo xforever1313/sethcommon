@@ -106,15 +106,15 @@ Alias("doxygen", doxygenTarget)
 Alias("cpp_check", cppCheckTarget)
 Alias("unit_test", unitTestTarget)
 Alias("run_unit_test", runTestTarget)
-Alias("run_test", [unitTestTarget, runTestTarget])
+Alias("run_test", [unitTestTarget, cppCheckTarget, runTestTarget])
 
 #used by auto build
 if (armBuild):
     print("WARNING! Unit tests are not going to be run on an ARM nightly/delta build")
     Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, unitTestTarget])
-    Alias ("delta", [releaseTarget, cppCheckTarget, unitTestTarget])
+    Alias ("delta", [debugTarget, releaseTarget, cppCheckTarget, unitTestTarget])
 else:
     Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, runTestTarget])
-    Alias ("delta", [releaseTarget, cppCheckTarget, runTestTarget])
+    Alias ("delta", [debugTarget, releaseTarget, cppCheckTarget, runTestTarget])
 
 Default([debugTarget])

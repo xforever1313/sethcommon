@@ -1,8 +1,10 @@
+import atexit
 import getpass
 import os
 import string
 import subprocess
 import sys
+import time
 
 #Globals.py
 thisDir = os.getcwd()
@@ -70,3 +72,10 @@ def getRedirectString(file):
     else:
         redirectString = " &> " + str(file)
     return redirectString
+
+def printEndTime(startTime):
+    print "Time ran: " + str(time.time() - startTime) + " seconds."
+
+def timeProgram():
+    startTime = time.time()
+    atexit.register(printEndTime, startTime)

@@ -131,6 +131,7 @@ std::string SCSVParser::convertEscapeCodes(std::string s) const{
                 ++i;
                 ++escapeEnd;
             }
+
             //If we reached the end of the string before hitting ';', throw
             if (i == s.size()){
                 throw SCSV_MISSING_ESCAPE_CODE_END;
@@ -139,17 +140,14 @@ std::string SCSVParser::convertEscapeCodes(std::string s) const{
                 //Can't have a separator within an escape sequence, throw
                 case SCSV_SEPARATOR:
                     throw SCSV_MISSING_ESCAPE_CODE_END;
-                break;
 
                 //Can't have an amp within an escape sequence, throw
                 case SCSV_AMP:
                     throw SCSV_MISSING_ESCAPE_CODE_END;
-                break;
 
                 //Can't have a new line within an escape sequence, throw
                 case '\n':
                     throw SCSV_MISSING_ESCAPE_CODE_END;
-                break;
 
                 //Otherwise, convert escape code to a char
                 default:
