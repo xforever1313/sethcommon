@@ -10,6 +10,7 @@ doxygen
 logs
 Release
 release
+reports
 unit_test
 testOutput
 __pycache__

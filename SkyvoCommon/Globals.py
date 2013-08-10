@@ -8,7 +8,6 @@ import sys
 thisDir = os.getcwd()
 
 codeCoverageDir = "CodeCoverage"
-profilingDataFile = os.path.join(codeCoverageDir, "profiling_data.txt")
 apiDir = "api"
 binDir = "bin"
 docDir = "doc"
@@ -28,6 +27,15 @@ unitTestDir = "unit_test"
 buildDir = "build"
 fitNesseDir = "fitnesse"
 
+reportDir = "reports"
+profilingDataFile = os.path.join(reportDir, "profiling_data.txt")
+cppCheckData = os.path.join(reportDir, 'cppcheck_data.txt')
+doxygenData = os.path.join(reportDir, 'doxygen_data.txt')
+
+def createDir(dir):
+    if (not os.path.exists(dir)):
+        os.mkdir(dir)
+
 #Determines if the first argument is arm
 def parseArguments():
     arm = False
@@ -38,7 +46,7 @@ def parseArguments():
 
 def replaceSpacesWithUnderscores(s):
     return string.replace(s, ' ', '_')
-    
+
 def getRevisionNumber():
     revProc = subprocess.Popen("git rev-list --count HEAD", shell=True, stdout=subprocess.PIPE)
     rawString = revProc.communicate()[0]

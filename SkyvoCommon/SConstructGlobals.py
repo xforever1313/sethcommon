@@ -182,10 +182,16 @@ def createSharedLib(env, sourceFiles, libName):
 def createDoxygenTarget(env, doxygenFiles):
     Doxygen = Builder(action = doxgyenBuilder)
     env.Append(BUILDERS = {"Doxygen" : Doxygen})
-    if (not os.path.exists(docDir)):
-        os.mkdir(docDir)
-    target = env.Doxygen(target = os.path.join(env['PROJECT_ROOT'], doxygenDir, "html/index.html"), source = doxygenFiles)
+    createDir(docDir)
+    target = env.Doxygen(target = doxygenData, source = doxygenFiles)
     Clean(target, os.path.join(env['PROJECT_ROOT'], doxygenDir))
+    return target
+
+def createCppCheckTarget(env, sources):
+    cppCheck = Builder(action = cppCheckBuilder)
+    env.Append(BUILDERS = {"cppCheck" : cppCheck})
+    target = env.cppCheck(target = cppCheckData, source = sources)
+    AlwaysBuild(target)
     return target
 
 def createApiMoveTarget(env, apiFiles):
@@ -196,11 +202,20 @@ def createApiMoveTarget(env, apiFiles):
     Depends(target, apiFiles)
     Clean(target, os.path.join(env['PROJECT_ROOT'], apiDir))
     return target
+
+def getCompiledObjectsWithDateVersionObject(env, sources, dateVersionFile, args):
+    compiledObjects = env.Object(sources)
+    
+    dateVersionEnvironment = env.Clone()
+    dateVersionEnvironment.Append(CPPDEFINES = getDateVersionDefine(env['BASE_DIR'], args))
+    dateVersionObject = dateVersionEnvironment.Object(dateVersionFile)
+    Depends(dateVersionObject, compiledObjects)
+    Depends(dateVersionObject, getVersionFile(env, args))
+    return compiledObjects + dateVersionObject
     
 ###
 # Other helper functions
 ###
-
 def getVersionFile(env, args):
     if (args.get('version_file', '0') == '0'): #If version file not specified, use the default one
         versionFile = os.path.join(env['BASE_DIR'], buildDir, 'version.txt')
@@ -214,40 +229,6 @@ def getDateVersionDefine(baseDir, args):
     else:
         dateVersionString = args.get('version')
     return 'VERSION="\\"' + dateVersionString + '\\""'
-
-def getCompiledObjectsWithDateVersionObject(env, sources, dateVersionFile, args):
-    compiledObjects = env.Object(sources)
-    
-    dateVersionEnvironment = env.Clone()
-    dateVersionEnvironment.Append(CPPDEFINES = getDateVersionDefine(env['BASE_DIR'], args))
-    dateVersionObject = dateVersionEnvironment.Object(dateVersionFile)
-    Depends(dateVersionObject, compiledObjects)
-    Depends(dateVersionObject, getVersionFile(env, args))
-    return compiledObjects + dateVersionObject
-    
-#Copies the API include files (given as source) to project_root/api
-def apiBuilder(target, source, env):
-    readmeText='''
-    DO NOT EDIT THESE FILES.  
-    These files are only to make a convient place to host the api for this project.
-    If you wish to edit these files, please go into include/api and rebuild.  
-    When you rebuild, these files get updated
-    '''
-    readme = open(os.path.join(env['OBJPREFIX'], 'apireadme.txt'), 'w')
-    readme.write(readmeText)
-    readme.close()
-    
-    for file in source:
-        Execute(Copy(os.path.join(env['PROJECT_ROOT'], apiDir), file))
-        
-    Execute(Copy(os.path.join(env['PROJECT_ROOT'], apiDir, 'readme.txt'), 'apireadme.txt'))
-    Execute(Delete('apireadme.txt'))
-
-#Source is only passed in so we know if we need to rebuild if any sources change
-def doxgyenBuilder(target, source, env):
-    status = subprocess.call("doxygen Doxyfile", shell=True)
-    if (status != 0):
-        raise Error("***Doxygen failed***")
 
 def filterSourceFiles(sourceFiles, blackListedFiles):
     for file in blackListedFiles:
@@ -277,17 +258,82 @@ def parseGcovOutput(gcovOutput):
         returnString += "[" + str(tupple[1]) + "%] " + tupple[0] + "\n"
     returnString += "\n" + totalCoverage + "\n"
     return returnString
+
+#Extracts libs to the given location
+def libExtractor(extractionLocation, libsToExtract):
+    #save the current dir
+    thisDir = os.getcwd()
+    #change to the destination folder
+    os.chdir(extractionLocation)
+    print "Extracting Libs..."
+    for lib in libsToExtract:
+        commandStr = "ar x " + str(lib)
+        print commandStr
+        status = subprocess.call(commandStr, shell=True)
+        if (status != 0):
+            raise Exception("Extraction Error")
+            
+    #return to the old directory
+    os.chdir(thisDir)
+
+#make a directory to dump all test output files
+def createTestOutputFolder(env):
+    testOutputPath = os.path.join(env['PROJECT_ROOT'], "testOutput")
+    if (os.path.exists(testOutputPath) == False):
+        os.mkdir(testOutputPath)
+
+###
+# Builders
+###    
+
+#Copies the API include files (given as source) to project_root/api
+def apiBuilder(target, source, env):
+    readmeText='''
+    DO NOT EDIT THESE FILES.  
+    These files are only to make a convient place to host the api for this project.
+    If you wish to edit these files, please go into include/api and rebuild.  
+    When you rebuild, these files get updated
+    '''
+    readme = open(os.path.join(env['OBJPREFIX'], 'apireadme.txt'), 'w')
+    readme.write(readmeText)
+    readme.close()
+    
+    for file in source:
+        Execute(Copy(os.path.join(env['PROJECT_ROOT'], apiDir), file))
+        
+    Execute(Copy(os.path.join(env['PROJECT_ROOT'], apiDir, 'readme.txt'), 'apireadme.txt'))
+    Execute(Delete('apireadme.txt'))
+
+#Source is only passed in so we know if we need to rebuild if any sources change
+def doxgyenBuilder(target, source, env):
+    print "Running Doxygen..."
+    return subprocess.call("doxygen Doxyfile " + getRedirectString(str(target[0])), shell=True)
+
+def cppCheckBuilder(target, source, env):
+    sources = ""
+    includeCommandString = ""
+    for src in source:
+        sources += (" " + str(src))
+    for include in env['CPPPATH']:
+        includeCommandString += (" -I" + include)
+    commandStr = 'cppcheck --enable=warning --enable=style --enable=information -q' + includeCommandString + sources + ' ' + getRedirectString(str(target[0]))
+    print commandStr
+    status = subprocess.call(commandStr, shell=True)
+    
+    if (status == 0):
+        print "\ncppcheck ran and no errors were found!"
+    else:
+        sys.stderr.write("**CPP Check detected errors.  Please refer to " + str(target[0]) + " for more details\n")
+    return status
    
 #Runs the test, and coverage while we are at it :P
 def testRunner(target, source, env):
     thisDir = os.getcwd()
-    os.chdir(os.path.join(binDir, unitTestDir))
-    
+    cwdDir = env['BINDIR']
     if (sys.platform == "win32"):
-        status = subprocess.call("unit_test.exe")
+        status = subprocess.call("unit_test.exe", cwd=cwdDir, shell=True)
     else:
-        status = subprocess.call("./unit_test")
-    os.chdir(thisDir)
+        status = subprocess.call("./unit_test", cwd=cwdDir, shell=True)
 
     if (status == 0):
         print("Running Coverage")
@@ -322,26 +368,3 @@ def testRunner(target, source, env):
             
     else:
         raise Exception("Test Failed!")
-        
-#Extracts libs to the given location
-def libExtractor(extractionLocation, libsToExtract):
-    #save the current dir
-    thisDir = os.getcwd()
-    #change to the destination folder
-    os.chdir(extractionLocation)
-    print "Extracting Libs..."
-    for lib in libsToExtract:
-        commandStr = "ar x " + str(lib)
-        print commandStr
-        status = subprocess.call(commandStr, shell=True)
-        if (status != 0):
-            raise Exception("Extraction Error")
-            
-    #return to the old directory
-    os.chdir(thisDir)
-
-#make a directory to dump all test output files
-def createTestOutputFolder(env):
-    testOutputPath = os.path.join(env['PROJECT_ROOT'], "testOutput")
-    if (os.path.exists(testOutputPath) == False):
-        os.mkdir(testOutputPath)
