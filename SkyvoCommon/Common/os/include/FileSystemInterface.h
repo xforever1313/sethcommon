@@ -32,7 +32,7 @@ class FileSystemInterface{
         virtual bool deleteDir (const std::string &dirPath) = 0;
         virtual bool listFilesInDir(const std::string &dirPath, std::deque<std::string> &fileNamesInDir) = 0;
         virtual FileStatus compareFiles (const std::string &fileOne, const std::string &fileTwo) = 0;
-        virtual FileStatus compareDirs (const std::string &fileOne, const std::string &fileTwo) = 0;
+        virtual FileStatus compareDirs (const std::string &dirOne, const std::string &dirTwo) = 0;
 };
 }
 

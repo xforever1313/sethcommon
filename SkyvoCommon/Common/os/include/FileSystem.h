@@ -85,7 +85,7 @@ class FileSystem : public FileSystemInterface
 
         ///\return FILE_EQUAL if same, FILE_NOT_EQUAL if not same, FILE_ERROR if error
         ///\note Returns based on directory contents, not given file names.  However, file and dir names within the directory must match
-        virtual FileStatus compareDirs (const std::string &fileOne, const std::string &fileTwo);
+        virtual FileStatus compareDirs (const std::string &dirOne, const std::string &dirTwo);
 
         #ifdef UNIT_TEST
             bool m_failListFilesInDir;
