@@ -48,6 +48,7 @@ Targets:
     debug_lib      Builds the project for Debug lib (Default)
     release_lib    Builds the project for Release lib
     create_lib     Builds both the debug and release libs
+    cpp_check      Runs cppcheck on the source files
     doxygen        Builds the doxygen documentation
     unit_test      Builds the project for Unit Tests
     run_test       Builds and runs the Unit Tests and memcheck and coverage
@@ -93,6 +94,7 @@ debugTarget = createStaticLib(debugEnvironment, "SkyvoOS-d", getCompiledObjectsW
 releaseTarget = createStaticLib(releaseEnvironment, "SkyvoOS", getCompiledObjectsWithDateVersionObject(releaseEnvironment, sourceFiles, dateVersionFile, ARGUMENTS))
 (unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, getCompiledObjectsWithDateVersionObject(testEnvironment, sourceFiles + sourceTestFiles, dateVersionFile, ARGUMENTS), coverageFiles, armBuild)
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
+cppCheckTarget = createCppCheckTarget(releaseEnvironment, coverageFiles)
 
 if (not armBuild):
     Depends(runTestTarget, unitTestTarget)
@@ -101,6 +103,7 @@ Alias("debug_lib", debugTarget)
 Alias("release_lib", releaseTarget)
 Alias ("create_lib", [debugTarget, releaseTarget])
 Alias("doxygen", doxygenTarget)
+Alias("cpp_check", cppCheckTarget)
 Alias("unit_test", unitTestTarget)
 Alias("run_unit_test", runTestTarget)
 Alias("run_test", [unitTestTarget, runTestTarget])
@@ -108,10 +111,10 @@ Alias("run_test", [unitTestTarget, runTestTarget])
 #used by auto build
 if (armBuild):
     print("WARNING! Unit tests are not going to be run on an ARM nightly/delta build")
-    Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, unitTestTarget])
-    Alias ("delta", [releaseTarget, unitTestTarget])
+    Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, unitTestTarget])
+    Alias ("delta", [releaseTarget, cppCheckTarget, unitTestTarget])
 else:
-    Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, runTestTarget])
-    Alias ("delta", [releaseTarget, runTestTarget])
+    Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, runTestTarget])
+    Alias ("delta", [releaseTarget, cppCheckTarget, runTestTarget])
 
 Default([debugTarget])

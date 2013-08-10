@@ -322,9 +322,8 @@ bool FileSystem::deleteFile(const std::string &filePath){
 }
 
 bool FileSystem::deleteDir (const std::string &dirPath){
-    bool ret = true;
     std::deque<std::string> files;
-    ret = listFilesInDir(dirPath, files);
+    bool ret = listFilesInDir(dirPath, files);
     for (unsigned int i = 0; i < files.size() && ret; ++i){
         //Ignore .  and ..
         if ((files[i] != UP_DIR) && (files[i] != THIS_DIR)){
@@ -355,14 +354,13 @@ bool FileSystem::listFilesInDir(const std::string &dirPath, std::deque<std::stri
     #endif // UNIT_TEST
 
     bool ret = false;
-    dirent *de;
     DIR *dir;
     dir = opendir(dirPath.c_str());
     if (dir == NULL){
         ret = false;
     }
     else{
-        de = readdir(dir);
+        dirent *de = readdir(dir);
         while (de != NULL){
             fileNamesInDir.push_back(de->d_name);
             de = readdir(dir);

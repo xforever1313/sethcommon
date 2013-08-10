@@ -316,14 +316,14 @@ def cppCheckBuilder(target, source, env):
         sources += (" " + str(src))
     for include in env['CPPPATH']:
         includeCommandString += (" -I" + include)
-    commandStr = 'cppcheck --enable=warning --enable=style --enable=information -q' + includeCommandString + sources + ' ' + getRedirectString(str(target[0]))
+    commandStr = 'cppcheck  --error-exitcode=13 --enable=warning --enable=style --enable=information -q' + includeCommandString + sources + ' ' + getRedirectString(str(target[0]))
     print commandStr
     status = subprocess.call(commandStr, shell=True)
     
     if (status == 0):
         print "\ncppcheck ran and no errors were found!"
     else:
-        sys.stderr.write("**CPP Check detected errors.  Please refer to " + str(target[0]) + " for more details\n")
+        sys.stderr.write("** CPP Check detected errors.  Please refer to " + str(target[0]) + " for more details\n")
     return status
    
 #Runs the test, and coverage while we are at it :P

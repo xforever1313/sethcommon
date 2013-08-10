@@ -16,6 +16,8 @@ typedef struct mutexImpl{
     }
 
     std::mutex *m_mutex;
+    private:
+        mutexImpl(const mutexImpl&);
 }mutexImpl_t;
 
 SkyvoMutex::SkyvoMutex() :

@@ -13,6 +13,8 @@ class SkyvoMutex
         void lock() const;
         void unlock() const;
     private:
+        SkyvoMutex(const SkyvoMutex&);
+        SkyvoMutex &operator=(const SkyvoMutex&);
         mutexImpl_t *m_impl;
 };
 

@@ -18,6 +18,8 @@ typedef struct semaphoreImpl{
     unsigned int m_semaphoreCount;
     std::mutex m_semaphoreCountMutex;
     std::mutex m_shutdownMutex;
+    private:
+        semaphoreImpl(const semaphoreImpl&);
 }semaphoreImpl_t;
 
 SkyvoSemaphore::SkyvoSemaphore() :
@@ -27,7 +29,8 @@ SkyvoSemaphore::SkyvoSemaphore() :
 }
 
 SkyvoSemaphore::SkyvoSemaphore(unsigned int initialCount) :
-    m_impl(new semaphoreImpl_t(initialCount))
+    m_impl(new semaphoreImpl_t(initialCount)),
+    m_isShutDown(false)
 {
 }
 

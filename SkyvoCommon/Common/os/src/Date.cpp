@@ -6,7 +6,14 @@ namespace SkyvoOS{
 
 const std::string Date::monthString [13] = {"Natecember", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 
-Date::Date(){
+Date::Date() :
+    month(0), 
+    day(0), 
+    year(0), 
+    hour(0), 
+    minute(0), 
+    second(0)
+{
 
     time_t rawTime;
     struct tm *currentTime;
@@ -27,7 +34,15 @@ Date::Date(){
 }
 
 Date::Date(unsigned int month, unsigned int day, unsigned int year, unsigned int hour, unsigned int minute, unsigned int second):
-    month(month), day(day), year(year), hour(hour), minute(minute), second(second)
+    month(month), 
+    day(day), 
+    year(year), 
+    hour(hour), 
+    minute(minute), 
+    second(second)
+    #ifdef UNIT_TEST
+    ,timeInfo(NULL)
+    #endif
 {
 }
 
