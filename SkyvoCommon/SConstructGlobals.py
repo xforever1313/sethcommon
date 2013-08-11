@@ -3,6 +3,7 @@ from SCons.Script import *
 from SCons.Environment import *
 from SCons.Builder import *
 from Globals import *
+from multiprocessing import cpu_count
 from operator import itemgetter
 import glob
 import os
@@ -15,6 +16,8 @@ import time
 if (sys.platform == "win32"):
     #defaults to MSVC until set to MinGW
     SCons.Defaults.DefaultEnvironment(tools = [])
+
+SetOption('num_jobs', cpu_count())  #Sets -j to the number of cores  This happens when you import this file
 
 ###
 # Compile flags
@@ -316,7 +319,8 @@ def cppCheckBuilder(target, source, env):
         sources += (" " + str(src))
     for include in env['CPPPATH']:
         includeCommandString += (" -I" + include)
-    commandStr = 'cppcheck  --error-exitcode=13 --enable=warning --enable=style --enable=information -q' + includeCommandString + sources + ' ' + getRedirectString(str(target[0]))
+    commandStr = 'cppcheck  --error-exitcode=13 --enable=warning --enable=style --enable=information -q -j ' + str(cpu_count()) + \
+	' ' + includeCommandString + sources + ' ' + getRedirectString(str(target[0]))
     print commandStr
     status = subprocess.call(commandStr, shell=True)
     

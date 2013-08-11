@@ -46,7 +46,7 @@ while (i < len(targetLocations)):
     if (arm): 
         commandStr = "scons nightly arm_build=1 " + redirectString
     else:
-        commandStr = "scons nightly -j4 arm_build=0 " + redirectString
+        commandStr = "scons nightly arm_build=0 " + redirectString
     print("Running scons nightly for " + targetNames[i])
     status = subprocess.call(commandStr, shell=True)
 
