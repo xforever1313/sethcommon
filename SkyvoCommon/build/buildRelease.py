@@ -15,10 +15,10 @@ versionFile = os.path.abspath('version.txt')
 
 def getVersionString():
     versionFile = open('version.txt', 'r')
-    versionString = versionFile.readline()
+    versionString = versionFile.readline().strip()
     versionFile.close()
     revisionFile = open('revision.txt', 'r')
-    versionString += '+' + revisionFile.readline()
+    versionString += '+' + revisionFile.readline().strip()
     revisionFile.close()
     return versionString
 
