@@ -52,7 +52,7 @@ def replaceSpacesWithUnderscores(s):
 def getRevisionNumber():
     revProc = subprocess.Popen("git rev-list --count HEAD", shell=True, stdout=subprocess.PIPE)
     rawString = revProc.communicate()[0]
-    return rawString.rstrip('\n')
+    return rawString.strip()
 
 def getUserName():
     return getpass.getuser()
@@ -61,7 +61,7 @@ def getVersion(baseDir):
     versionFile = open(os.path.join(baseDir, buildDir, "version.txt"))
     versionString = versionFile.readline()
     versionFile.close()
-    return versionString
+    return versionString.strip()
 
 def getReleaseVersionNumber(baseDir):
     return getVersion(baseDir) + '+' + getRevisionNumber()

@@ -34,7 +34,7 @@ while (i < len(targetLocations)):
     if (arm): 
         commandStr = 'scons create_lib doxygen arm_build=1 version="' + versionString + '" version_file=' + versionFile
     else:
-        commandStr = 'scons create_lib doxygen -j4 arm_build=0 version="' + versionString + '" version_file=' + versionFile
+        commandStr = 'scons create_lib doxygen arm_build=0 version="' + versionString + '" version_file=' + versionFile
     print("Building library for" + targetNames[i])
     print(commandStr)
     status = subprocess.call(commandStr, shell=True)
