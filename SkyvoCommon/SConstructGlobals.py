@@ -52,11 +52,12 @@ else:
 
 #Libs
 globalLibsDebug = ["ssp"]
-globalLibsRelease = ["ssp"]
-globalLibsUnitTest = ["gcov", "gtest", "gmock", "boost_unit_test_framework", "boost_system", "ssp"]
+globalLibsRelease = []
+globalLibsUnitTest = ["gcov", "gtest", "gmock", "boost_unit_test_framework", "boost_system"]
 if (sys.platform == "win32"):
-    globalLibsDebug += ["debug_new"]
-    globalLibsUnitTest += ["debug_new"]
+    globalLibsDebug += ["ssp", "debug_new"] #Lib SSP is still needed in mingw, but not linux
+    globalLibsRelease += ["ssp"]
+    globalLibsUnitTest += ["ssp", "debug_new"]
 
     
 #Parses arguments
