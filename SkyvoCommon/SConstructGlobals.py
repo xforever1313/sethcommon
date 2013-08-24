@@ -51,7 +51,7 @@ else:
     globalLinkerFlags += ["-pthread"]
 
 #Libs
-globalLibsDebug = ["ssp"]
+globalLibsDebug = []
 globalLibsRelease = []
 globalLibsUnitTest = ["gcov", "gtest", "gmock", "boost_unit_test_framework", "boost_system"]
 if (sys.platform == "win32"):
