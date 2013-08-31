@@ -21,3 +21,6 @@ targetLocations += [os.path.join(rootDir, "Common", "common_classes")]
 
 targetNames += ["SCSVBuild"]
 targetLocations += [os.path.join(rootDir, "Common", "SCSV")]
+
+targetNames += ['sqlite']
+targetLocations += [os.path.join(rootDir, "Common", "sqlite")]

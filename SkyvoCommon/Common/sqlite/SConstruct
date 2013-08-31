@@ -1,0 +1,138 @@
+import SCons.Defaults
+import SCons
+from SCons.Util import unique
+import stat
+import os
+import sys
+import subprocess
+import glob
+import shutil
+from copy import deepcopy
+
+baseDir = os.path.abspath("../../")
+sys.path.append(baseDir) #Get globals
+from Globals import *
+from SConstructGlobals import parseArguments
+from SkyvoCommonGlobals import *
+
+armBuild = parseArguments(ARGUMENTS)
+from SConstructGlobals import *
+
+###
+# Files to compile
+###
+
+###cpp defines
+cppDefines = ['PACKAGE_NAME="\\"sqlite\\""', 'PACKAGE_TARNAME="\\"sqlite\\""', 'PACKAGE_VERSION="\\"3.7.17\\""'] + \
+             ['PACKAGE_STRING="\\"sqlite',  '3.7.17\\""', 'PACKAGE_BUGREPORT="\\"http://www.sqlite.org\\""', 'PACKAGE_URL="\\"\\""'] + \
+             ['PACKAGE="\\"sqlite\\""', 'VERSION="\\"3.7.17\\""', '_FILE_OFFSET_BITS=64', '_REENTRANT=1', 'SQLITE_THREADSAFE=1'] + \
+             ['SQLITE_ENABLE_FTS3', 'SQLITE_ENABLE_RTREE']
+
+###Compile flags
+commonCompileFlags = []
+debugFlags = ['-O0', '-g']
+releaseFlags = ['-O3', '-fdata-sections', '-ffunction-sections', '-s']
+
+###include paths:
+includePaths = [includeDir, getDateVersionPath(baseDir)]
+testIncludePaths = []
+
+###Source Files
+sqliteLibFiles = [os.path.join(srcDir, "sqlite3.c")]
+sqliteShellFiles = [os.path.join(srcDir, "shell.c")]
+sourceFiles = glob.glob(os.path.join(srcDir, "*.cpp")) #our source files
+sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp"))
+coverageFiles = deepcopy(sourceFiles)
+
+###Link flags
+commonLinkFlags = ['-std=gnu++11']
+debugLinkFlags = ['-g']
+releaseLinkFlags = ["-Wl,--gc-sections", "-Wl,--strip-all"]
+
+###Libs
+libs = []
+testLibs = ["pthread"] + libs
+
+###libPath
+libPath = []
+
+Help(
+'''
+SConstruct file for SQLite project
+
+Targets:
+    debug          Builds the debug version of the sqlite shell
+    release        Builds the release version of the sqlite shell
+    debug_lib      Builds the project for sqlite Debug lib
+    release_lib    Builds the project for sqlite Release lib
+    create_lib     Builds both the debug and release libs
+    cpp_check      Runs cppcheck on the source files
+    doxygen        Builds the doxygen documentation
+    unit_test      Builds the project for Unit Tests
+    run_test       Builds and runs the Unit Tests and memcheck and coverage
+'''
+)
+
+###
+# Environment creation
+###
+
+#Make common environment
+envBase = createBaseEnvironment(baseDir, armBuild)
+
+#Debug Environment
+debugEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
+debugEnvironment['CPPDEFINES'] = cppDefines
+debugEnvironment['CXXFLAGS'] = ['-std=gnu++11']
+debugEnvironment['CCFLAGS'] = debugFlags + commonCompileFlags
+debugEnvironment['LINKFLAGS'] = commonLinkFlags + debugLinkFlags
+
+#Release Environment
+releaseEnvironment = createReleaseEnvironment(envBase, includePaths, libs, libPath)
+releaseEnvironment['CPPDEFINES'] = cppDefines
+releaseEnvironment['CXXFLAGS'] = ['-std=gnu++11']
+releaseEnvironment['CCFLAGS'] = releaseFlags + commonCompileFlags
+releaseEnvironment['LINKFLAGS'] = commonLinkFlags + releaseLinkFlags
+
+#Unit test environment
+testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, testLibs, libPath)
+testEnvironment.Append(CPPDEFINES = cppDefines)
+
+#Doxygen
+doxygenFiles = sourceFiles + sourceTestFiles + glob.glob(os.path.join(includeDir, "*h")) + glob.glob(os.path.join(testDir, includeDir, "*h"))
+
+###
+# Targets
+###
+debugLibTarget = createStaticLib(debugEnvironment, "sqlite-d", sqliteLibFiles + sourceFiles)
+releaseLibTarget = createStaticLib(releaseEnvironment, "sqlite", sqliteLibFiles + sourceFiles)
+debugTarget = createExe(debugEnvironment, 'sqlite_shell-d', sqliteShellFiles + debugLibTarget)
+releaseTarget = createExe(releaseEnvironment, 'sqlite_shell', sqliteShellFiles + releaseLibTarget)
+(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles, armBuild)
+doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
+cppCheckTarget = createCppCheckTarget(releaseEnvironment, coverageFiles)
+
+if (not armBuild):
+    Depends(runTestTarget, unitTestTarget)
+
+Alias("debug", debugTarget)
+Alias("release", releaseTarget)
+Alias("debug_lib", debugLibTarget)
+Alias("release_lib", releaseLibTarget)
+Alias("create_lib", [debugTarget, releaseTarget]) #Debug and relase since deliverable must build these.
+Alias("doxygen", doxygenTarget)
+Alias("cpp_check", cppCheckTarget)
+Alias("unit_test", unitTestTarget)
+Alias("run_unit_test", runTestTarget)
+Alias("run_test", [unitTestTarget, cppCheckTarget, runTestTarget])
+
+#used by auto build
+if (armBuild):
+    print("WARNING! Unit tests are not going to be run on an ARM nightly/delta build")
+    Alias ("nightly", [debugTarget, releaseTarget, debugLibTarget, releaseLibTarget, doxygenTarget, cppCheckTarget, unitTestTarget])
+    Alias ("delta", [releaseTarget, debugLibTarget, releaseLibTarget, cppCheckTarget, unitTestTarget])
+else:
+    Alias ("nightly", [debugTarget, releaseTarget, debugLibTarget, releaseLibTarget, doxygenTarget, cppCheckTarget, runTestTarget])
+    Alias ("delta", [releaseTarget, debugLibTarget, releaseLibTarget, cppCheckTarget, runTestTarget])
+
+Default([debugTarget])
