@@ -64,7 +64,7 @@ class SkyvoThread
         static void sleep(unsigned int millisecs);
 
         ///\brief returns the status of the thread
-        SkyvoThreadStatus getStatus() const;
+        SkyvoThreadStatus getStatus();
 
     protected:
         virtual void run() = 0;

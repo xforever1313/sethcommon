@@ -29,11 +29,11 @@ SkyvoMutex::~SkyvoMutex(){
     delete m_impl;
 }
 
-void SkyvoMutex::lock() const{
+void SkyvoMutex::lock(){
     m_impl->m_mutex->lock();
 }
 
-void  SkyvoMutex::unlock() const{
+void  SkyvoMutex::unlock(){
     m_impl->m_mutex->unlock();
 }
 

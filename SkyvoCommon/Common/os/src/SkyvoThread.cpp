@@ -94,7 +94,7 @@ void SkyvoThread::work(){
     m_status_mutex.unlock();
 }
 
-SkyvoThread::SkyvoThreadStatus SkyvoThread::getStatus() const{
+SkyvoThread::SkyvoThreadStatus SkyvoThread::getStatus(){
     m_status_mutex.lock();
     SkyvoThread::SkyvoThreadStatus status = m_status;
     m_status_mutex.unlock();

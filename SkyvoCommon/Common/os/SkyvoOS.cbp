@@ -163,7 +163,13 @@
 		<Unit filename="Test/cstdioWrapperTest.cpp">
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="Test/cwrappers/SkyvoMutexCWrapperTest.cpp">
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="Test/include/MockFilesystem.h">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="Test/include/MockSkyvoMutex.h">
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="Test/include/MockcstdioWrapper.h">
@@ -207,6 +213,11 @@
 			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="include/SkyvoMutexInterface.h">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="include/SkyvoOSDateVersion.h">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
@@ -227,6 +238,16 @@
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/cstdioWrapperInterface.h">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="include/cwrappers/SkyvoMutexCWrapper.h">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="include/cwrappers/SkyvoMutexStruct.h">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
 			<Option target="unit_test" />
@@ -261,6 +282,11 @@
 			<Option target="Release_lib" />
 		</Unit>
 		<Unit filename="src/cstdioWrapper.cpp">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="src/cwrappers/SkyvoMutexCWrapper.cpp">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
 			<Option target="unit_test" />
