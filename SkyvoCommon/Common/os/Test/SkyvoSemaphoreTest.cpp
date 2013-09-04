@@ -10,27 +10,52 @@
 BOOST_AUTO_TEST_CASE(Semaphore_waitTestDefaultConstructor){
     SkyvoOS::SkyvoSemaphore *uut = new SkyvoOS::SkyvoSemaphore;
     SemaphorePoster poster(uut);
+    BOOST_CHECK_EQUAL(uut->getSemaphoreCount(), 0); //Zero by default
     poster.start();
     uut->wait();
     BOOST_CHECK(poster.getPosted()); //If it gets here, the test was successful, as the program didn't hang
     poster.join(); //Wait for thread to exit
+    BOOST_CHECK_EQUAL(uut->getSemaphoreCount(), 0); //Should stay at zero
     delete uut;
 }
 
 ///\brief tests the wait method with an inital count not set to zero
 BOOST_AUTO_TEST_CASE(Semaphore_waitTest){
     SkyvoOS::SkyvoSemaphore uut(1);
+    BOOST_CHECK_EQUAL(uut.getSemaphoreCount(), 1);
     uut.wait();
+    BOOST_CHECK_EQUAL(uut.getSemaphoreCount(), 0);
     //If it gets here, the test was successful, as the program didn't hang (no blocking should happen when semahpore count greater than zero
 }
 
 
 ///\brief tests the tryWait method
-BOOST_AUTO_TEST_CASE(Semaphore_tryWaitTest){
+BOOST_AUTO_TEST_CASE(Semaphore_tryWaitTestGreaterThanZero){
     SkyvoOS::SkyvoSemaphore uut(1);
+    BOOST_CHECK_EQUAL(uut.getSemaphoreCount(), 1);
     BOOST_CHECK(uut.tryWait()); //Should return true, as the count is greater than zero.
     BOOST_CHECK(!uut.tryWait()); //Should return false, as the count is zero.
     //The program should NOT hang
+}
+
+///\brief tests the tryWait method with initial count at zero
+BOOST_AUTO_TEST_CASE(Semaphore_tryWaitTestAtZero){
+    SkyvoOS::SkyvoSemaphore uut;
+    BOOST_CHECK_EQUAL(uut.getSemaphoreCount(), 0);
+    BOOST_CHECK(!uut.tryWait()); //Should return false, as the count is zero.
+    BOOST_CHECK(!uut.tryWait()); //Should return false, as the count is zero.
+    //The program should NOT hang
+}
+
+///\brief tests the timedWait method not At zero
+BOOST_AUTO_TEST_CASE(Semaphore_timedWaitTestNotAtZero){
+    SkyvoOS::SkyvoSemaphore *uut = new SkyvoOS::SkyvoSemaphore(1);
+    BOOST_CHECK_EQUAL(uut->getSemaphoreCount(), 1);
+    BOOST_CHECK(uut->timedWait(10));
+    BOOST_CHECK_EQUAL(uut->getSemaphoreCount(), 0);
+    BOOST_CHECK(!uut->timedWait(10));
+    BOOST_CHECK_EQUAL(uut->getSemaphoreCount(), 0);
+    delete uut;
 }
 
 ///\brief tests the timedWait method

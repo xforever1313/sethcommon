@@ -6,11 +6,11 @@
 * \brief This file wrappers the C++ Skyvo Mutex so it can be called from C or Obj-C
 */
 
-typedef struct SkyvoMutex SkyvoMutex_t;
-
 #ifdef __cplusplus
 extern "C" {
 #endif
+
+typedef struct SkyvoMutex SkyvoMutex_t;
 
 SkyvoMutex_t *createMutex();
 

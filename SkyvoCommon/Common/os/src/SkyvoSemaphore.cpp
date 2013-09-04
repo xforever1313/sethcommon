@@ -85,9 +85,9 @@ bool SkyvoSemaphore::timedWait(unsigned long millisecs){
         if (timeout == std::cv_status::timeout){
             ret = false;
         }
-        if (ret){
-            --m_impl->m_semaphoreCount;
-        }
+    }
+    else{
+        --m_impl->m_semaphoreCount;
     }
     return ret;
 }
@@ -103,6 +103,11 @@ void SkyvoSemaphore::shutdown(){
 bool SkyvoSemaphore::isShutdown(){
     std::unique_lock<std::mutex> shutdownLock(m_impl->m_shutdownMutex);
     return m_isShutDown;
+}
+
+unsigned int SkyvoSemaphore::getSemaphoreCount(){
+    std::unique_lock<std::mutex> lock(m_impl->m_semaphoreCountMutex);
+    return m_impl->m_semaphoreCount;
 }
 
 }

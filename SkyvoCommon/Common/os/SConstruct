@@ -24,7 +24,7 @@ from SConstructGlobals import *
 ###
 
 ###include paths:
-includePaths = [includeDir, getDateVersionPath(baseDir)]
+includePaths = [includeDir, getDateVersionPath(baseDir), os.path.join(getCommonClassesPath(baseDir), includeDir)]
 testIncludePaths = [os.path.join(testDir, includeDir)]
 
 ###Source Files

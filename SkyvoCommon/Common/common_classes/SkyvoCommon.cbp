@@ -157,6 +157,11 @@
 			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="include/cwrappers/SkyvoBoolean.h">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="src/EventExecutor.cpp">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />

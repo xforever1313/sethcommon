@@ -1,6 +1,8 @@
 #ifndef SKYVOSEMAPHORE_H
 #define SKYVOSEMAPHORE_H
 
+#include "SkyvoSemaphoreInterface.h"
+
 namespace SkyvoOS{
 
 typedef struct semaphoreImpl semaphoreImpl_t;
@@ -10,7 +12,7 @@ typedef struct semaphoreImpl semaphoreImpl_t;
 * \brief a wrapper around os semaphore calls.
 * \author Seth Hendrick
 */
-class SkyvoSemaphore{
+class SkyvoSemaphore : public SkyvoSemaphoreInterface{
     public:
 
         /**
@@ -47,7 +49,7 @@ class SkyvoSemaphore{
 
         /**
         * \brief decrements the semaphore count if count is greater than zero
-        *  the value is less than, equal to zero, waits for a post, or for the timeout.  If timeout occurs, returns false.
+        *  If the value is less than, equal to zero, waits for a post, or for the timeout.  If timeout occurs, returns false.
         * \param millisecs timeout to wait for a post
         * \return false if timeout expires, else return true.  Returns true if shutdown.
         */
@@ -64,6 +66,12 @@ class SkyvoSemaphore{
         * \return true if semaphore is shutdown, else return false
         */
         bool isShutdown();
+
+        /**
+        * \brief returns the semaphore count
+        * \return the semaphore count
+        */
+        unsigned int getSemaphoreCount();
 
     private:
         //Not copyable (Boost does this)
