@@ -108,6 +108,9 @@
 		<Unit filename="Test/UnitTestRunner.cpp">
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="Test/cwrappers/SkyvoStringTest.cpp">
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="Test/include/DummyEvent.h">
 			<Option target="unit_test" />
 		</Unit>
@@ -162,6 +165,16 @@
 			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="include/cwrappers/SkyvoString.h">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="include/cwrappers/SkyvoStringStruct.h">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="src/EventExecutor.cpp">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
@@ -183,6 +196,11 @@
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="src/StringOps.cpp">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="src/cwrappers/SkyvoString.cpp">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
 			<Option target="unit_test" />

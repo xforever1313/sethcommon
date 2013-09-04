@@ -34,8 +34,9 @@ testIncludePaths = [os.path.join(testDir, includeDir)]
 
 ###Source Files
 dateVersionFile = (os.path.join(srcDir, 'SkyvoCommonDateVersion.cpp'))
-sourceFiles = filterSourceFiles(glob.glob(os.path.join(srcDir, "*.cpp")), [dateVersionFile])
-sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.join(testDir, srcDir, "*.cpp"))
+sourceFiles = filterSourceFiles(glob.glob(os.path.join(srcDir, "*.cpp")) +
+                                glob.glob(os.path.join(srcDir, "*/*.cpp")), [dateVersionFile])
+sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.join(testDir, "*/*.cpp"))
 coverageFiles = deepcopy(sourceFiles + [dateVersionFile])
 
 ###Libs
@@ -86,22 +87,22 @@ createTestOutputFolder(envBase)
 # Targets
 ###
 
-debugTarget = createStaticLib(debugEnvironment, "SkyvoCommon-d", getCompiledObjectsWithDateVersionObject(debugEnvironment, 
-                                                                                                         sourceFiles, 
+debugTarget = createStaticLib(debugEnvironment, "SkyvoCommon-d", getCompiledObjectsWithDateVersionObject(debugEnvironment,
+                                                                                                         sourceFiles,
                                                                                                          dateVersionFile,
                                                                                                          ARGUMENTS))
-releaseTarget = createStaticLib(releaseEnvironment, "SkyvoCommon", getCompiledObjectsWithDateVersionObject(releaseEnvironment, 
-                                                                                                           sourceFiles, 
-                                                                                                           dateVersionFile, 
+releaseTarget = createStaticLib(releaseEnvironment, "SkyvoCommon", getCompiledObjectsWithDateVersionObject(releaseEnvironment,
+                                                                                                           sourceFiles,
+                                                                                                           dateVersionFile,
                                                                                                            ARGUMENTS))
-(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, 
-                                                    getCompiledObjectsWithDateVersionObject(testEnvironment, 
-                                                                                            sourceFiles + sourceTestFiles, 
-                                                                                            dateVersionFile, 
-                                                                                            ARGUMENTS), 
-                                                    coverageFiles, 
+(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment,
+                                                    getCompiledObjectsWithDateVersionObject(testEnvironment,
+                                                                                            sourceFiles + sourceTestFiles,
+                                                                                            dateVersionFile,
+                                                                                            ARGUMENTS),
+                                                    coverageFiles,
                                                     armBuild)
-                                                    
+
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
 cppCheckTarget = createCppCheckTarget(releaseEnvironment, coverageFiles)
 
