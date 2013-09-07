@@ -2,6 +2,7 @@
 #include <sstream>
 
 #include "FilenameChecker.h"
+#include "StringOps.h"
 
 namespace Common{
 
@@ -115,14 +116,8 @@ std::string FilenameChecker::checkFilename(std::string filename){
             i += replacementString.size() - 1;
         }
     }
-    toLowerCase(filename);
+    StringOps::toLowerCaseModify(filename);
     return filename;
-}
-
-void FilenameChecker::toLowerCase(std::string &s){
-    for (unsigned int i = 0; i < s.size(); ++i){
-        s[i] = tolower(s[i]);
-    }
 }
 
 }
