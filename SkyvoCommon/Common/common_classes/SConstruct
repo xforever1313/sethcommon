@@ -15,12 +15,12 @@ from Globals import *
 from SkyvoCommonGlobals import *
 from SConstructGlobals import parseArguments
 
-armBuild = parseArguments(ARGUMENTS)
+(armBuild, serverBuild) = parseArguments(ARGUMENTS)
 
 from SConstructGlobals import *
 
 #Make common environment
-envBase = createBaseEnvironment(baseDir, armBuild)
+envBase = createBaseEnvironment(baseDir, armBuild, serverBuild)
 
 osPath = getSkyvoOSPath(baseDir)
 

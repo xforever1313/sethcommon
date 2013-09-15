@@ -62,6 +62,7 @@ if (sys.platform == "win32"):
     
 #Parses arguments
 def parseArguments(args):
+    serverBuild = (args.get('server_build', '0') == '1')
     armBuild = (args.get('arm_build', '0') == '1')
     if (armBuild):
         global armPrefix
@@ -71,24 +72,33 @@ def parseArguments(args):
         libDir += armPrefix
         global objectDir
         objectDir += armPrefix
-    return armBuild
+    return (armBuild, serverBuild)
     
 ###
 # Environments
 ###
-#rootDir is located in checkoutRoot/Notebook, where this file is located
+
 #isArm is a boolean about whether or not to use the ARM compiler
-def createBaseEnvironment (rootDir, isArm):
+def createBaseEnvironment (rootDir, isArm, serverBuild):
     if (sys.platform == "win32"):
         env = Environment(            
             tools = ["mingw"],
             ARM = False
         )
     elif (not isArm):
-        env = Environment(
-            tools = ["default", "gcc", "g++"],
-            ARM = False
-        )
+        if (serverBuild):
+            env = Environment(
+                tools = ["default, gcc, g++"],
+                ARM = False,
+                CC = "gcc-4.8",
+                CXX = "g++-4.8",
+                LINK = "g++-4.8"
+            )
+        else:
+            env = Environment(
+                tools = ["default", "gcc", "g++"],
+                ARM = False
+            )
     else:
         print ("Building for ARM")
         global globalCXXFlags

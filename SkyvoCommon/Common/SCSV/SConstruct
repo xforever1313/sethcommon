@@ -15,7 +15,7 @@ from Globals import *
 from SConstructGlobals import parseArguments
 from SkyvoCommonGlobals import *
 
-armBuild = parseArguments(ARGUMENTS)
+(armBuild, serverBuild) = parseArguments(ARGUMENTS)
 
 from SConstructGlobals import *
 
@@ -59,7 +59,7 @@ Targets:
 ###
 
 #Make common environment
-envBase = createBaseEnvironment(baseDir, armBuild)
+envBase = createBaseEnvironment(baseDir, armBuild, serverBuild)
 
 #Debug Environment
 debugEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
