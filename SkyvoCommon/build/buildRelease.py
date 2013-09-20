@@ -24,26 +24,9 @@ def getVersionString():
 
 versionString = getVersionString() 
 
-if (len(sys.argv) == 2):
-    if (sys.argv[1] == "arm"):
-        arm = True
-        
-i = 0
-while (i < len(targetLocations)):
-    os.chdir(targetLocations[i])
-    if (arm): 
-        commandStr = 'scons create_lib doxygen arm_build=1 version="' + versionString + '" version_file=' + versionFile
-    else:
-        commandStr = 'scons create_lib doxygen arm_build=0 version="' + versionString + '" version_file=' + versionFile
-    print("Building library for" + targetNames[i])
-    print(commandStr)
-    status = subprocess.call(commandStr, shell=True)
+args = 'create_lib doxygen version="' + versionString + '" version_file=' + versionFile
+for arg in sys.argv[1:]:
+    args += ' '
+    args += arg
 
-    os.chdir(thisDir)
-    if (status != 0):
-        break
-    i += 1
-    
-if (status != 0):
-    print("A compile error occured!")
-    exit(status)
+status = subprocess.call("python build.py " + args, shell=True)
