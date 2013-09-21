@@ -21,5 +21,8 @@ def getSCSVPath(baseDir):
 def getSkyvoOSPath(baseDir):
     return os.path.join(getCommonPath(baseDir), "os")
 
+def getRapidJSONPath(baseDir):
+    return os.path.join(getCommonPath(baseDir), "rapidjson")
+    
 def getRapidXMLPath(baseDir):
     return os.path.join(getCommonPath(baseDir), "rapidxml")
