@@ -83,21 +83,23 @@ def createBaseEnvironment (rootDir, isArm, serverBuild):
     if (sys.platform == "win32"):
         env = Environment(            
             tools = ["mingw"],
-            ARM = False
+            ARM = False,
+            SERVER_BUILD = False
         )
     elif (not isArm):
         if (serverBuild):
             env = Environment(
-                tools = ["default, gcc, g++"],
                 ARM = False,
                 CC = "gcc-4.8",
                 CXX = "g++-4.8",
-                LINK = "g++-4.8"
+                LINK = "g++-4.8",
+                SERVER_BUILD = True
             )
         else:
             env = Environment(
                 tools = ["default", "gcc", "g++"],
-                ARM = False
+                ARM = False,
+                SERVER_BUILD = False
             )
     else:
         print ("Building for ARM")
@@ -135,6 +137,9 @@ def createDebugEnvironment(envBase, includePaths, libs, libPath):
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, debugDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, debugDir))
     )
+    if (envBase['SERVER_BUILD']):
+        debugEnvironment.Append(CPPPATH = ['/skyvo/include'])
+        debugEnvironment.Append(LIBPATH = ['/skyvo/lib'])
     return debugEnvironment
     
 def createReleaseEnvironment(envBase, includePaths, libs, libPath):
@@ -149,6 +154,9 @@ def createReleaseEnvironment(envBase, includePaths, libs, libPath):
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, releaseDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, releaseDir))
     )
+    if (envBase['SERVER_BUILD']):
+        releaseEnvironment.Append(CPPPATH = ['/skyvo/include'])
+        releaseEnvironment.Append(LIBPATH = ['/skyvo/lib'])
     return releaseEnvironment
     
 def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
@@ -163,7 +171,9 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, unitTestDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, unitTestDir))
     )
-    
+    if (envBase['SERVER_BUILD']):
+        testEnvironment.Append(CPPATH = ['/skyvo/include'])
+        testEnvironment.Append(LIBPATH = ['/skyvo/lib'])
     RunTest = Builder(action = testRunner)
     testEnvironment.Append(BUILDERS = {"Test" : RunTest})
     return testEnvironment
@@ -359,8 +369,11 @@ def testRunner(target, source, env):
             print("CodeCoverage directory missing, recreating")
 
         os.mkdir(codeCoverageDir)
-        
-        gcovString = "gcov -r -s \"" + thisDir + "\" -o \"" + os.path.join(thisDir, objectDir, unitTestDir) + "\" "
+        if (env['SERVER_BUILD']):
+            gcovCommand = 'gcov-4.8'
+        else:
+            gcovCommand = 'gcov'
+        gcovString = gcovCommand + " -r -s \"" + thisDir + "\" -o \"" + os.path.join(thisDir, objectDir, unitTestDir) + "\" "
         for file in source:
             gcovString += (os.path.join(thisDir, str(file)) + " ")
         print (gcovString)

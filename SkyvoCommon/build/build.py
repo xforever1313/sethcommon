@@ -21,20 +21,25 @@ for arg in sys.argv[1:]:
     args += arg
     args += ' '
 
+if (sys.platform == 'win32'):
+    sconsCommand = 'scons.bat'
+else:
+    sconsCommand = 'scons'
+
 i = 0
 while (i < len(targetLocations)):
     logFile = os.path.join(logDir, targetNames[i] + ".log")
-    
-    redirectString = getRedirectString(logFile)
+
     print("Running scons " + args + "for " + targetNames[i])
-    
-    commandStr = "scons " + args + " " + redirectString
-    status = subprocess.call(commandStr, shell=True, cwd=targetLocations[i])
-    
+
+    process = subprocess.Popen([sconsCommand] + sys.argv[1:], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=targetLocations[i])
+    status = process.wait()
+    log = process.communicate()[0]
+    f = open(logFile, 'w')
+    f.write(log)
+    f.close()
     if (status != 0):
-        break
-    i += 1
+        raise Exception('A compile error occured!')
     
-if (status != 0):
-    print("A compile error occured!")
-    exit(status)
+    i += 1
+

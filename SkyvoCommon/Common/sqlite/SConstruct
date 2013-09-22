@@ -131,6 +131,9 @@ if (armBuild):
     print("WARNING! Unit tests are not going to be run on an ARM nightly/delta build")
     Alias ("nightly", [debugTarget, releaseTarget, debugLibTarget, releaseLibTarget, doxygenTarget, cppCheckTarget, unitTestTarget])
     Alias ("delta", [releaseTarget, debugLibTarget, releaseLibTarget, cppCheckTarget, unitTestTarget])
+elif (serverBuild):
+    Alias ("nightly", [debugLibTarget, releaseLibTarget, doxygenTarget, cppCheckTarget, runTestTarget])
+    Alias ("delta", [debugLibTarget, releaseLibTarget, cppCheckTarget, runTestTarget])
 else:
     Alias ("nightly", [debugTarget, releaseTarget, debugLibTarget, releaseLibTarget, doxygenTarget, cppCheckTarget, runTestTarget])
     Alias ("delta", [releaseTarget, debugLibTarget, releaseLibTarget, cppCheckTarget, runTestTarget])
