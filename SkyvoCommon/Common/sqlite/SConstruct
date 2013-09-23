@@ -119,7 +119,6 @@ Alias("debug", debugTarget)
 Alias("release", releaseTarget)
 Alias("debug_lib", debugLibTarget)
 Alias("release_lib", releaseLibTarget)
-Alias("create_lib", [debugTarget, releaseTarget]) #Debug and relase since deliverable must build these.
 Alias("doxygen", doxygenTarget)
 Alias("cpp_check", cppCheckTarget)
 Alias("unit_test", unitTestTarget)
@@ -131,11 +130,14 @@ if (armBuild):
     print("WARNING! Unit tests are not going to be run on an ARM nightly/delta build")
     Alias ("nightly", [debugTarget, releaseTarget, debugLibTarget, releaseLibTarget, doxygenTarget, cppCheckTarget, unitTestTarget])
     Alias ("delta", [releaseTarget, debugLibTarget, releaseLibTarget, cppCheckTarget, unitTestTarget])
+    Alias("create_lib", [debugLibTarget, releaseLibTarget])
 elif (serverBuild):
     Alias ("nightly", [debugLibTarget, releaseLibTarget, doxygenTarget, cppCheckTarget, runTestTarget])
     Alias ("delta", [debugLibTarget, releaseLibTarget, cppCheckTarget, runTestTarget])
+    Alias("create_lib", [debugLibTarget, releaseLibTarget])
 else:
     Alias ("nightly", [debugTarget, releaseTarget, debugLibTarget, releaseLibTarget, doxygenTarget, cppCheckTarget, runTestTarget])
     Alias ("delta", [releaseTarget, debugLibTarget, releaseLibTarget, cppCheckTarget, runTestTarget])
+    Alias("create_lib", [debugTarget, releaseTarget]) #Debug and relase since deliverable must build these.
 
 Default([debugTarget])
