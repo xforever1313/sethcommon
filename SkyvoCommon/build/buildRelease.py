@@ -24,9 +24,11 @@ def getVersionString():
 
 versionString = getVersionString() 
 
-args = 'create_lib doxygen version="' + versionString + '" version_file=' + versionFile
+args = ['create_lib', 'doxygen', 'version="' + versionString + '"', 'version_file=' + versionFile]
 for arg in sys.argv[1:]:
-    args += ' '
-    args += arg
+    if ((arg != 'delta') and (arg != 'nightly')):
+        args += [arg]
 
-status = subprocess.call("python build.py " + args, shell=True)
+status = subprocess.call(['python', 'build.py'] + args)
+if (status != 0):
+    raise Exception("Skyvo common release build failed")

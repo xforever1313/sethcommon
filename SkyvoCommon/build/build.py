@@ -33,11 +33,11 @@ while (i < len(targetLocations)):
     print("Running scons " + args + "for " + targetNames[i])
 
     process = subprocess.Popen([sconsCommand] + sys.argv[1:], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=targetLocations[i])
-    status = process.wait()
     log = process.communicate()[0]
     f = open(logFile, 'w')
     f.write(log)
     f.close()
+    status = process.wait()
     if (status != 0):
         raise Exception('A compile error occured!')
     
