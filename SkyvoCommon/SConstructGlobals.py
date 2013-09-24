@@ -78,6 +78,12 @@ def parseArguments(args):
 # Environments
 ###
 
+def serverBuildAdd(env):
+    env.Append(CPPPATH = ['/skyvo/include'])
+    env.Append(LIBPATH = ['/skyvo/lib'])
+    env.Append(CCFLAGS = ['-isystem', '/skyvo/include'])
+
+
 #isArm is a boolean about whether or not to use the ARM compiler
 def createBaseEnvironment (rootDir, isArm, serverBuild):
     if (sys.platform == "win32"):
@@ -138,8 +144,7 @@ def createDebugEnvironment(envBase, includePaths, libs, libPath):
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, debugDir))
     )
     if (envBase['SERVER_BUILD']):
-        debugEnvironment.Append(CPPPATH = ['/skyvo/include'])
-        debugEnvironment.Append(LIBPATH = ['/skyvo/lib'])
+        serverBuildAdd(debugEnvironment)
     return debugEnvironment
     
 def createReleaseEnvironment(envBase, includePaths, libs, libPath):
@@ -155,8 +160,7 @@ def createReleaseEnvironment(envBase, includePaths, libs, libPath):
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, releaseDir))
     )
     if (envBase['SERVER_BUILD']):
-        releaseEnvironment.Append(CPPPATH = ['/skyvo/include'])
-        releaseEnvironment.Append(LIBPATH = ['/skyvo/lib'])
+        serverBuildAdd(releaseEnvironment)
     return releaseEnvironment
     
 def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
@@ -172,8 +176,7 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, unitTestDir))
     )
     if (envBase['SERVER_BUILD']):
-        testEnvironment.Append(CPPATH = ['/skyvo/include'])
-        testEnvironment.Append(LIBPATH = ['/skyvo/lib'])
+        serverBuildAdd(testEnvironment)
     RunTest = Builder(action = testRunner)
     testEnvironment.Append(BUILDERS = {"Test" : RunTest})
     return testEnvironment
