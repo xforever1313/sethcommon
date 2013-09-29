@@ -250,12 +250,17 @@ def getVersionFile(env, args):
         versionFile = args.get('version_file')
     return versionFile
 
-def getDateVersionDefine(baseDir, args):
+def getDateVersionValue(baseDir, args):
     if (args.get('version', '0') == '0'):
         dateVersionString = getVersion(baseDir) + '+' + replaceSpacesWithUnderscores(getUserName())
     else:
         dateVersionString = args.get('version')
-    return 'VERSION="\\"' + dateVersionString + '\\""'
+    return dateVersionString
+
+    
+def getDateVersionDefine(baseDir, args):
+
+    return 'VERSION="\\"' + getDateVersionValue(baseDir, args) + '\\""'
 
 def filterSourceFiles(sourceFiles, blackListedFiles):
     for file in blackListedFiles:

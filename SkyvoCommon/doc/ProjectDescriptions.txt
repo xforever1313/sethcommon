@@ -15,9 +15,15 @@ Common:
     Common/os:
         This is platform specific os calls.  This includes threading and filesystem calls.  The implementation of these classes can be platform-specific, but should be abstracted in a way to be cross-platform.  This is the lowest level, and should be built first.  The language is C++, unless other platforms required a different language (they must, however, be wrapped so c++ can call them).    
 
+    rapidjson:
+        JSON parser written in C++.  This is a library we found online.
+        
     rapidxml:
         xml parser written in c++.  This is a library we found online.
-        
+    
+    sqlite:
+        This is SQLITE.
+    
     SCSV:
         Us at skyvo disliked CSV as a format, so we created our own standard called Skyvo CSV (SCSV).  This project contains the SCSV parser.  The language is C++.
     

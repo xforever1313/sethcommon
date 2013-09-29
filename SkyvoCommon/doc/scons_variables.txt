@@ -4,6 +4,10 @@ arm_build:  Whether or not to build for the ARM (Raspberry pi).  Only works on l
     0: Do not build for ARM (Raspberry pi)
     1: Build for ARM (Raspberry pi)
 
+server_build:  Whether or not we are building on the server
+    0: Not building on skyvo's server
+    1: Building on skyvo's server
+    
 version:  Overrides the version string for the DateVersion object.
     0 or unspecified:  Get the version string for version.txt in the root's build folder
     else:  Make the version whatever is passed in for the variable
