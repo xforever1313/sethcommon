@@ -12,11 +12,10 @@ from copy import deepcopy
 baseDir = os.path.abspath("../../")
 sys.path.append(baseDir) #Get globals
 from Globals import *
-from SConstructGlobals import parseArguments
+from SConstructGlobals import *
 from SkyvoCommonGlobals import *
 
-(armBuild, serverBuild) = parseArguments(ARGUMENTS)
-from SConstructGlobals import *
+serverBuild = parseArguments(ARGUMENTS)
 
 ###
 # Files to compile
@@ -78,7 +77,7 @@ Targets:
 ###
 
 #Make common environment
-envBase = createBaseEnvironment(baseDir, armBuild, serverBuild)
+envBase = createBaseEnvironment(baseDir, ARGUMENTS)
 
 #Debug Environment
 debugEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
@@ -108,12 +107,9 @@ debugLibTarget = createStaticLib(debugEnvironment, "sqlite-d", sqliteLibFiles + 
 releaseLibTarget = createStaticLib(releaseEnvironment, "sqlite", sqliteLibFiles + sourceFiles)
 debugTarget = createExe(debugEnvironment, 'sqlite_shell-d', sqliteShellFiles + debugLibTarget)
 releaseTarget = createExe(releaseEnvironment, 'sqlite_shell', sqliteShellFiles + releaseLibTarget)
-(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles, armBuild)
+(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, sourceFiles + sourceTestFiles, coverageFiles)
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
 cppCheckTarget = createCppCheckTarget(releaseEnvironment, coverageFiles)
-
-if (not armBuild):
-    Depends(runTestTarget, unitTestTarget)
 
 Alias("debug", debugTarget)
 Alias("release", releaseTarget)
@@ -126,12 +122,7 @@ Alias("run_unit_test", runTestTarget)
 Alias("run_test", [unitTestTarget, cppCheckTarget, runTestTarget])
 
 #used by auto build
-if (armBuild):
-    print("WARNING! Unit tests are not going to be run on an ARM nightly/delta build")
-    Alias ("nightly", [debugTarget, releaseTarget, debugLibTarget, releaseLibTarget, doxygenTarget, cppCheckTarget, unitTestTarget])
-    Alias ("delta", [releaseTarget, debugLibTarget, releaseLibTarget, cppCheckTarget, unitTestTarget])
-    Alias("create_lib", [debugLibTarget, releaseLibTarget])
-elif (serverBuild):
+if (serverBuild):
     Alias ("nightly", [debugLibTarget, releaseLibTarget, doxygenTarget, cppCheckTarget, runTestTarget])
     Alias ("delta", [debugLibTarget, releaseLibTarget, cppCheckTarget, runTestTarget])
     Alias("create_lib", [debugLibTarget, releaseLibTarget])

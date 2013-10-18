@@ -63,16 +63,7 @@ if (sys.platform == "win32"):
 #Parses arguments
 def parseArguments(args):
     serverBuild = (args.get('server_build', '0') == '1')
-    armBuild = (args.get('arm_build', '0') == '1')
-    if (armBuild):
-        global armPrefix
-        global binDir
-        binDir += armPrefix
-        global libDir
-        libDir += armPrefix
-        global objectDir
-        objectDir += armPrefix
-    return (armBuild, serverBuild)
+    return serverBuild
     
 ###
 # Environments
@@ -85,45 +76,30 @@ def serverBuildAdd(env):
 
 
 #isArm is a boolean about whether or not to use the ARM compiler
-def createBaseEnvironment (rootDir, isArm, serverBuild):
+def createBaseEnvironment (rootDir, args):
+    serverBuild = parseArguments(args)
+    
     if (sys.platform == "win32"):
         env = Environment(            
             tools = ["mingw"],
-            ARM = False,
-            SERVER_BUILD = False
+            SERVER_BUILD = False,
+            SYSTEM = "mingw32"
         )
-    elif (not isArm):
+    else:
         if (serverBuild):
             env = Environment(
-                ARM = False,
                 CC = "gcc-4.8",
                 CXX = "g++-4.8",
                 LINK = "g++-4.8",
-                SERVER_BUILD = True
+                SERVER_BUILD = True,
+                SYSTEM = "gcc"
             )
         else:
             env = Environment(
                 tools = ["default", "gcc", "g++"],
-                ARM = False,
-                SERVER_BUILD = False
+                SERVER_BUILD = False,
+                SYSTEM = "gcc"
             )
-    else:
-        print ("Building for ARM")
-        global globalCXXFlags
-        globalCXXFlags += ["-march=armv6k"]
-        globalCXXFlags.remove("-Werror")       #Warnings are not errors in the arm compiler
-        gcc_location = os.environ['GCC_ARM']
-        env = Environment(
-            tools = ["g++", "gcc", "as", "ar", "link"],
-            CC = os.path.join(gcc_location, 'bin/arm-linux-gnueabihf-gcc'),
-            CXX = os.path.join(gcc_location,'bin/arm-linux-gnueabihf-g++'),
-            AR = os.path.join(gcc_location, 'bin/arm-linux-gnueabihf-ar'),
-            AS = os.path.join(gcc_location,'bin/arm-linux-gnueabihf-as'),
-            #TODO enable this
-            #RANLIB = os.path.join(gcc_location, 'bin/arm-linux-gnueabihf-gcc-ranlib'),
-            GCC_ARM = gcc_location,
-            ARM = True
-        )        
     baseEnvironment = env.Clone(
         PROJECT_ROOT = os.path.abspath("."),
         ENV = {'PATH' : os.environ['PATH']}, #Look in path for tools
@@ -139,9 +115,9 @@ def createDebugEnvironment(envBase, includePaths, libs, libPath):
         LIBS = libs + globalLibsDebug, 
         LIBPATH = libPath,
         LINKFLAGS = globalLinkerFlags,
-        OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, debugDir)) + '/',
-        LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, debugDir)),
-        BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, debugDir))
+        OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, envBase['SYSTEM'], debugDir)) + '/',
+        LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], debugDir)),
+        BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], debugDir))
     )
     if (envBase['SERVER_BUILD']):
         serverBuildAdd(debugEnvironment)
@@ -155,9 +131,9 @@ def createReleaseEnvironment(envBase, includePaths, libs, libPath):
         LIBS = libs + globalLibsRelease, 
         LIBPATH = libPath,
         LINKFLAGS = globalLinkerFlags + releaseLinkerFlags,
-        OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, releaseDir)) + '/',
-        LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, releaseDir)),
-        BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, releaseDir))
+        OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, envBase['SYSTEM'], releaseDir)) + '/',
+        LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], releaseDir)),
+        BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], releaseDir))
     )
     if (envBase['SERVER_BUILD']):
         serverBuildAdd(releaseEnvironment)
@@ -171,9 +147,9 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
         LIBS = libs + globalLibsUnitTest, 
         LIBPATH = libPath,
         LINKFLAGS = globalLinkerFlags,
-        OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, unitTestDir)) + '/',
-        LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, unitTestDir)),
-        BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, unitTestDir))
+        OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, envBase['SYSTEM'], unitTestDir)) + '/',
+        LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], unitTestDir)),
+        BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], unitTestDir))
     )
     if (envBase['SERVER_BUILD']):
         serverBuildAdd(testEnvironment)
@@ -189,13 +165,12 @@ def createExe(env, exeName, sourceFiles):
     exeTarget = env.Program(target = os.path.join(env['BINDIR'], exeName), source = sourceFiles)
     return exeTarget
     
-def createUnitTestExe(env, sourceFiles, coverageFiles, armBuild):
+def createUnitTestExe(env, sourceFiles, coverageFiles):
     testExeTarget = env.Program(target = os.path.join(env['BINDIR'], "unit_test"), source = sourceFiles)
     runTestTarget = env.Test(target = profilingDataFile, source = coverageFiles)
     AlwaysBuild(runTestTarget)
     Execute(Delete(Glob(os.path.join(testOutputDir, '*')))) #Remove old test outputs
-    if (not armBuild):
-        Depends(runTestTarget, testExeTarget)
+    Depends(runTestTarget, testExeTarget)
     return (testExeTarget, runTestTarget)
 
 def createStaticLib(env, libName, sourceFiles):
@@ -381,7 +356,7 @@ def testRunner(target, source, env):
             gcovCommand = 'gcov-4.8'
         else:
             gcovCommand = 'gcov'
-        gcovString = gcovCommand + " -r -s \"" + thisDir + "\" -o \"" + os.path.join(thisDir, objectDir, unitTestDir) + "\" "
+        gcovString = gcovCommand + " -r -s \"" + thisDir + "\" -o \"" + os.path.join(thisDir, objectDir, env['SYSTEM'], unitTestDir) + "\" "
         for file in source:
             gcovString += (os.path.join(thisDir, str(file)) + " ")
         print (gcovString)

@@ -10,10 +10,10 @@ struct cstdioWrapperFixture{
     cstdioWrapperFixture() :
         m_uut(new SkyvoOS::cstdioWrapper()),
         m_fs(SkyvoOS::FileSystem::getInstance()),
-        m_testFile( "../../Test/testFile.txt"),
+        m_testFile( "../../../Test/testFile.txt"),
         m_testFileContents("test!"),
         //Date constructed automatically
-        m_testOutput("../../testOutput/cstdioWrapperTest/cstdioWrapperTest/" + m_date.getFullDateUnderscores())
+        m_testOutput("../../../testOutput/cstdioWrapperTest/cstdioWrapperTest/" + m_date.getFullDateUnderscores())
     {
     }
 

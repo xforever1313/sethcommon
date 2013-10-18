@@ -10,11 +10,11 @@
 #include <iostream>
 #include <string>
 
-const std::string testFileDirectory = "../../Test"; /**<Location of tests relative to .exe */
-const std::string unEditableFilePath = "../../Test/unEditableFile.txt";
-const std::string unReadableFilePath = "../../Test/unReadableFile.txt";
-const std::string blankFilePath = "../../testOutput/thisFileShouldbeBlank.txt";
-const std::string testOutputPath = "../../testOutput";
+const std::string testFileDirectory = "../../../Test"; /**<Location of tests relative to .exe */
+const std::string unEditableFilePath = "../../../Test/unEditableFile.txt";
+const std::string unReadableFilePath = "../../../Test/unReadableFile.txt";
+const std::string blankFilePath = "../../../testOutput/thisFileShouldbeBlank.txt";
+const std::string testOutputPath = "../../../testOutput";
 extern std::string fileTestOutputPath;
 
 /**
