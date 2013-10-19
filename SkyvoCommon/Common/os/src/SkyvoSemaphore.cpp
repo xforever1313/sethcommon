@@ -52,7 +52,7 @@ void SkyvoSemaphore::post(){
 
 void SkyvoSemaphore::wait(){
     std::unique_lock<std::mutex> lock(m_impl->m_semaphoreCountMutex);
-    while ((m_impl->m_semaphoreCount == 0)){
+    while (m_impl->m_semaphoreCount == 0){
         m_impl->m_conditionVariable->wait(lock);
     }
     --m_impl->m_semaphoreCount;

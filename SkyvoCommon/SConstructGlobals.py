@@ -31,10 +31,17 @@ globalUnitTestDefines = ["-DUNIT_TEST"]
 
 
 #Compile Flags
-globalCXXFlags = ["-pedantic-errors", "-Werror", "-std=gnu++11", "-Wall", "-Wdouble-promotion", "-Wclobbered", "-Wcast-align", "-Wsign-compare", "-Wempty-body", "-Wcast-qual", "-Wmissing-field-initializers", "-Wtype-limits", "-fstack-protector-all"]
+globalCXXFlags = ["-pedantic-errors", "-Werror", "-std=gnu++11", "-Wall", "-Wcast-align", "-Wsign-compare", \
+                  "-Wempty-body", "-Wcast-qual", "-Wmissing-field-initializers", "-Wtype-limits", "-fstack-protector-all"]
 globalCXXDebugFlags = ["-g", "-Wswitch-enum"]
-globalCXXReleaseFlags = ["-O3", "-Wswitch-enum", "-fdata-sections", "-ffunction-sections", "-s"]
-globalCXXUnitTestFlags = ["-g", "-fprofile-arcs", "-ftest-coverage"]
+globalCXXReleaseFlags = ["-O3", "-Wswitch-enum", "-fdata-sections", "-ffunction-sections"]
+globalCXXUnitTestFlags = ["-g"]
+
+clangGlobalCXXFlags = ['-Wno-return-type-c-linkage', '-stdlib=libc++']
+clangUnitTestFlags = []
+
+gccGlobalCXXFlags = ['-Wclobbered', '-Wdouble-promotion']
+gccUnitTestCXXFlags = ['-fprofile-arcs', '-ftest-coverage']
 
 if (sys.platform == "win32"):
     globalCXXFlags += ["-pthread"]
@@ -43,7 +50,8 @@ else:
 
 #Linker Flags
 globalLinkerFlags = ["-Wall", "-Werror", "-std=gnu++11"]
-releaseLinkerFlags = ["-Wl,--gc-sections", "-Wl,--strip-all"]
+releaseLinkerFlags = ["-Wl,--gc-sections", "-Wl,--strip-all", "-s"]
+unitTestLinkerFlags = []
 
 if(sys.platform == "win32"):
     globalLinkerFlags += ["-static", "-pthread"]
@@ -53,13 +61,16 @@ else:
 #Libs
 globalLibsDebug = []
 globalLibsRelease = []
-globalLibsUnitTest = ["gcov", "gtest", "gmock", "boost_unit_test_framework", "boost_system"]
+globalLibsUnitTest = ["gtest", "gmock", "boost_unit_test_framework", "boost_system"]
+
+gccUnitTestLibs = ['gcov']
+clangUnitTestLibs = []
+
 if (sys.platform == "win32"):
     globalLibsDebug += ["ssp", "debug_new"] #Lib SSP is still needed in mingw, but not linux
     globalLibsRelease += ["ssp"]
     globalLibsUnitTest += ["ssp", "debug_new"]
 
-    
 #Parses arguments
 def parseArguments(args):
     serverBuild = (args.get('server_build', '0') == '1')
@@ -68,41 +79,92 @@ def parseArguments(args):
 ###
 # Environments
 ###
+def armBuildAdd(env):
+    if(env['ARM_BUILD']):
+        env.Append(CCFLAGS = ['-arch', 'armv7s'])
+        env.Append(LINKFLAGS = ['-arch', 'armv7s'])
+
+def clangBuildAdd(env):
+    if (env['CLANG_BUILD']):
+        env.Append(CCFLAGS = ['-isystem', '/usr/include/c++/4.8.1'])
+        if (sys.platform == "darwin"):
+            env.Append(CCFLAGS = ['-isystem', '/usr/include/c++/4.8.1/x_86apple']) #TODO Fix this for apple
+        else:
+            env.Append(CCFLAGS = ['-isystem', '/usr/include/i386-linux-gnu/c++/4.8'])
+
+        env.Append(CCFLAGS = ['-D__STRICT_ANSI__'])
 
 def serverBuildAdd(env):
-    env.Append(CPPPATH = ['/skyvo/include'])
-    env.Append(LIBPATH = ['/skyvo/lib'])
-    env.Append(CCFLAGS = ['-isystem', '/skyvo/include'])
+    if (env['SERVER_BUILD']):
+        env.Append(CPPPATH = ['/skyvo/include'])
+        env.Append(LIBPATH = ['/skyvo/lib'])
+        env.Append(CCFLAGS = ['-isystem', '/skyvo/include'])
 
+def addPlatformFlags(env):
+    serverBuildAdd(env)
+    clangBuildAdd(env)
+    armBuildAdd(env)
 
-#isArm is a boolean about whether or not to use the ARM compiler
 def createBaseEnvironment (rootDir, args):
     serverBuild = parseArguments(args)
-    
+    clangBuild = (args.get('clang_build', '0') == '1')
+    armBuild = (args.get('arm_build', '0') == '1')
+
     if (sys.platform == "win32"):
+        print "Building for mingw32"
         env = Environment(            
             tools = ["mingw"],
             SERVER_BUILD = False,
+            ARM_BUILD = False,
+            CLANG_BUILD = False,
             SYSTEM = "mingw32"
         )
+    elif(clangBuild):
+        if (armBuild):
+            print "Building for clang arm"
+            env = Environment(
+                CC = "clang",
+                CXX = "clang++",
+                LINK = "clang++",
+                SERVER_BUILD = serverBuild,
+                ARM_BUILD = True,
+                CLANG_BUILD = True,
+                SYSTEM = "clangArm"    
+            )
+        else:
+             print "Building for clang x86"
+             env = Environment(
+                CC = "clang",
+                CXX = "clang++",
+                LINK = "clang++",
+                SERVER_BUILD = serverBuild,
+                ARM_BUILD = False,
+                CLANG_BUILD = True,
+                SYSTEM = "clangx86"
+            ) 
     else:
+        print "Building for gcc x86"
         if (serverBuild):
             env = Environment(
                 CC = "gcc-4.8",
                 CXX = "g++-4.8",
                 LINK = "g++-4.8",
                 SERVER_BUILD = True,
-                SYSTEM = "gcc"
+                ARM_BUILD = False,
+                CLANG_BUILD = False,
+                SYSTEM = "gccx86"
             )
         else:
             env = Environment(
                 tools = ["default", "gcc", "g++"],
                 SERVER_BUILD = False,
-                SYSTEM = "gcc"
+                ARM_BUILD = False,
+                CLANG_BUILD = False,
+                SYSTEM = "gccx86"
             )
     baseEnvironment = env.Clone(
         PROJECT_ROOT = os.path.abspath("."),
-        ENV = {'PATH' : os.environ['PATH']}, #Look in path for tools
+        ENV = {'PATH' : os.environ['PATH']} #Look in path for tools
     )
     baseEnvironment['BASE_DIR'] = os.path.abspath(rootDir)
     return baseEnvironment
@@ -119,8 +181,13 @@ def createDebugEnvironment(envBase, includePaths, libs, libPath):
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], debugDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], debugDir))
     )
-    if (envBase['SERVER_BUILD']):
-        serverBuildAdd(debugEnvironment)
+    addPlatformFlags(debugEnvironment)
+
+    if (debugEnvironment['CLANG_BUILD']):
+        debugEnvironment.Append(CCFLAGS = clangGlobalCXXFlags)
+    else:
+        debugEnvironment.Append(CCFLAGS = gccGlobalCXXFlags)
+
     return debugEnvironment
     
 def createReleaseEnvironment(envBase, includePaths, libs, libPath):
@@ -135,8 +202,13 @@ def createReleaseEnvironment(envBase, includePaths, libs, libPath):
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], releaseDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], releaseDir))
     )
-    if (envBase['SERVER_BUILD']):
-        serverBuildAdd(releaseEnvironment)
+    addPlatformFlags(releaseEnvironment)
+
+    if (releaseEnvironment['CLANG_BUILD']):
+        releaseEnvironment.Append(CCFLAGS = clangGlobalCXXFlags)
+    else:
+        releaseEnvironment.Append(CCFLAGS = gccGlobalCXXFlags)
+
     return releaseEnvironment
     
 def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
@@ -146,13 +218,20 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
         CCFLAGS = globalCXXFlags + globalCXXUnitTestFlags,
         LIBS = libs + globalLibsUnitTest, 
         LIBPATH = libPath,
-        LINKFLAGS = globalLinkerFlags,
+        LINKFLAGS = globalLinkerFlags + unitTestLinkerFlags,
         OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, envBase['SYSTEM'], unitTestDir)) + '/',
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], unitTestDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], unitTestDir))
     )
-    if (envBase['SERVER_BUILD']):
-        serverBuildAdd(testEnvironment)
+    addPlatformFlags(testEnvironment)
+
+    if(testEnvironment['CLANG_BUILD']):
+        testEnvironment.Append(CCFLAGS = clangGlobalCXXFlags + clangUnitTestLibs)
+        testEnvironment.Append(LIBS = clangUnitTestLibs)
+    else:
+        testEnvironment.Append(CCFLAGS = gccGlobalCXXFlags + gccUnitTestCXXFlags)
+        testEnvironment.Append(LIBS = gccUnitTestLibs)
+
     RunTest = Builder(action = testRunner)
     testEnvironment.Append(BUILDERS = {"Test" : RunTest})
     return testEnvironment
@@ -343,7 +422,7 @@ def testRunner(target, source, env):
     else:
         status = subprocess.call("./unit_test", cwd=cwdDir, shell=True)
 
-    if (status == 0):
+    if ((status == 0) and not env['CLANG_BUILD']):
         print("Running Coverage")
         try:
             Execute(Delete(codeCoverageDir)) #Remove old code coverage
@@ -377,5 +456,5 @@ def testRunner(target, source, env):
         for file in gcovGlob:
             shutil.move(file, codeCoverageDir)
             
-    else:
+    elif (status != 0):
         raise Exception("Test Failed!")

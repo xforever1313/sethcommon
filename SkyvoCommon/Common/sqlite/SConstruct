@@ -21,16 +21,21 @@ serverBuild = parseArguments(ARGUMENTS)
 # Files to compile
 ###
 
+#Make common environment
+envBase = createBaseEnvironment(baseDir, ARGUMENTS)
+
 ###cpp defines
 cppDefines = ['PACKAGE_NAME="\\"sqlite\\""', 'PACKAGE_TARNAME="\\"sqlite\\""', 'PACKAGE_VERSION="\\"3.7.17\\""'] + \
              ['PACKAGE_STRING="\\"sqlite',  '3.7.17\\""', 'PACKAGE_BUGREPORT="\\"http://www.sqlite.org\\""', 'PACKAGE_URL="\\"\\""'] + \
              ['PACKAGE="\\"sqlite\\""', 'VERSION="\\"3.7.17\\""', '_FILE_OFFSET_BITS=64', '_REENTRANT=1', 'SQLITE_THREADSAFE=1'] + \
              ['SQLITE_ENABLE_FTS3', 'SQLITE_ENABLE_RTREE']
+if (envBase['CLANG_BUILD']):
+    cppDefines += ['__STRICT_ANSI__']
 
 ###Compile flags
 commonCompileFlags = []
-debugFlags = ['-O0', '-g']
-releaseFlags = ['-O3', '-fdata-sections', '-ffunction-sections', '-s']
+debugFlags = ['-O0', '-g', '-pthread']
+releaseFlags = ['-O3', '-fdata-sections', '-ffunction-sections', '-s', '-pthread']
 
 ###include paths:
 includePaths = [includeDir, getDateVersionPath(baseDir)]
@@ -49,8 +54,10 @@ debugLinkFlags = ['-g']
 releaseLinkFlags = ["-Wl,--gc-sections", "-Wl,--strip-all"]
 
 ###Libs
-libs = []
-testLibs = ["pthread"] + libs
+libs = ["pthread"]
+if (not sys.platform == "win32"):
+    libs += ['dl']
+testLibs = [] + libs
 
 ###libPath
 libPath = []
@@ -75,9 +82,6 @@ Targets:
 ###
 # Environment creation
 ###
-
-#Make common environment
-envBase = createBaseEnvironment(baseDir, ARGUMENTS)
 
 #Debug Environment
 debugEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
