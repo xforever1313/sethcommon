@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <vector>
 
-#ifdef _WIN32
+#ifdef WIN32
 #include <windows.h>
 #endif
 
@@ -45,12 +45,18 @@ FileSystem::~FileSystem(){
 
 std::string FileSystem::getCWD(){
     std::string ret;
-    #ifdef _WIN32
+    #ifdef WIN32
     char dir[MAX_PATH];
     GetModuleFileName( NULL, dir, MAX_PATH );
     ret = std::string (dir);
     std::string::size_type pos = ret.find_last_of( "\\/" ); //Get rid of the filename
     ret = ret.substr(0, pos);
+    
+    #elif DARWIN
+    
+    char dir [PATH_MAX];
+    getcwd(dir, PATH_MAX);
+    ret = std::string(dir);
     #else
     char *dir = get_current_dir_name();
     ret = std::string(dir);
@@ -177,8 +183,9 @@ bool FileSystem::dirExists(const std::string &dirPath){
     else{
         ret = true;
     }
-    closedir(dir);
-
+    if (dir != NULL){
+        closedir(dir);
+    }
     return ret;
 }
 

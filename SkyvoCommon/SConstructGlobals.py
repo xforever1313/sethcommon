@@ -24,10 +24,18 @@ SetOption('num_jobs', cpu_count())  #Sets -j to the number of cores  This happen
 ###
 #Defines
 globalDefines = []
-    
-globalDebugDefines = ["-DDEBUG"]
-globalReleaseDefines = ["-DRELEASE"]
-globalUnitTestDefines = ["-DUNIT_TEST"]
+
+if (sys.platform == "win32"):
+    globalDefines += ["WIN_32"]
+elif (sys.platform == "darwin"):
+    globalDefines += ["DARWIN"]
+else:
+    globalDefines += ["LINUX"]
+
+
+globalDebugDefines = ["DEBUG"]
+globalReleaseDefines = ["RELEASE"]
+globalUnitTestDefines = ["UNIT_TEST"]
 
 
 #Compile Flags
@@ -39,6 +47,8 @@ globalCXXUnitTestFlags = ["-g"]
 
 clangGlobalCXXFlags = ['-Wno-return-type-c-linkage', '-stdlib=libc++']
 clangUnitTestFlags = []
+if (sys.platform == "darwin"):
+    clangUnitTestFlags += ['-DGTEST_USE_OWN_TR1_TUPLE=1']
 
 gccGlobalCXXFlags = ['-Wclobbered', '-Wdouble-promotion']
 gccUnitTestCXXFlags = ['-fprofile-arcs', '-ftest-coverage']
@@ -50,11 +60,18 @@ else:
 
 #Linker Flags
 globalLinkerFlags = ["-Wall", "-Werror", "-std=gnu++11"]
-releaseLinkerFlags = ["-Wl,--gc-sections", "-Wl,--strip-all", "-s"]
+releaseLinkerFlags = []
+if (sys.platform == "darwin"):
+    releaseLinkerFlags += ["-Wl,-dead_strip"]
+else:
+    releaseLinkerFlags += ['-s', '-Wl,--gc-sections', '-Wl,--strip-all']
+
 unitTestLinkerFlags = []
 
 if(sys.platform == "win32"):
     globalLinkerFlags += ["-static", "-pthread"]
+elif (sys.platform == "darwin"):
+    globalLinkerFlags += []
 else:
     globalLinkerFlags += ["-pthread"]
 
@@ -79,18 +96,23 @@ def parseArguments(args):
 ###
 # Environments
 ###
+
 def armBuildAdd(env):
     if(env['ARM_BUILD']):
-        env.Append(CCFLAGS = ['-arch', 'armv7s'])
-        env.Append(LINKFLAGS = ['-arch', 'armv7s'])
+        env.Append(CCFLAGS = ['-arch', 'armv7s', '-miphoneos-version-min=7.0', '-isysroot', '/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk'])
+        env.Append(LINKFLAGS = ['-arch', 'armv7s', '-miphoneos-version-min=7.0', '-isysroot', '/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk'])
+        env.Append(LIBPATH = ['/skyvo/lib/ios'])
+    elif (sys.platform == "darwin"):
+        env.Append(LIBPATH = ['/skyvo/lib/x86'])
 
 def clangBuildAdd(env):
     if (env['CLANG_BUILD']):
-        env.Append(CCFLAGS = ['-isystem', '/usr/include/c++/4.8.1'])
         if (sys.platform == "darwin"):
-            env.Append(CCFLAGS = ['-isystem', '/usr/include/c++/4.8.1/x_86apple']) #TODO Fix this for apple
+            env.Append(CCFLAGS = ['-isystem', '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/c++/v1'])
+            env.Append(CCFLAGS = ['-isystem', '/skyvo/include'])
         else:
             env.Append(CCFLAGS = ['-isystem', '/usr/include/i386-linux-gnu/c++/4.8'])
+            env.Append(CCFLAGS = ['-isystem', '/usr/include/c++/4.8.1'])
 
         env.Append(CCFLAGS = ['-D__STRICT_ANSI__'])
 
@@ -104,6 +126,16 @@ def addPlatformFlags(env):
     serverBuildAdd(env)
     clangBuildAdd(env)
     armBuildAdd(env)
+
+def addSystemDefines(env):
+    system = ""
+    if (env['SYSTEM'] == "mingw32"):
+        system = "MINGW"
+    elif (env['SYSTEM'] == "clangArm" or env['SYSTEM'] == "clangx86"):
+        system = "CLANG"
+    else:
+        system = "GCC"
+    env.Append(CPPDEFINES = [system])
 
 def createBaseEnvironment (rootDir, args):
     serverBuild = parseArguments(args)
@@ -188,6 +220,8 @@ def createDebugEnvironment(envBase, includePaths, libs, libPath):
     else:
         debugEnvironment.Append(CCFLAGS = gccGlobalCXXFlags)
 
+    addSystemDefines(debugEnvironment)
+
     return debugEnvironment
     
 def createReleaseEnvironment(envBase, includePaths, libs, libPath):
@@ -209,6 +243,8 @@ def createReleaseEnvironment(envBase, includePaths, libs, libPath):
     else:
         releaseEnvironment.Append(CCFLAGS = gccGlobalCXXFlags)
 
+    addSystemDefines(releaseEnvironment)
+
     return releaseEnvironment
     
 def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
@@ -226,7 +262,7 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
     addPlatformFlags(testEnvironment)
 
     if(testEnvironment['CLANG_BUILD']):
-        testEnvironment.Append(CCFLAGS = clangGlobalCXXFlags + clangUnitTestLibs)
+        testEnvironment.Append(CCFLAGS = clangGlobalCXXFlags + clangUnitTestFlags)
         testEnvironment.Append(LIBS = clangUnitTestLibs)
     else:
         testEnvironment.Append(CCFLAGS = gccGlobalCXXFlags + gccUnitTestCXXFlags)
@@ -234,6 +270,8 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
 
     RunTest = Builder(action = testRunner)
     testEnvironment.Append(BUILDERS = {"Test" : RunTest})
+
+    addSystemDefines(testEnvironment)
     return testEnvironment
 
 ###
