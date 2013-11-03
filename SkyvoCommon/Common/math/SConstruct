@@ -1,0 +1,113 @@
+import SCons.Defaults
+import SCons
+from SCons.Util import unique
+import stat
+import os
+import sys
+import subprocess
+import glob
+import shutil
+from copy import deepcopy
+
+baseDir = os.path.abspath("../../")
+sys.path.append(baseDir) #Get globals
+from Globals import *
+from SkyvoCommonGlobals import *
+from SConstructGlobals import *
+
+#Make common environment
+envBase = createBaseEnvironment(baseDir, ARGUMENTS)
+
+osPath = getSkyvoOSPath(baseDir)
+
+###
+# Files to compile
+###
+
+###include paths:
+includePaths = [includeDir, os.path.join(osPath, includeDir), getDateVersionPath(baseDir)]
+testIncludePaths = [os.path.join(testDir, includeDir)]
+
+###Source Files
+dateVersionFile = (os.path.join(srcDir, 'SkyvoMathDateVersion.cpp'))
+sourceFiles = filterSourceFiles(glob.glob(os.path.join(srcDir, "*.cpp")) +
+                                glob.glob(os.path.join(srcDir, "*/*.cpp")), [dateVersionFile])
+sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.join(testDir, "*/*.cpp"))
+coverageFiles = deepcopy(sourceFiles + [dateVersionFile])
+
+###Libs
+libs = []
+testLibs = [] + libs
+if (sys.platform != "win32" and sys.platform != "darwin"):
+    testLibs += ["rt", 'c']
+
+###libPath
+libPath = []
+
+Help(
+'''
+SConstruct file for Skyvo Math project
+
+Targets:
+    debug          Builds the project for Debug lib (Default)
+    release        Builds the project for Release lib
+    create_lib     Builds both the debug and release libs
+    cpp_check      Runs cppcheck on the source files
+    doxygen        Builds the doxygen documentation
+    unit_test      Builds the project for Unit Tests
+    run_test       Builds and runs the Unit Tests and memcheck and coverage
+'''
+)
+
+###
+# Environment creation
+###
+
+#Debug Environment
+debugEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
+
+#Release Environment
+releaseEnvironment = createReleaseEnvironment(envBase, includePaths, libs, libPath)
+
+#Unit test environment
+testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, testLibs, libPath)
+
+#Doxygen
+doxygenFiles = [dateVersionFile] + sourceFiles + sourceTestFiles + glob.glob(os.path.join(includeDir, "*h")) + glob.glob(os.path.join(testDir, includeDir, "*h"))
+
+###
+# Targets
+###
+
+debugTarget = createStaticLib(debugEnvironment, "SkyvoMath-d", getCompiledObjectsWithDateVersionObject(debugEnvironment,
+                                                                                                         sourceFiles,
+                                                                                                         dateVersionFile,
+                                                                                                         ARGUMENTS))
+releaseTarget = createStaticLib(releaseEnvironment, "SkyvoMath", getCompiledObjectsWithDateVersionObject(releaseEnvironment,
+                                                                                                           sourceFiles,
+                                                                                                           dateVersionFile,
+                                                                                                           ARGUMENTS))
+(unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment,
+                                                    getCompiledObjectsWithDateVersionObject(testEnvironment,
+                                                                                            sourceFiles + sourceTestFiles,
+                                                                                            dateVersionFile,
+                                                                                            ARGUMENTS),
+                                                    coverageFiles)
+
+doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
+cppCheckTarget = createCppCheckTarget(releaseEnvironment, coverageFiles)
+
+Alias("debug_lib", debugTarget)
+Alias("release_lib", releaseTarget)
+Alias ("create_lib", [debugTarget, releaseTarget])
+Alias("doxygen", doxygenTarget)
+Alias("cpp_check", cppCheckTarget)
+Alias("unit_test", unitTestTarget)
+Alias("run_unit_test", runTestTarget)
+Alias("run_test", [unitTestTarget, cppCheckTarget, runTestTarget])
+
+Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, runTestTarget])
+Alias ("delta", [debugTarget, releaseTarget, cppCheckTarget, runTestTarget])
+
+Default([debugTarget])
+
