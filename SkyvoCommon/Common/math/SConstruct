@@ -20,6 +20,8 @@ envBase = createBaseEnvironment(baseDir, ARGUMENTS)
 
 osPath = getSkyvoOSPath(baseDir)
 
+testDir = "test"
+
 ###
 # Files to compile
 ###
