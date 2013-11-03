@@ -29,7 +29,7 @@ if os.path.exists(tarFileName):
 
 releaseFiles = []
 for directory, dirnames, filenames in os.walk(getCommonPath(baseDir)):
-    if (os.path.basename(directory) != ("debug_new" or "math" or "rapidxml" or "rapidjson")):
+    if (os.path.basename(directory) != ("debug_new" or "rapidxml" or "rapidjson")):
         if (os.path.basename(directory) == includeDir):
             releaseFiles += [directory]
         elif ((os.path.basename(directory) == srcDir) and (testDir not in directory)):
@@ -49,7 +49,6 @@ dateVersionFiles = glob.glob(os.path.join(getDateVersionPath(baseDir), '*.h')) +
                 
 releaseFiles += debugNewFiles
 releaseFiles += dateVersionFiles
-releaseFiles += [getMathPath(baseDir)]
 releaseFiles += [getRapidXMLPath(baseDir)]
 releaseFiles += [getRapidJSONPath(baseDir)]
 

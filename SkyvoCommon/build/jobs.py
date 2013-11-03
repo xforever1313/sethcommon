@@ -12,9 +12,11 @@ rootDir = os.path.abspath("..")
 targetLocations = []
 targetNames = []
 
-#Core build
 targetNames += ["OSBuild"] #Must be built first
 targetLocations += [os.path.join(rootDir,"Common", "os")]
+
+targetNames += ["MathBuild"] #Must be built first
+targetLocations += [os.path.join(rootDir,"Common", "math")]
 
 targetNames += ['CommonClassesBuild']
 targetLocations += [os.path.join(rootDir, "Common", "common_classes")]
