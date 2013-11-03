@@ -38,7 +38,7 @@ coverageFiles = deepcopy(sourceFiles + [dateVersionFile])
 ###Libs
 libs = [] #Only need debug lib for unit tests.
 testLibs = ['SkyvoOS-d', "pthread"] + libs
-if (sys.platform != "win32"):
+if (sys.platform != "win32" and sys.platform != "darwin"):
     testLibs += ["rt", 'c']
 ###libPath
 libPath = [os.path.join(osPath, libDir, envBase['SYSTEM'], debugDir)]

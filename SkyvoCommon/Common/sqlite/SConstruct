@@ -51,7 +51,11 @@ coverageFiles = deepcopy(sourceFiles)
 ###Link flags
 commonLinkFlags = ['-std=gnu++11']
 debugLinkFlags = ['-g']
-releaseLinkFlags = ["-Wl,--gc-sections", "-Wl,--strip-all"]
+releaseLinkFlags = []
+if (sys.platform == "darwin"):
+    releaseLinkFlags += ['-Wl,-dead_strip']
+else:
+    releaseLinkFlags += ['-Wl,--gc-sections', '-Wl,--strip-all', '-s']
 
 ###Libs
 libs = ["pthread"]
