@@ -1,7 +1,7 @@
 #ifndef BOX_H
 #define BOX_H
 
-namespace Common{
+namespace Math{
 
 struct Box{
     public:

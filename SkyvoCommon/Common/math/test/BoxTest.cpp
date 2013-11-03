@@ -9,7 +9,7 @@ struct BoxFixture{
         m_z(4),
         m_width(5),
         m_height(6),
-        m_uut(new Common::Box(m_x, m_y, m_z, m_width, m_height))
+        m_uut(new Math::Box(m_x, m_y, m_z, m_width, m_height))
     {
     }
 
@@ -17,7 +17,7 @@ struct BoxFixture{
         delete m_uut;
     }
     double m_x, m_y, m_z, m_width, m_height;
-    Common::Box *m_uut;
+    Math::Box *m_uut;
 };
 
 BOOST_FIXTURE_TEST_SUITE(BoxTest, BoxFixture)
@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(Box_ConstructorTest){
 }
 
 BOOST_AUTO_TEST_CASE(Box_DefaultConstructorTest){
-    Common::Box uut;
+    Math::Box uut;
 
     BOOST_CHECK_EQUAL(uut.x, 0);
     BOOST_CHECK_EQUAL(uut.y, 0);

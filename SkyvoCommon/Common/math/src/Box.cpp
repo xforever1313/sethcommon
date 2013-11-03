@@ -1,6 +1,6 @@
 #include "Box.h"
 
-namespace Common{
+namespace Math{
 
 Box::Box() :
     x(0),
