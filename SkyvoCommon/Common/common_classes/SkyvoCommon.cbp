@@ -88,6 +88,9 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="SConstruct" />
+		<Unit filename="Test/BoxTest.cpp">
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="Test/EventExecutorTest.cpp">
 			<Option target="unit_test" />
 		</Unit>
@@ -118,6 +121,11 @@
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="Test/src/DummyEvent.cpp">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="include/Box.h">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/EventExecutor.h">
@@ -171,6 +179,11 @@
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="include/cwrappers/SkyvoStringStruct.h">
+			<Option target="Debug_lib" />
+			<Option target="Release_lib" />
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="src/Box.cpp">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
 			<Option target="unit_test" />
