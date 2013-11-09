@@ -4,5 +4,6 @@
 		<Project filename="Common/os/SkyvoOS.cbp" />
 		<Project filename="Common/common_classes/SkyvoCommon.cbp" />
 		<Project filename="Common/date_version/dateVersion.cbp" />
+		<Project filename="Common/math/SkyvoMath.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
