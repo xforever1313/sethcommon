@@ -1,5 +1,8 @@
 import os    
 
+def getCppUTestPath(baseDir):
+    return os.path.join(getCommonPath(baseDir), "CppUTest")
+
 def getCommonClassesPath(baseDir):
     return os.path.join(getCommonPath(baseDir), "common_classes")
 

@@ -1,0 +1,97 @@
+import SCons.Defaults
+import SCons
+from SCons.Util import unique
+import stat
+import os
+import sys
+import subprocess
+import glob
+import shutil
+from copy import deepcopy
+
+baseDir = "../../"
+sys.path.append(baseDir) #Get globals
+from Globals import *
+from SConstructGlobals import *
+
+envBase = createBaseEnvironment(baseDir, ARGUMENTS)
+
+#include paths
+includePaths = [".", "include"]
+
+#CCFlags
+ccFlags = ['-Wall', '-g']
+
+#source files
+sourceDirectories = ["src/CppUTest", "src/CppUTest/Extensions", "src/Platforms/Gcc"]
+sourceTestDirectories = ["tests", "tests/Extensions"]
+
+sourceFiles = []
+testSourceFiles = []
+
+#Add all .cpp files
+for dir in sourceDirectories:
+    sourceFiles += glob.glob(os.path.join(dir, "*.cpp"))
+for dir in sourceTestDirectories:
+    testSourceFiles += glob.glob(os.path.join(dir, "*.cpp"))
+
+coverageFiles = deepcopy(sourceFiles) #Creates a copy of the list
+    
+#Libs
+libs = []
+testLibs = ["CppUTest"]
+
+#libPath
+libPath = []
+testLibPath = [libDir]
+
+#link flags
+linkFlags = []
+
+Help(
+'''
+SConstruct file for CppUTEST
+
+Targets:
+    create_lib     Builds the CppUTest
+    doxygen        Builds the doxygen documentation
+    unit_test      Builds the project for Unit Tests
+    run_test       Builds and runs the Unit Tests and memcheck and coverage
+'''
+)
+
+###
+# Environment creation
+###
+libEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
+#Override flags
+libEnvironment['CCFLAGS'] = ccFlags
+libEnvironment['LINKFLAGS'] = linkFlags
+libEnvironment['LIBDIR'] = os.path.abspath(libDir)
+
+testEnvironment = createUnitTestEnvironment(envBase, includePaths, testLibs, testLibPath)
+#Override flags
+testEnvironment['CCFLAGS'] = ccFlags +  ["-fprofile-arcs", "-ftest-coverage"]
+testEnvironment['LINKFLAGS'] = linkFlags
+
+#Doxygen 
+doxygenFiles = sourceFiles + testSourceFiles + glob.glob(os.path.join(includeDir, "*h")) +  glob.glob(os.path.join(includeDir, "*", "*h"))
+
+###
+# Targets
+###
+libBuild  = createStaticLib(libEnvironment, "CppUTest", sourceFiles)
+(unitTestBuild, runUnitTests) = createUnitTestExe(testEnvironment, testSourceFiles + sourceFiles, coverageFiles)
+
+doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
+
+Alias("create_lib", libBuild)
+Alias("doxygen", doxygenTarget)
+Alias("unit_test", unitTestBuild)
+Alias("run_unit_test", runUnitTests)
+Alias("run_test", runUnitTests)
+
+Alias ("nightly", ["doxygen", "create_lib"])
+Alias ("delta", ["create_lib"])
+
+Default("create_lib")
