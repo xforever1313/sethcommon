@@ -3,6 +3,7 @@ from SCons.Script import *
 from SCons.Environment import *
 from SCons.Builder import *
 from Globals import *
+from SkyvoCommonGlobals import *
 from multiprocessing import cpu_count
 from operator import itemgetter
 import glob
@@ -35,7 +36,7 @@ else:
 
 globalDebugDefines = ["DEBUG"]
 globalReleaseDefines = ["RELEASE"]
-globalUnitTestDefines = ["UNIT_TEST"]
+globalUnitTestDefines = ["UNIT_TEST", "UT_NEW_MACROS_DISABLED", "UT_NEW_OVERRIDES_DISABLED"]
 
 
 #Compile Flags
@@ -78,7 +79,7 @@ else:
 #Libs
 globalLibsDebug = []
 globalLibsRelease = []
-globalLibsUnitTest = ["gtest", "gmock", "boost_unit_test_framework", "boost_system"]
+globalLibsUnitTest = ["gtest", "gmock", "CppUTest"]
 
 gccUnitTestLibs = ['gcov']
 clangUnitTestLibs = []
@@ -250,7 +251,7 @@ def createReleaseEnvironment(envBase, includePaths, libs, libPath):
 def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
     testEnvironment = envBase.Clone(
         CPPDEFINES = globalDefines + globalUnitTestDefines,
-        CPPPATH = includePaths,
+        CPPPATH = includePaths + [os.path.join(getCppUTestPath(envBase['BASE_DIR']), includeDir)],
         CCFLAGS = globalCXXFlags + globalCXXUnitTestFlags,
         LIBS = libs + globalLibsUnitTest, 
         LIBPATH = libPath,
@@ -259,6 +260,7 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], unitTestDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], unitTestDir))
     )
+    testEnvironment.Append(LIBPATH = os.path.join(getCppUTestPath(envBase['BASE_DIR']), libDir, testEnvironment['SYSTEM']))
     addPlatformFlags(testEnvironment)
 
     if(testEnvironment['CLANG_BUILD']):

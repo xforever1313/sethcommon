@@ -1,4 +1,4 @@
-#include <boost/test/unit_test.hpp>
+#include <CppUTest/TestHarness.h>
 #include <string>
 #include <sstream>
 
@@ -8,11 +8,15 @@
 #include "SCSVChecker.h"
 #include "SCSVConstants.h"
 
-BOOST_AUTO_TEST_CASE(SCSVChecker_checkTest){
+TEST_GROUP(SCSVChecker){
+};
+
+TEST(SCSVChecker, checkTest){
 
     std::string testString = "& , &,";
     std::stringstream ss;
     ss << SCSV_AMP_REPLACE << " " << SCSV_SEPARATOR_REPLACE << " " << SCSV_AMP_REPLACE << SCSV_SEPARATOR_REPLACE;
 
-    BOOST_CHECK_EQUAL(SCSV::SCSVChecker::checkText(testString), ss.str());
+    CHECK_EQUAL(SCSV::SCSVChecker::checkText(testString), ss.str());
 }
+

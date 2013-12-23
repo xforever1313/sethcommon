@@ -31,3 +31,8 @@ SimpleString StringFrom (const std::string& value)
 {
   return SimpleString(value.c_str());
 }
+
+SimpleString StringFrom (unsigned int value)
+{
+  return StringFromFormat("%u", value);
+}

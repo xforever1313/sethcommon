@@ -43,7 +43,7 @@ testLibs = ["CppUTest"]
 
 #libPath
 libPath = []
-testLibPath = [libDir]
+testLibPath = [os.path.join(libDir, envBase['SYSTEM'])]
 
 #link flags
 linkFlags = []
@@ -65,9 +65,10 @@ Targets:
 ###
 libEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
 #Override flags
+libEnvironment['CPPDEFINES'] = ["UT_NEW_MACROS_DISABLED", "UT_NEW_OVERRIDES_DISABLED"]
 libEnvironment['CCFLAGS'] = ccFlags
 libEnvironment['LINKFLAGS'] = linkFlags
-libEnvironment['LIBDIR'] = os.path.abspath(libDir)
+libEnvironment['LIBDIR'] = os.path.join(libDir, envBase['SYSTEM'])
 
 testEnvironment = createUnitTestEnvironment(envBase, includePaths, testLibs, testLibPath)
 #Override flags

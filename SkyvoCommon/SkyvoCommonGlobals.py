@@ -3,6 +3,9 @@ import os
 def getCppUTestPath(baseDir):
     return os.path.join(getCommonPath(baseDir), "CppUTest")
 
+def getTestMain(baseDir):
+    return(os.path.join(getCppUTestPath(baseDir), "skyvoTestMain.cpp"))
+
 def getCommonClassesPath(baseDir):
     return os.path.join(getCommonPath(baseDir), "common_classes")
 

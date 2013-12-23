@@ -43,4 +43,6 @@
 
 SimpleString StringFrom (const std::string& other);
 
+SimpleString StringFrom (unsigned int i);
+
 #endif

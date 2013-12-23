@@ -29,6 +29,7 @@
 #ifndef D_UTestMacros_h
 #define D_UTestMacros_h
 
+#undef TEST
   /*! \brief Define a group of tests
    *
    * All tests in a TEST_GROUP share the same setup

@@ -74,6 +74,7 @@
 
 #include "Utest.h"
 #include "UtestMacros.h"
+#include "Extensions/SimpleStringExtensions.h"
 #include "SimpleString.h"
 #include "TestResult.h"
 #include "Failure.h"

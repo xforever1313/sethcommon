@@ -26,7 +26,7 @@ testIncludePaths = [os.path.join(testDir, includeDir)]
 ###Source Files
 dateVersionFile = os.path.join(srcDir, "SCSVDateVersion.cpp")
 sourceFiles = filterSourceFiles(glob.glob(os.path.join(srcDir, "*.cpp")), [dateVersionFile])
-sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.join(testDir, srcDir, "*.cpp"))
+sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.join(testDir, srcDir, "*.cpp")) + [getTestMain(baseDir)]
 coverageFiles = deepcopy(sourceFiles + [dateVersionFile])
     
 ###Libs
