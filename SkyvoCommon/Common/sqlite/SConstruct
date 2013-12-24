@@ -45,7 +45,7 @@ testIncludePaths = []
 sqliteLibFiles = [os.path.join(srcDir, "sqlite3.c")]
 sqliteShellFiles = [os.path.join(srcDir, "shell.c")]
 sourceFiles = glob.glob(os.path.join(srcDir, "*.cpp")) #our source files
-sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp"))
+sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + [getTestMain(baseDir)]
 coverageFiles = deepcopy(sourceFiles)
 
 ###Link flags
