@@ -1,4 +1,5 @@
-#include <boost/test/unit_test.hpp>
+#include <CppUTest/TestHarness.h>
+#include <iostream>
 
 #include "SkyvoMathDateVersion.h"
 

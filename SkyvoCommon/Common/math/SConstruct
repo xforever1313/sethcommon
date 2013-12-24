@@ -34,7 +34,7 @@ testIncludePaths = [os.path.join(testDir, includeDir)]
 dateVersionFile = (os.path.join(srcDir, 'SkyvoMathDateVersion.cpp'))
 sourceFiles = filterSourceFiles(glob.glob(os.path.join(srcDir, "*.cpp")) +
                                 glob.glob(os.path.join(srcDir, "*/*.cpp")), [dateVersionFile])
-sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.join(testDir, "*/*.cpp"))
+sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.join(testDir, "*/*.cpp")) + [getTestMain(baseDir)]
 coverageFiles = deepcopy(sourceFiles + [dateVersionFile])
 
 ###Libs
