@@ -56,6 +56,7 @@ releaseFiles += [os.path.join(baseDir, "Globals.py")]
 releaseFiles += [os.path.join(baseDir, "SConstructGlobals.py")]
 releaseFiles += [os.path.join(baseDir, "SkyvoCommonGlobals.py")]
 
+releaseFiles += [getTestMain(baseDir)]
 
 buildFiles = ["jobs.py", "buildRelease.py", "build.py"]
 
