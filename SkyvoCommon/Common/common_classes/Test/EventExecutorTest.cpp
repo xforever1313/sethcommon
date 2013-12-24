@@ -1,12 +1,18 @@
-#include <boost/test/unit_test.hpp>
+#include <CppUTest/TestHarness.h>
 
 #define private public
 
 #include "DummyEvent.h"
 #include "EventExecutor.h"
 
+TEST_GROUP(EventExecutor){
+    TEST_SETUP(){
+        DummyEvent::ranCount = 0;
+    }
+};
+
 ///\brief tests the run method
-BOOST_AUTO_TEST_CASE(EventExecutor_runTest){
+TEST(EventExecutor, runTest){
     DummyEvent *event1 = new DummyEvent();
     DummyEvent *event2 = new DummyEvent();
     DummyEvent *event3 = new DummyEvent();
@@ -17,6 +23,7 @@ BOOST_AUTO_TEST_CASE(EventExecutor_runTest){
     DummyEvent *event8 = new DummyEvent();
     DummyEvent *event9 = new DummyEvent();
     DummyEvent *event10 = new DummyEvent();
+    Common::EventExecutor::startRightAway = true;
     Common::EventExecutor *uut = new Common::EventExecutor();
     uut->addEvent(event1);
     uut->addEvent(event2);
@@ -31,13 +38,12 @@ BOOST_AUTO_TEST_CASE(EventExecutor_runTest){
     do {
         DummyEvent::semaphore.wait();
     }while(DummyEvent::getRanCount() < 10);
-    BOOST_CHECK_EQUAL(DummyEvent::getRanCount(), 10);
+    CHECK_EQUAL(DummyEvent::getRanCount(), 10);
     delete uut;
 }
 
 ///\brief tests the destructor when there are tasks left
-BOOST_AUTO_TEST_CASE(EventExecutor_destroyTest){
-    DummyEvent::ranCount = 0;
+TEST(EventExecutor, destroyTest){
     DummyEvent *event1 = new DummyEvent();
     DummyEvent *event2 = new DummyEvent();
     DummyEvent *event3 = new DummyEvent();
@@ -60,7 +66,7 @@ BOOST_AUTO_TEST_CASE(EventExecutor_destroyTest){
     uut->addEvent(event8);
     uut->addEvent(event9);
     uut->addEvent(event10);
-    BOOST_CHECK_EQUAL(DummyEvent::ranCount, 0);
+    CHECK_EQUAL(DummyEvent::ranCount, 0);
     delete uut;
-    BOOST_CHECK_EQUAL(DummyEvent::ranCount, 10);
+    CHECK_EQUAL(DummyEvent::ranCount, 10);
 }

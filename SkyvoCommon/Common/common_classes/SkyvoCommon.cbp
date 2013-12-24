@@ -88,9 +88,6 @@
 			<Add option="-fexceptions" />
 		</Compiler>
 		<Unit filename="SConstruct" />
-		<Unit filename="Test/BoxTest.cpp">
-			<Option target="unit_test" />
-		</Unit>
 		<Unit filename="Test/EventExecutorTest.cpp">
 			<Option target="unit_test" />
 		</Unit>
@@ -106,9 +103,6 @@
 		<Unit filename="Test/StringOpsTest.cpp">
 			<Option target="Debug_lib" />
 			<Option target="Release_lib" />
-			<Option target="unit_test" />
-		</Unit>
-		<Unit filename="Test/UnitTestRunner.cpp">
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="Test/cwrappers/SkyvoStringTest.cpp">

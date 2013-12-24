@@ -92,7 +92,7 @@
 //This check needs the operator!=(), and a StringFrom(YourType) function
 #define CHECK_EQUAL(expected,actual)\
   CHECK_EQUAL_LOCATION(expected, actual, __FILE__, __LINE__)
-
+  
 #define CHECK_EQUAL_LOCATION(expected,actual, file, line)\
   if ((expected) != (actual))\
   {\

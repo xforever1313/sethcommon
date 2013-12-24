@@ -1,5 +1,5 @@
 #include <algorithm>
-#include <boost/test/unit_test.hpp>
+#include <CppUTest/TestHarness.h>
 #include <deque>
 #include <list>
 #include <string>
@@ -9,15 +9,14 @@
 
 #include "StringOps.h"
 
-struct StringOpsFixture{
-    StringOpsFixture() :
-        m_lowerCaseString("abcdefghijklmnopqrstuvwxyz1234567890"),
-        m_upperCaseString("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890"),
-        m_whiteSpacedString(" \t\vH \fe\nl\t \n l\ro\n\t "),
-        m_removedWhiteSpaceString("Hello"),
-        m_tabbedString("\tHello\tWorld\tHi\t\t"),
-        m_removedTabbedString("    Hello    World    Hi        ")
-    {
+TEST_GROUP(StringOps){
+    TEST_SETUP(){
+        m_lowerCaseString = ("abcdefghijklmnopqrstuvwxyz1234567890");
+        m_upperCaseString = ("ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890");
+        m_whiteSpacedString = (" \t\vH \fe\nl\t \n l\ro\n\t ");
+        m_removedWhiteSpaceString = ("Hello");
+        m_tabbedString = ("\tHello\tWorld\tHi\t\t");
+        m_removedTabbedString = ("    Hello    World    Hi        ");
         m_orderedVector = {"!@#$", "123", "al, Alpha", "Beta", "boy", "Cat", "cool", "Dog", "dog", "ever", "EVERYWHERE", "fREd", "Friend",
                           "good", "gOOF", "Hi", "Ho", "Ice cream", "ice CREAM", "Jr.", "Junior Burger", "Kite", "kYlE", "Marsh", "milk", "No", "Not",
                           "Oh Dear", "Oh no!", "Peas", "Peppers", "Queen", "queen", "R", "r", "Seth", "Seth Hendrick", "TV", "tx queue", "U", "u",
@@ -25,9 +24,6 @@ struct StringOpsFixture{
 
         m_orderedDeque = std::deque<std::string>(m_orderedVector.begin(), m_orderedVector.end());
         m_orderedList = std::list<std::string>(m_orderedVector.begin(), m_orderedVector.end());
-    }
-
-    virtual ~StringOpsFixture(){
     }
 
     template <typename T>
@@ -57,155 +53,151 @@ struct StringOpsFixture{
     std::list <std::string> m_orderedList;
 };
 
-BOOST_FIXTURE_TEST_SUITE(StringOpsTest, StringOpsFixture)
-
-BOOST_AUTO_TEST_CASE(StringOps_toLowerCopyTestWithUpperString){
+TEST(StringOps, toLowerCopyTestWithUpperString){
     std::string oldString(m_upperCaseString);
     std::string newString = Common::StringOps::toLowerCaseCopy(m_upperCaseString);
-    BOOST_CHECK_EQUAL(oldString, m_upperCaseString);
-    BOOST_CHECK_EQUAL(newString, m_lowerCaseString);
+    CHECK_EQUAL(oldString, m_upperCaseString);
+    CHECK_EQUAL(newString, m_lowerCaseString);
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_toLowerCopyTestWithLowerString){
+TEST(StringOps, stoLowerCopyTestWithLowerString){
     std::string oldString(m_lowerCaseString);
     std::string newString = Common::StringOps::toLowerCaseCopy(m_lowerCaseString);
-    BOOST_CHECK_EQUAL(oldString, m_lowerCaseString);
-    BOOST_CHECK_EQUAL(newString, m_lowerCaseString);
+    CHECK_EQUAL(oldString, m_lowerCaseString);
+    CHECK_EQUAL(newString, m_lowerCaseString);
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_toLowerModifyTestWithUpperString){
+TEST(StringOps, toLowerModifyTestWithUpperString){
     Common::StringOps::toLowerCaseModify(m_upperCaseString);
-    BOOST_CHECK_EQUAL(m_lowerCaseString, m_upperCaseString);
+    CHECK_EQUAL(m_lowerCaseString, m_upperCaseString);
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_toLowerModifyTestWithLowerString){
+TEST(StringOps, toLowerModifyTestWithLowerString){
     std::string oldString(m_lowerCaseString);
     Common::StringOps::toLowerCaseModify(m_lowerCaseString);
-    BOOST_CHECK_EQUAL(oldString, m_lowerCaseString);
+    CHECK_EQUAL(oldString, m_lowerCaseString);
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_toUpperCopyTestWithLowerString){
+TEST(StringOps, toUpperCopyTestWithLowerString){
     std::string oldString(m_lowerCaseString);
     std::string newString = Common::StringOps::toUpperCaseCopy(m_lowerCaseString);
-    BOOST_CHECK_EQUAL(oldString, m_lowerCaseString);
-    BOOST_CHECK_EQUAL(newString, m_upperCaseString);
+    CHECK_EQUAL(oldString, m_lowerCaseString);
+    CHECK_EQUAL(newString, m_upperCaseString);
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_toUpperCopyTestWithUpperString){
+TEST(StringOps, toUpperCopyTestWithUpperString){
     std::string oldString(m_upperCaseString);
     std::string newString = Common::StringOps::toUpperCaseCopy(m_upperCaseString);
-    BOOST_CHECK_EQUAL(oldString, m_upperCaseString);
-    BOOST_CHECK_EQUAL(newString, m_upperCaseString);
+    CHECK_EQUAL(oldString, m_upperCaseString);
+    CHECK_EQUAL(newString, m_upperCaseString);
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_toUpperModifyTestWithLowerString){
+TEST(StringOps, toUpperModifyTestWithLowerString){
     Common::StringOps::toUpperCaseModify(m_lowerCaseString);
-    BOOST_CHECK_EQUAL(m_lowerCaseString, m_upperCaseString);
+    CHECK_EQUAL(m_lowerCaseString, m_upperCaseString);
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_toUpperModifyTestWithUpperString){
+TEST(StringOps, toUpperModifyTestWithUpperString){
     std::string oldString(m_upperCaseString);
     Common::StringOps::toUpperCaseModify(m_upperCaseString);
-    BOOST_CHECK_EQUAL(oldString, m_upperCaseString);
+    CHECK_EQUAL(oldString, m_upperCaseString);
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_removeWhiteSpaceModifyTest){
+TEST(StringOps, removeWhiteSpaceModifyTest){
     Common::StringOps::removeWhiteSpaceModify(m_whiteSpacedString);
-    BOOST_CHECK_EQUAL(m_whiteSpacedString, m_removedWhiteSpaceString);
+    CHECK_EQUAL(m_whiteSpacedString, m_removedWhiteSpaceString);
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_removeWhiteSpaceCopyTest){
+TEST(StringOps, removeWhiteSpaceCopyTest){
     std::string oldString(m_whiteSpacedString);
 
     std::string newString = Common::StringOps::removeWhiteSpaceCopy(m_whiteSpacedString);
 
-    BOOST_CHECK_EQUAL(oldString, m_whiteSpacedString);
-    BOOST_CHECK_EQUAL(newString, m_removedWhiteSpaceString);
+    CHECK_EQUAL(oldString, m_whiteSpacedString);
+    CHECK_EQUAL(newString, m_removedWhiteSpaceString);
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_replaceTabsWithSpacesModifyTest){
+TEST(StringOps, replaceTabsWithSpacesModifyTest){
     Common::StringOps::replaceTabsWithSpacesModify(m_tabbedString);
-    BOOST_CHECK_EQUAL(m_tabbedString, m_removedTabbedString);
+    CHECK_EQUAL(m_tabbedString, m_removedTabbedString);
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_replaceTabsWithSpacesCopyTest){
+TEST(StringOps, replaceTabsWithSpacesCopyTest){
     std::string oldString(m_tabbedString);
 
     std::string newString = Common::StringOps::replaceTabsWithSpacesCopy(m_tabbedString);
 
-    BOOST_CHECK_EQUAL(m_tabbedString, oldString);
-    BOOST_CHECK_EQUAL(m_removedTabbedString, newString);
+    CHECK_EQUAL(m_tabbedString, oldString);
+    CHECK_EQUAL(m_removedTabbedString, newString);
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_toAlphabeticalOrderModifyVectorTest){
+TEST(StringOps, toAlphabeticalOrderModifyVectorTest){
     for (size_t i = 0; i < 100; ++i){
         std::vector<std::string> unorderedVector(m_orderedVector);
         std::random_shuffle(unorderedVector.begin(), unorderedVector.end());
 
         Common::StringOps::toAlphabeticalOrderModify(unorderedVector);
-        BOOST_CHECK(StringOpsFixture::compareCollections<std::vector<std::string> >(unorderedVector, m_orderedVector));
+        CHECK(compareCollections<std::vector<std::string> >(unorderedVector, m_orderedVector));
     }
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_toAlphabeticalOrderCopyVectorTest){
+TEST(StringOps, toAlphabeticalOrderCopyVectorTest){
     for (size_t i = 0; i < 100; ++i){
         std::vector<std::string> unorderedVector(m_orderedVector);
         std::random_shuffle(unorderedVector.begin(), unorderedVector.end());
 
         std::vector<std::string> oldVector(unorderedVector);
         std::vector<std::string> newVector = Common::StringOps::toAlphabeticalOrderCopy(unorderedVector);
-        BOOST_CHECK(StringOpsFixture::compareCollections<std::vector<std::string> >(newVector, m_orderedVector));
-        BOOST_CHECK(StringOpsFixture::compareCollections<std::vector<std::string> >(oldVector, unorderedVector));
+        CHECK(compareCollections<std::vector<std::string> >(newVector, m_orderedVector));
+        CHECK(compareCollections<std::vector<std::string> >(oldVector, unorderedVector));
     }
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_toAlphabeticalOrderModifyDequeTest){
+TEST(StringOps, toAlphabeticalOrderModifyDequeTest){
     for (size_t i = 0; i < 100; ++i){
         std::deque<std::string> unorderedDeque(m_orderedDeque);
         std::random_shuffle(unorderedDeque.begin(), unorderedDeque.end());
 
         Common::StringOps::toAlphabeticalOrderModify(unorderedDeque);
-        BOOST_CHECK(StringOpsFixture::compareCollections<std::deque<std::string> >(unorderedDeque, m_orderedDeque));
+        CHECK(compareCollections<std::deque<std::string> >(unorderedDeque, m_orderedDeque));
     }
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_toAlphabeticalOrderCopyDequeTest){
+TEST(StringOps, toAlphabeticalOrderCopyDequeTest){
     for (size_t i = 0; i < 100; ++i){
         std::deque<std::string> unorderedDeque(m_orderedDeque);
         std::random_shuffle(unorderedDeque.begin(), unorderedDeque.end());
 
         std::deque<std::string> oldDeque(unorderedDeque);
         std::deque<std::string> newDeque = Common::StringOps::toAlphabeticalOrderCopy(unorderedDeque);
-        BOOST_CHECK(StringOpsFixture::compareCollections<std::deque<std::string> >(newDeque, m_orderedDeque));
-        BOOST_CHECK(StringOpsFixture::compareCollections<std::deque<std::string> >(oldDeque, unorderedDeque));
+        CHECK(compareCollections<std::deque<std::string> >(newDeque, m_orderedDeque));
+        CHECK(compareCollections<std::deque<std::string> >(oldDeque, unorderedDeque));
     }
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_toAlphabeticalOrderModifyListTest){
+TEST(StringOps, toAlphabeticalOrderModifyListTest){
     for (size_t i = 0; i < 100; ++i){
         std::vector<std::string> unorderedVector(m_orderedVector);
         std::random_shuffle(unorderedVector.begin(), unorderedVector.end());
         std::list <std::string> unorderedList(unorderedVector.begin(), unorderedVector.end());
 
         Common::StringOps::toAlphabeticalOrderModify(unorderedList);
-        BOOST_CHECK(StringOpsFixture::compareCollections<std::list<std::string> >(unorderedList, m_orderedList));
+        CHECK(compareCollections<std::list<std::string> >(unorderedList, m_orderedList));
     }
 }
 
-BOOST_AUTO_TEST_CASE(StringOps_toAlphabeticalOrderCopyListTest){
+TEST(StringOps, toAlphabeticalOrderCopyListTest){
     for (size_t i = 0; i < 100; ++i){
         std::vector<std::string> unorderedVector(m_orderedVector);
         std::random_shuffle(unorderedVector.begin(), unorderedVector.end());
         std::list <std::string> unorderedList(unorderedVector.begin(), unorderedVector.end());
 
         Common::StringOps::toAlphabeticalOrderModify(unorderedList);
-        BOOST_CHECK(StringOpsFixture::compareCollections<std::list<std::string> >(unorderedList, m_orderedList));;
+        CHECK(compareCollections<std::list<std::string> >(unorderedList, m_orderedList));;
 
         std::list<std::string> oldList(unorderedList);
         std::list<std::string> newList = Common::StringOps::toAlphabeticalOrderCopy(unorderedList);
-        BOOST_CHECK(StringOpsFixture::compareCollections<std::list<std::string> >(newList, m_orderedList));
-        BOOST_CHECK(StringOpsFixture::compareCollections<std::list<std::string> >(oldList, unorderedList));
+        CHECK(compareCollections<std::list<std::string> >(newList, m_orderedList));
+        CHECK(compareCollections<std::list<std::string> >(oldList, unorderedList));
     }
 }
-
-BOOST_AUTO_TEST_SUITE_END()
