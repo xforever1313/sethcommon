@@ -1,4 +1,4 @@
-#include <boost/test/unit_test.hpp>
+#include <CppUTest/TestHarness.h>
 
 #define private public
 
@@ -6,84 +6,86 @@
 #include "SemaphoreWaiter.h"
 #include "SkyvoSemaphore.h"
 
+TEST_GROUP(Semaphore){
+};
+
 ///\brief tests the wait method with an inital count set to zero
-BOOST_AUTO_TEST_CASE(Semaphore_waitTestDefaultConstructor){
+TEST(Semaphore, waitTestDefaultConstructor){
     SkyvoOS::SkyvoSemaphore *uut = new SkyvoOS::SkyvoSemaphore;
     SemaphorePoster poster(uut);
-    BOOST_CHECK_EQUAL(uut->getSemaphoreCount(), 0); //Zero by default
+    CHECK_EQUAL(uut->getSemaphoreCount(), 0); //Zero by default
     poster.start();
     uut->wait();
-    BOOST_CHECK(poster.getPosted()); //If it gets here, the test was successful, as the program didn't hang
+    CHECK(poster.getPosted()); //If it gets here, the test was successful, as the program didn't hang
     poster.join(); //Wait for thread to exit
-    BOOST_CHECK_EQUAL(uut->getSemaphoreCount(), 0); //Should stay at zero
+    CHECK_EQUAL(uut->getSemaphoreCount(), 0); //Should stay at zero
     delete uut;
 }
 
 ///\brief tests the wait method with an inital count not set to zero
-BOOST_AUTO_TEST_CASE(Semaphore_waitTest){
+TEST(Semaphore, waitTest){
     SkyvoOS::SkyvoSemaphore uut(1);
-    BOOST_CHECK_EQUAL(uut.getSemaphoreCount(), 1);
+    CHECK_EQUAL(uut.getSemaphoreCount(), 1);
     uut.wait();
-    BOOST_CHECK_EQUAL(uut.getSemaphoreCount(), 0);
+    CHECK_EQUAL(uut.getSemaphoreCount(), 0);
     //If it gets here, the test was successful, as the program didn't hang (no blocking should happen when semahpore count greater than zero
 }
 
-
 ///\brief tests the tryWait method
-BOOST_AUTO_TEST_CASE(Semaphore_tryWaitTestGreaterThanZero){
+TEST(Semaphore, tryWaitTestGreaterThanZero){
     SkyvoOS::SkyvoSemaphore uut(1);
-    BOOST_CHECK_EQUAL(uut.getSemaphoreCount(), 1);
-    BOOST_CHECK(uut.tryWait()); //Should return true, as the count is greater than zero.
-    BOOST_CHECK(!uut.tryWait()); //Should return false, as the count is zero.
+    CHECK_EQUAL(uut.getSemaphoreCount(), 1);
+    CHECK(uut.tryWait()); //Should return true, as the count is greater than zero.
+    CHECK(!uut.tryWait()); //Should return false, as the count is zero.
     //The program should NOT hang
 }
 
 ///\brief tests the tryWait method with initial count at zero
-BOOST_AUTO_TEST_CASE(Semaphore_tryWaitTestAtZero){
+TEST(Semaphore, tryWaitTestAtZero){
     SkyvoOS::SkyvoSemaphore uut;
-    BOOST_CHECK_EQUAL(uut.getSemaphoreCount(), 0);
-    BOOST_CHECK(!uut.tryWait()); //Should return false, as the count is zero.
-    BOOST_CHECK(!uut.tryWait()); //Should return false, as the count is zero.
+    CHECK_EQUAL(uut.getSemaphoreCount(), 0);
+    CHECK(!uut.tryWait()); //Should return false, as the count is zero.
+    CHECK(!uut.tryWait()); //Should return false, as the count is zero.
     //The program should NOT hang
 }
 
 ///\brief tests the timedWait method not At zero
-BOOST_AUTO_TEST_CASE(Semaphore_timedWaitTestNotAtZero){
+TEST(Semaphore, timedWaitTestNotAtZero){
     SkyvoOS::SkyvoSemaphore *uut = new SkyvoOS::SkyvoSemaphore(1);
-    BOOST_CHECK_EQUAL(uut->getSemaphoreCount(), 1);
-    BOOST_CHECK(uut->timedWait(10));
-    BOOST_CHECK_EQUAL(uut->getSemaphoreCount(), 0);
-    BOOST_CHECK(!uut->timedWait(10));
-    BOOST_CHECK_EQUAL(uut->getSemaphoreCount(), 0);
+    CHECK_EQUAL(uut->getSemaphoreCount(), 1);
+    CHECK(uut->timedWait(10));
+    CHECK_EQUAL(uut->getSemaphoreCount(), 0);
+    CHECK(!uut->timedWait(10));
+    CHECK_EQUAL(uut->getSemaphoreCount(), 0);
     delete uut;
 }
 
 ///\brief tests the timedWait method
-BOOST_AUTO_TEST_CASE(Semaphore_timedWaitTest){
+TEST(Semaphore, timedWaitTest){
     SkyvoOS::SkyvoSemaphore *uut = new SkyvoOS::SkyvoSemaphore();
     SemaphorePoster poster1(uut);
     poster1.start();
-    BOOST_CHECK(!uut->timedWait(250)); //Timeout before the thing gets posted, should return false
-    BOOST_CHECK(!poster1.getPosted());
+    CHECK(!uut->timedWait(250)); //Timeout before the thing gets posted, should return false
+    CHECK(!poster1.getPosted());
     poster1.join();
 
     SemaphorePoster poster2 (uut);
     poster2.start();
-    BOOST_CHECK(uut->timedWait(600)); //Wait longer than the post time, should return true from getting posted
+    CHECK(uut->timedWait(600)); //Wait longer than the post time, should return true from getting posted
     poster2.join();
 
     delete uut;
 }
 
 ///\brief tests that all wait methods return after a shutdown
-BOOST_AUTO_TEST_CASE(Semaphore_shutdownTest){
+TEST(Semaphore, shutdownTest){
     SkyvoOS::SkyvoSemaphore *uut1 = new SkyvoOS::SkyvoSemaphore();
-    BOOST_CHECK(!uut1->isShutdown());
+    CHECK(!uut1->isShutdown());
     uut1->shutdown();
-    BOOST_CHECK(uut1->isShutdown());
+    CHECK(uut1->isShutdown());
     uut1->wait(); //thread should not block
-    BOOST_CHECK(uut1->tryWait());
-    BOOST_CHECK(uut1->timedWait(10000));
+    CHECK(uut1->tryWait());
+    CHECK(uut1->timedWait(10000));
     delete uut1;
 
     //Test the case where the semaphore is waiting,
@@ -99,7 +101,7 @@ BOOST_AUTO_TEST_CASE(Semaphore_shutdownTest){
     waiter2.join();
     waiter3.join();
     //If the program doesn't hang, test successful!
-    BOOST_CHECK(uut2->isShutdown());
+    CHECK(uut2->isShutdown());
 
     delete uut2;
 }

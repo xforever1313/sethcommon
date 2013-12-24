@@ -1,5 +1,5 @@
-#include <boost/test/unit_test.hpp>
 #include <gmock/gmock.h>
+#include <CppUTest/TestHarness.h>
 
 #define private public
 
@@ -7,16 +7,15 @@
 #include "cwrappers/SkyvoMutexCWrapper.h"
 #include "cwrappers/SkyvoMutexStruct.h"
 
-struct SkyvoMutexCWrapperFixture{
-    SkyvoMutexCWrapperFixture() :
-        m_mutex(new testing::StrictMock<SkyvoOS::MockSkyvoMutex>()),
-        m_uut(createMutex())
-    {
+TEST_GROUP(SkyvoMutexCWrapper){
+    TEST_SETUP(){
+        m_mutex = new testing::StrictMock<SkyvoOS::MockSkyvoMutex>();
+        m_uut = createMutex();
         delete m_uut->m_mutex;
         m_uut->m_mutex = m_mutex;
     }
 
-    virtual ~SkyvoMutexCWrapperFixture(){
+    TEST_TEARDOWN(){
         deleteMutex(m_uut);
         //m_mutex is deleted in m_uut
     }
@@ -24,16 +23,12 @@ struct SkyvoMutexCWrapperFixture{
     SkyvoMutex_t *m_uut;
 };
 
-BOOST_FIXTURE_TEST_SUITE(SkyvoMutexCWrapperTest, SkyvoMutexCWrapperFixture)
-
-BOOST_AUTO_TEST_CASE(SkyvoMutexCWrapper_lockTest){
+TEST(SkyvoMutexCWrapper, lockTest){
     EXPECT_CALL(*m_mutex, lock());
     lockMutex(m_uut);
 }
 
-BOOST_AUTO_TEST_CASE(SkyvoMutexCWrapper_unlockTest){
+TEST(SkyvoMutexCWrapper, unlockTest){
     EXPECT_CALL(*m_mutex, unlock());
     unlockMutex(m_uut);
 }
-
-BOOST_AUTO_TEST_SUITE_END()
