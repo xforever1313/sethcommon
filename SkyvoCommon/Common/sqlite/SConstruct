@@ -93,6 +93,7 @@ debugEnvironment['CPPDEFINES'] = cppDefines
 debugEnvironment['CXXFLAGS'] = ['-std=gnu++11']
 debugEnvironment['CCFLAGS'] = debugFlags + commonCompileFlags
 debugEnvironment['LINKFLAGS'] = commonLinkFlags + debugLinkFlags
+addPlatformFlags(debugEnvironment)
 
 #Release Environment
 releaseEnvironment = createReleaseEnvironment(envBase, includePaths, libs, libPath)
@@ -100,10 +101,12 @@ releaseEnvironment['CPPDEFINES'] = cppDefines
 releaseEnvironment['CXXFLAGS'] = ['-std=gnu++11']
 releaseEnvironment['CCFLAGS'] = releaseFlags + commonCompileFlags
 releaseEnvironment['LINKFLAGS'] = commonLinkFlags + releaseLinkFlags
+addPlatformFlags(releaseEnvironment)
 
 #Unit test environment
 testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, testLibs, libPath)
 testEnvironment.Append(CPPDEFINES = cppDefines)
+addPlatformFlags(testEnvironment)
 
 #Doxygen
 doxygenFiles = sourceFiles + sourceTestFiles + glob.glob(os.path.join(includeDir, "*h")) + glob.glob(os.path.join(testDir, includeDir, "*h"))

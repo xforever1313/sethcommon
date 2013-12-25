@@ -15,6 +15,9 @@ from Globals import *
 from SkyvoCommonGlobals import *
 from SConstructGlobals import *
 
+#Make common environment
+envBase = createBaseEnvironment(baseDir, ARGUMENTS)
+
 ###
 # Files to compile
 ###
@@ -32,7 +35,9 @@ coverageFiles = deepcopy(sourceFiles + [dateVersionFile])
 
 ###Libs
 libs = []
-testLibs = ["pthread"] + libs
+testLibs = [] + libs
+if (not envBase['ASM_JS_BUILD']):
+    testLibs += ["pthread"]
 
 ###libPath
 libPath = []
@@ -55,9 +60,6 @@ Targets:
 ###
 # Environment creation
 ###
-
-#Make common environment
-envBase = createBaseEnvironment(baseDir, ARGUMENTS)
 
 #Debug Environment
 debugEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)

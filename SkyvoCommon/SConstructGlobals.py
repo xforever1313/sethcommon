@@ -47,9 +47,7 @@ globalCXXReleaseFlags = ["-O3", "-Wswitch-enum", "-fdata-sections", "-ffunction-
 globalCXXUnitTestFlags = ["-g"]
 
 clangGlobalCXXFlags = ['-Wno-return-type-c-linkage', '-stdlib=libc++']
-clangUnitTestFlags = []
-if (sys.platform == "darwin"):
-    clangUnitTestFlags += ['-DGTEST_USE_OWN_TR1_TUPLE=1']
+clangUnitTestFlags = ['-DGTEST_USE_OWN_TR1_TUPLE=1']
 
 gccGlobalCXXFlags = ['-Wclobbered', '-Wdouble-promotion']
 gccUnitTestCXXFlags = ['-fprofile-arcs', '-ftest-coverage']
@@ -111,7 +109,7 @@ def clangBuildAdd(env):
         if (sys.platform == "darwin"):
             env.Append(CCFLAGS = ['-isystem', '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/c++/v1'])
             env.Append(CCFLAGS = ['-isystem', '/skyvo/include'])
-        else:
+        elif (sys.platform != "win32"):
             env.Append(CCFLAGS = ['-isystem', '/usr/include/i386-linux-gnu/c++/4.8'])
             env.Append(CCFLAGS = ['-isystem', '/usr/include/c++/4.8.1'])
 
@@ -123,16 +121,37 @@ def serverBuildAdd(env):
         env.Append(LIBPATH = ['/skyvo/lib'])
         env.Append(CCFLAGS = ['-isystem', '/skyvo/include'])
 
+def asmJSBuildAdd(env):
+    if (env['ASM_JS_BUILD']):
+        env.Append(CCFLAGS = ['-s', 'ASM_JS=1', '-O2', '-Wno-warn-absolute-paths', '-s', 'DISABLE_EXCEPTION_CATCHING=0'])
+        env.Append(LINKFLAGS = ['-s', 'ASM_JS=1', '-O2', '-Wno-warn-absolute-paths', '-s', 'DISABLE_EXCEPTION_CATCHING=0'])
+        env['PROGSUFFIX'] = ".js"
+        if (sys.platform == "win32"):
+            try:
+                globalLibsDebug.remove("debug_new")
+                globalLibsUnitTest.remove("debug_new")
+            except:
+                pass #Fails on the second go around.
+            
+
+def windowsBuildAdd(env):
+    if (sys.platform == "win32"):
+        env.Append(CCFLAGS = ['-isystem', os.environ['CPPPATH']])
+        env.Append(LIBPATH = [os.path.join(os.environ['LIBPATH'], env['SYSTEM'])])
+
+            
 def addPlatformFlags(env):
     serverBuildAdd(env)
     clangBuildAdd(env)
     armBuildAdd(env)
+    asmJSBuildAdd(env)
+    windowsBuildAdd(env)
 
 def addSystemDefines(env):
     system = ""
     if (env['SYSTEM'] == "mingw32"):
         system = "MINGW"
-    elif (env['SYSTEM'] == "clangArm" or env['SYSTEM'] == "clangx86"):
+    elif (env['SYSTEM'] == "clangArm" or env['SYSTEM'] == "clangx86" or env['SYSTEM'] == "asmjs"):
         system = "CLANG"
     else:
         system = "GCC"
@@ -142,14 +161,32 @@ def createBaseEnvironment (rootDir, args):
     serverBuild = parseArguments(args)
     clangBuild = (args.get('clang_build', '0') == '1')
     armBuild = (args.get('arm_build', '0') == '1')
+    asmJSBuild = (args.get('asmjs', '0') == '1')
 
-    if (sys.platform == "win32"):
+    if (asmJSBuild):
+        print "Building for ASM.js"
+        env = Environment(
+            tools = ["mingw"],
+            CC = "emcc",
+            CXX = "emcc",
+            LINK = "emcc",
+            AR = "emar",
+            RANLIB = "emranlib",
+            SERVER_BUILD = serverBuild,
+            ARM_BUILD = False,
+            CLANG_BUILD = True,
+            ASM_JS_BUILD = True,
+            SYSTEM = "asmjs"
+        )
+    
+    elif (sys.platform == "win32"):
         print "Building for mingw32"
         env = Environment(            
             tools = ["mingw"],
             SERVER_BUILD = False,
             ARM_BUILD = False,
             CLANG_BUILD = False,
+            ASM_JS_BUILD = False,
             SYSTEM = "mingw32"
         )
     elif(clangBuild):
@@ -162,6 +199,7 @@ def createBaseEnvironment (rootDir, args):
                 SERVER_BUILD = serverBuild,
                 ARM_BUILD = True,
                 CLANG_BUILD = True,
+                ASM_JS_BUILD = False,
                 SYSTEM = "clangArm"    
             )
         else:
@@ -173,6 +211,7 @@ def createBaseEnvironment (rootDir, args):
                 SERVER_BUILD = serverBuild,
                 ARM_BUILD = False,
                 CLANG_BUILD = True,
+                ASM_JS_BUILD = False,
                 SYSTEM = "clangx86"
             ) 
     else:
@@ -185,6 +224,7 @@ def createBaseEnvironment (rootDir, args):
                 SERVER_BUILD = True,
                 ARM_BUILD = False,
                 CLANG_BUILD = False,
+                ASM_JS_BUILD = False,
                 SYSTEM = "gccx86"
             )
         else:
@@ -193,12 +233,17 @@ def createBaseEnvironment (rootDir, args):
                 SERVER_BUILD = False,
                 ARM_BUILD = False,
                 CLANG_BUILD = False,
+                ASM_JS_BUILD = False,
                 SYSTEM = "gccx86"
             )
     baseEnvironment = env.Clone(
         PROJECT_ROOT = os.path.abspath("."),
         ENV = {'PATH' : os.environ['PATH']} #Look in path for tools
     )
+    if (sys.platform == "win32"):
+        baseEnvironment['ENV']['emscripten'] = os.environ['emscripten']
+        baseEnvironment['ENV']['HOME'] = os.environ['USERPROFILE']
+        baseEnvironment['ENV']['NUMBER_OF_PROCESSORS'] = cpu_count()
     baseEnvironment['BASE_DIR'] = os.path.abspath(rootDir)
     return baseEnvironment
     
@@ -457,7 +502,9 @@ def cppCheckBuilder(target, source, env):
 def testRunner(target, source, env):
     thisDir = os.getcwd()
     cwdDir = env['BINDIR']
-    if (sys.platform == "win32"):
+    if (env['ASM_JS_BUILD']):
+        status = subprocess.call("node unit_test.js", cwd=cwdDir, shell=True)
+    elif (sys.platform == "win32"):
         status = subprocess.call("unit_test.exe", cwd=cwdDir, shell=True)
     else:
         status = subprocess.call("./unit_test", cwd=cwdDir, shell=True)
@@ -496,5 +543,4 @@ def testRunner(target, source, env):
         for file in gcovGlob:
             shutil.move(file, codeCoverageDir)
             
-    elif (status != 0):
-        raise Exception("Test Failed!")
+    return status

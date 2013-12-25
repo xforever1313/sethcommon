@@ -52,14 +52,12 @@ std::string FileSystem::getCWD(){
     std::string::size_type pos = ret.find_last_of( "\\/" ); //Get rid of the filename
     ret = ret.substr(0, pos);
     
-    #elif DARWIN
+    #else
     
     char dir [PATH_MAX];
     getcwd(dir, PATH_MAX);
     ret = std::string(dir);
-    #else
-    char *dir = get_current_dir_name();
-    ret = std::string(dir);
+
     #endif
     return ret;
 }

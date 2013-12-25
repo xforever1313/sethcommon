@@ -3,29 +3,23 @@ import SCons
 from SCons.Util import unique
 import sys
 
-sys.path.append("../../") #Get globals
+baseDir = "../../"
+sys.path.append(baseDir) #Get globals
 from Globals import *
 from SConstructGlobals import *
 from SkyvoCommonGlobals import *
 
-if (sys.platform == "win32"):
-    env = Environment(tools = ["mingw"])
-else:
-    env = Environment(tools = ["default", "gcc", "g++"])
+envBase = createBaseEnvironment(baseDir, ARGUMENTS)
 
 #Make commonCXX environment
-BaseCXXEnvironment = env.Clone(
-    ENV = {'PATH' : os.environ['PATH']}, #Look in path for tools
-    PROJECT_ROOT = Dir("."),
-    OBJPREFIX = os.path.join(Dir(objectDir).abspath, "lib") + '/',
-    LIBDIR = libDir,
-    CCFLAGS = globalCXXDebugFlags,
-    LINKFLAGS = globalLinkerFlags
-)
+CXXEnvironment = createDebugEnvironment(envBase, [], [], [])
+CXXEnvironment['CCFLAGS'] = ['-g', '-std=gnu++11']
+CXXEnvironment['LIBDIR'] = os.path.join(libDir, CXXEnvironment['SYSTEM'])
+addPlatformFlags(CXXEnvironment)
 
-debugNewObject = BaseCXXEnvironment.Object("debug_new.cpp")
+debugNewObject = CXXEnvironment.Object("debug_new.cpp")
 
-buildDebugNew = BaseCXXEnvironment.StaticLibrary(target = os.path.join("lib","debug_new"), source = debugNewObject)
+buildDebugNew = createStaticLib(CXXEnvironment, "debug_new", debugNewObject)
 
 Alias("create_lib", buildDebugNew)
 
