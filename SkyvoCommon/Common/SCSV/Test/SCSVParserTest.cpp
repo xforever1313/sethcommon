@@ -3,6 +3,7 @@
 #define private public
 
 #include "SCSVConstants.h"
+#include "SCSVException.h"
 #include "SCSVParser.h"
 #include "TestHelper.h"
 
@@ -13,8 +14,6 @@ TEST_GROUP(SCSVParser){
 TEST(SCSVParser, defaultConstructionTest){
     SCSV::SCSVParser uut;
     CHECK_EQUAL(uut.m_space_filler, SCSV_DEFAULT_STRING);
-
-    uut.getErrorMessage(SCSV::SCSV_DEFAULT); //get full coverage by calling default value
 }
 
 ///\brief tests the case where there are no missing values.
@@ -208,8 +207,8 @@ void testConvertEscapeCodesException(std::string stringToTest, SCSV::SCSVLoadErr
         uut.convertEscapeCodes(stringToTest);
         CHECK(false);
     }
-    catch(const SCSV::SCSVLoadErrors &e){
-        CHECK_EQUAL(errorToCatch, e);
+    catch(const SCSV::SCSVException &e){
+        CHECK_EQUAL(errorToCatch, e.getError());
     }
 }
 
@@ -248,17 +247,5 @@ TEST(SCSVParser, convertEscapeCodesTest){
 
     //Invaid escape code
     testConvertEscapeCodesException("&derp; hello", SCSV::SCSV_INVALID_ESCAPE_CODE);
-}
-
-///\brief tests the getErrorMessage class (really only used for coverage)
-TEST(SCSVParser, getErrorMessageTest){
-    SCSV::SCSVParser uut;
-
-    //Ensure the okay message returns an empty string
-    CHECK_EQUAL(uut.getErrorMessage(SCSV::SCSV_OKAY), "");
-
-    for (int e = static_cast<int>(SCSV::SCSV_OKAY) + 1; e != SCSV::SCSV_DEFAULT; ++e){
-        CHECK(uut.getErrorMessage(static_cast<SCSV::SCSVLoadErrors>(e)) != "");
-    }
 }
 

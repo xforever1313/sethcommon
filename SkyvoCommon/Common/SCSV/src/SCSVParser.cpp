@@ -1,3 +1,4 @@
+#include "SCSVException.h"
 #include "SCSVParser.h"
 
 namespace SCSV{
@@ -29,7 +30,7 @@ SCSVParser::SCSVFileStatus_t SCSVParser::parseCsvFile(const std::string &csvFile
         inFile.open(csvFileLocation.c_str());
         inFile.peek();
         if (inFile.fail()){
-            throw SCSV_OPEN_ERR;
+            throw SCSVException(SCSV_OPEN_ERR);
         }
         while (!inFile.fail() && !inFile.eof()){
             std::string csvLine = getLine(inFile);
@@ -52,14 +53,16 @@ SCSVParser::SCSVFileStatus_t SCSVParser::parseCsvFile(const std::string &csvFile
             inFile.close();
             #endif
 
-            throw SCSV_CORRUPTED_FILE;
+            throw SCSVException(SCSV_CORRUPTED_FILE);
         }
         inFile.close();
-        status = generateErrorStatus(SCSV_OKAY);
+        status.errorNumber = SCSV_OKAY;
+	status.errorMessage = "";
         status.CSVValues = cells;
     }
-    catch (const SCSVLoadErrors &e){
-        status = generateErrorStatus(e);
+    catch (const SCSVException &e){
+        status.errorNumber = e.getError();
+        status.errorMessage = std::string(e.what());
     }
 
     return status;
@@ -83,7 +86,7 @@ std::vector<std::string> SCSVParser::parseCSVLine(const std::string &csvLine) co
     unsigned int secondIndex = 0;
 
     if (csvLine.back() != '\n'){
-        throw SCSV_ROW_MISSING_NEW_LINE;
+        throw SCSVException(SCSV_ROW_MISSING_NEW_LINE);
     }
 
     for (unsigned int i = 0; i < csvLine.size(); ++i){
@@ -102,14 +105,6 @@ std::vector<std::string> SCSVParser::parseCSVLine(const std::string &csvLine) co
     }
 
     return ret;
-}
-
-SCSVParser::SCSVFileStatus_t SCSVParser::generateErrorStatus(const SCSVLoadErrors &errorNum) const{
-    SCSVFileStatus_t status;
-    status.errorNumber = errorNum;
-    status.errorMessage = getErrorMessage(errorNum);
-
-    return status;
 }
 
 std::string SCSVParser::convertEscapeCodes(const std::string &s) const{
@@ -134,20 +129,20 @@ std::string SCSVParser::convertEscapeCodes(const std::string &s) const{
 
             //If we reached the end of the string before hitting ';', throw
             if (i == s.size()){
-                throw SCSV_MISSING_ESCAPE_CODE_END;
+                throw SCSVException(SCSV_MISSING_ESCAPE_CODE_END);
             }
             switch (s[i]){
                 //Can't have a separator within an escape sequence, throw
                 case SCSV_SEPARATOR:
-                    throw SCSV_MISSING_ESCAPE_CODE_END;
+                    throw SCSVException(SCSV_MISSING_ESCAPE_CODE_END);
 
                 //Can't have an amp within an escape sequence, throw
                 case SCSV_AMP:
-                    throw SCSV_MISSING_ESCAPE_CODE_END;
+                    throw SCSVException(SCSV_MISSING_ESCAPE_CODE_END);
 
                 //Can't have a new line within an escape sequence, throw
                 case '\n':
-                    throw SCSV_MISSING_ESCAPE_CODE_END;
+                    throw SCSVException(SCSV_MISSING_ESCAPE_CODE_END);
 
                 //Otherwise, convert escape code to a char
                 default:
@@ -159,7 +154,7 @@ std::string SCSVParser::convertEscapeCodes(const std::string &s) const{
                         ss << SCSV_AMP;
                     }
                     else{
-                        throw SCSV_INVALID_ESCAPE_CODE;
+                        throw SCSVException(SCSV_INVALID_ESCAPE_CODE);
                     }
             }
         }
@@ -172,39 +167,4 @@ std::string SCSVParser::convertEscapeCodes(const std::string &s) const{
     return ss.str();
 }
 
-std::string SCSVParser::getErrorMessage(const SCSVLoadErrors &errorNum) const{
-    std::string s = "";
-
-    switch (errorNum){
-
-        case SCSV_OKAY:
-            s = "";
-        break;
-
-        case SCSV_OPEN_ERR:
-            s = "Could not open CSV file";
-        break;
-
-        case SCSV_CORRUPTED_FILE:
-            s = "The CSV file seems to have been corrupted";
-        break;
-
-        case SCSV_ROW_MISSING_NEW_LINE:
-            s = "Row is missing a new line character";
-        break;
-
-        case SCSV_INVALID_ESCAPE_CODE:
-            s = "Invalid escape code";
-        break;
-
-        case SCSV_MISSING_ESCAPE_CODE_END:
-            s = "Missing escape code ending";
-        break;
-
-        default:
-            s = "An unknown CSV load error occured!";
-    }
-
-    return s;
-}
 }

@@ -42,8 +42,6 @@ class SCSVParser{
 
         SCSVFileStatus_t generateErrorStatus(const SCSVLoadErrors &errorNum) const;
 
-        std::string getErrorMessage(const SCSVLoadErrors &errorNum)const;
-
         ///\brief converts any strings with &escapeCode; to the proper form
         std::string convertEscapeCodes(const std::string &s) const;
 
