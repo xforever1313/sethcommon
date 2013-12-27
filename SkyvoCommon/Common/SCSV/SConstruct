@@ -15,6 +15,14 @@ from Globals import *
 from SkyvoCommonGlobals import *
 from SConstructGlobals import *
 
+#Make common environment
+envBase = createBaseEnvironment(baseDir, ARGUMENTS)
+
+#additional flags
+testLinkFlags = []
+if (envBase['ASM_JS_BUILD']):
+    testLinkFlags += ['--embed-file', os.path.join(testDir, 'SCSVTestfiles')]
+
 ###
 # Files to compile
 ###
@@ -54,9 +62,6 @@ Targets:
 # Environment creation
 ###
 
-#Make common environment
-envBase = createBaseEnvironment(baseDir, ARGUMENTS)
-
 #Debug Environment
 debugEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
 
@@ -65,6 +70,7 @@ releaseEnvironment = createReleaseEnvironment(envBase, includePaths, libs, libPa
 
 #Unit test environment
 testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, libs, libPath)
+testEnvironment.Append(LINKFLAGS = testLinkFlags)
 
 ###Doxygen
 doxygenFiles = [dateVersionFile] + sourceFiles + sourceTestFiles + glob.glob(os.path.join(includeDir, "*h")) + glob.glob(os.path.join(testDir, includeDir, "*h"))

@@ -28,24 +28,24 @@ class SCSVParser{
         SCSVParser();
 
         ///\param - spaceFiller what to fill an empty cell with
-        SCSVParser(std::string spaceFiller);
+        SCSVParser(const std::string &spaceFiller);
 
         virtual ~SCSVParser();
 
         ///\param csvFileLocation - path, relitive to exe file, to the csv file
-        SCSVFileStatus_t parseCsvFile(std::string csvFileLocation) const;
+        SCSVFileStatus_t parseCsvFile(const std::string &csvFileLocation) const;
 
     private:
         std::string getLine(std::ifstream &inFile) const;
 
-        std::vector<std::string> parseCSVLine(std::string csvLine) const;
+        std::vector<std::string> parseCSVLine(const std::string &csvLine) const;
 
-        SCSVFileStatus_t generateErrorStatus(SCSVLoadErrors errorNum) const;
+        SCSVFileStatus_t generateErrorStatus(const SCSVLoadErrors &errorNum) const;
 
-        std::string getErrorMessage(SCSVLoadErrors errorNum)const;
+        std::string getErrorMessage(const SCSVLoadErrors &errorNum)const;
 
         ///\brief converts any strings with &escapeCode; to the proper form
-        std::string convertEscapeCodes(std::string) const;
+        std::string convertEscapeCodes(const std::string &s) const;
 
         std::string m_space_filler;
 

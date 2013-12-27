@@ -123,6 +123,7 @@ def serverBuildAdd(env):
 
 def asmJSBuildAdd(env):
     if (env['ASM_JS_BUILD']):
+        env.Append(CPPDEFINES = ['ASM_JS'])
         env.Append(CCFLAGS = ['-s', 'ASM_JS=1', '-O2', '-Wno-warn-absolute-paths', '-s', 'DISABLE_EXCEPTION_CATCHING=0'])
         env.Append(LINKFLAGS = ['-s', 'ASM_JS=1', '-O2', '-Wno-warn-absolute-paths', '-s', 'DISABLE_EXCEPTION_CATCHING=0'])
         env['PROGSUFFIX'] = ".js"
@@ -503,7 +504,10 @@ def testRunner(target, source, env):
     thisDir = os.getcwd()
     cwdDir = env['BINDIR']
     if (env['ASM_JS_BUILD']):
-        status = subprocess.call("node unit_test.js", cwd=cwdDir, shell=True)
+        command = "node " + os.path.join(env['BINDIR'], 'unit_test.js')
+        print command
+        status = subprocess.call(command, cwd='.', shell=True)
+        #status = subprocess.call("node unit_test.js", cwd=cwdDir, shell=True)
     elif (sys.platform == "win32"):
         status = subprocess.call("unit_test.exe", cwd=cwdDir, shell=True)
     else:

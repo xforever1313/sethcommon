@@ -7,7 +7,7 @@ SCSVParser::SCSVParser() :
 {
 }
 
-SCSVParser::SCSVParser(std::string space_filler) :
+SCSVParser::SCSVParser(const std::string &space_filler) :
     m_space_filler(space_filler)
 {
     #ifdef UNIT_TEST
@@ -19,7 +19,7 @@ SCSVParser::~SCSVParser(){
 }
 
 
-SCSVParser::SCSVFileStatus_t SCSVParser::parseCsvFile(std::string csvFileLocation) const{
+SCSVParser::SCSVFileStatus_t SCSVParser::parseCsvFile(const std::string &csvFileLocation) const{
 
     SCSVFileStatus_t status;
 
@@ -76,7 +76,7 @@ std::string SCSVParser::getLine(std::ifstream &inFile) const{
     return ss.str();
 }
 
-std::vector<std::string> SCSVParser::parseCSVLine(std::string csvLine) const{
+std::vector<std::string> SCSVParser::parseCSVLine(const std::string &csvLine) const{
     std::vector<std::string> ret;
 
     unsigned int firstIndex = 0;
@@ -104,7 +104,7 @@ std::vector<std::string> SCSVParser::parseCSVLine(std::string csvLine) const{
     return ret;
 }
 
-SCSVParser::SCSVFileStatus_t SCSVParser::generateErrorStatus(SCSVLoadErrors errorNum) const{
+SCSVParser::SCSVFileStatus_t SCSVParser::generateErrorStatus(const SCSVLoadErrors &errorNum) const{
     SCSVFileStatus_t status;
     status.errorNumber = errorNum;
     status.errorMessage = getErrorMessage(errorNum);
@@ -112,7 +112,7 @@ SCSVParser::SCSVFileStatus_t SCSVParser::generateErrorStatus(SCSVLoadErrors erro
     return status;
 }
 
-std::string SCSVParser::convertEscapeCodes(std::string s) const{
+std::string SCSVParser::convertEscapeCodes(const std::string &s) const{
 
     std::stringstream ss;
 
@@ -172,7 +172,7 @@ std::string SCSVParser::convertEscapeCodes(std::string s) const{
     return ss.str();
 }
 
-std::string SCSVParser::getErrorMessage(SCSVLoadErrors errorNum) const{
+std::string SCSVParser::getErrorMessage(const SCSVLoadErrors &errorNum) const{
     std::string s = "";
 
     switch (errorNum){
