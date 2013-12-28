@@ -71,8 +71,17 @@ SCSVParser::SCSVFileStatus_t SCSVParser::parseCsvFile(const std::string &csvFile
 std::string SCSVParser::getLine(std::ifstream &inFile) const{
     std::stringstream ss;
     while (inFile.peek() != '\n' && !inFile.eof() && !inFile.fail()){
-
-        ss.put(inFile.get());
+        char c = inFile.get();
+        
+        #ifdef ASM_JS
+        //compiling with emscripten with files preloaded causes all \n to have \r in front of it
+        if (c != '\r'){  //ignore cariage returns
+        #endif
+            ss.put(c);
+        
+        #ifdef ASM_JS
+        }
+        #endif
     }
     ss.put(inFile.get()); //keep \n
 

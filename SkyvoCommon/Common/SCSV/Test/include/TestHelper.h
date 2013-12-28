@@ -7,10 +7,6 @@
 * \author Seth Hendrick
 */
 
-#ifdef ASM_JS
-const std::string csvFileDirectory = "/Test/SCSVTestfiles";
-#else
 const std::string csvFileDirectory = "../../../Test/SCSVTestfiles";
-#endif
 
 #endif // TESTHELPER_H_INCLUDED

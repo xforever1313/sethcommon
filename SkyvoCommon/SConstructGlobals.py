@@ -358,7 +358,6 @@ def createCppCheckTarget(env, sources):
     cppCheck = Builder(action = cppCheckBuilder)
     env.Append(BUILDERS = {"cppCheck" : cppCheck})
     target = env.cppCheck(target = cppCheckData, source = sources)
-    AlwaysBuild(target)
     return target
 
 def createApiMoveTarget(env, apiFiles):
@@ -504,10 +503,7 @@ def testRunner(target, source, env):
     thisDir = os.getcwd()
     cwdDir = env['BINDIR']
     if (env['ASM_JS_BUILD']):
-        command = "node " + os.path.join(env['BINDIR'], 'unit_test.js')
-        print command
-        status = subprocess.call(command, cwd='.', shell=True)
-        #status = subprocess.call("node unit_test.js", cwd=cwdDir, shell=True)
+        status = subprocess.call("node unit_test.js", cwd=cwdDir, shell=True)
     elif (sys.platform == "win32"):
         status = subprocess.call("unit_test.exe", cwd=cwdDir, shell=True)
     else:
