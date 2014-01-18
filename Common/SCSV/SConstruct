@@ -16,7 +16,7 @@ from SkyvoCommonGlobals import *
 from SConstructGlobals import *
 
 #Make common environment
-envBase = createBaseEnvironment(baseDir, ARGUMENTS)
+envBase = createBaseEnvironment(baseDir, baseDir, ARGUMENTS)
 
 #additional flags
 testLinkFlags = []

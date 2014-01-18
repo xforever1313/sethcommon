@@ -158,7 +158,7 @@ def addSystemDefines(env):
         system = "GCC"
     env.Append(CPPDEFINES = [system])
 
-def createBaseEnvironment (rootDir, args):
+def createBaseEnvironment (rootDir, skyvoCommonPath, args):
     serverBuild = parseArguments(args)
     clangBuild = (args.get('clang_build', '0') == '1')
     armBuild = (args.get('arm_build', '0') == '1')
@@ -246,6 +246,7 @@ def createBaseEnvironment (rootDir, args):
         baseEnvironment['ENV']['HOME'] = os.environ['USERPROFILE']
         baseEnvironment['ENV']['NUMBER_OF_PROCESSORS'] = cpu_count()
     baseEnvironment['BASE_DIR'] = os.path.abspath(rootDir)
+    baseEnvironment['COMMON_DIR'] = os.path.abspath(skyvoCommonPath)
     return baseEnvironment
     
 def createDebugEnvironment(envBase, includePaths, libs, libPath):
@@ -297,7 +298,7 @@ def createReleaseEnvironment(envBase, includePaths, libs, libPath):
 def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
     testEnvironment = envBase.Clone(
         CPPDEFINES = globalDefines + globalUnitTestDefines,
-        CPPPATH = includePaths + [os.path.join(getCppUTestPath(envBase['BASE_DIR']), includeDir)],
+        CPPPATH = includePaths + [os.path.join(getCppUTestPath(envBase['COMMON_DIR']), includeDir)],
         CCFLAGS = globalCXXFlags + globalCXXUnitTestFlags,
         LIBS = libs + globalLibsUnitTest, 
         LIBPATH = libPath,
@@ -306,7 +307,7 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], unitTestDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], unitTestDir))
     )
-    testEnvironment.Append(LIBPATH = os.path.join(getCppUTestPath(envBase['BASE_DIR']), libDir, testEnvironment['SYSTEM']))
+    testEnvironment.Append(LIBPATH = os.path.join(getCppUTestPath(envBase['COMMON_DIR']), libDir, testEnvironment['SYSTEM']))
     addPlatformFlags(testEnvironment)
 
     if(testEnvironment['CLANG_BUILD']):

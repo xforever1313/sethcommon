@@ -22,7 +22,7 @@ serverBuild = parseArguments(ARGUMENTS)
 ###
 
 #Make common environment
-envBase = createBaseEnvironment(baseDir, ARGUMENTS)
+envBase = createBaseEnvironment(baseDir, baseDir, ARGUMENTS)
 
 ###cpp defines
 cppDefines = ['PACKAGE_NAME="\\"sqlite\\""', 'PACKAGE_TARNAME="\\"sqlite\\""', 'PACKAGE_VERSION="\\"3.7.17\\""'] + \

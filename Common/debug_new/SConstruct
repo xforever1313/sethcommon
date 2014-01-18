@@ -1,6 +1,7 @@
 import SCons.Defaults
 import SCons
 from SCons.Util import unique
+import glob
 import sys
 
 baseDir = "../../"
@@ -9,7 +10,7 @@ from Globals import *
 from SConstructGlobals import *
 from SkyvoCommonGlobals import *
 
-envBase = createBaseEnvironment(baseDir, ARGUMENTS)
+envBase = createBaseEnvironment(baseDir, baseDir, ARGUMENTS)
 
 #Make commonCXX environment
 CXXEnvironment = createDebugEnvironment(envBase, [], [], [])
@@ -17,7 +18,7 @@ CXXEnvironment['CCFLAGS'] = ['-g', '-std=gnu++11']
 CXXEnvironment['LIBDIR'] = os.path.join(libDir, CXXEnvironment['SYSTEM'])
 addPlatformFlags(CXXEnvironment)
 
-debugNewObject = CXXEnvironment.Object("debug_new.cpp")
+debugNewObject = CXXEnvironment.Object(glob.glob("*.cpp"))
 
 buildDebugNew = createStaticLib(CXXEnvironment, "debug_new", debugNewObject)
 
