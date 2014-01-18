@@ -7,7 +7,7 @@ from jobs import *
 
 baseDir = "../"
 sys.path.append(baseDir) #Get globals
-from Globals import thisDir
+from Globals import thisDir, getRevisionNumber
 
 arm = False
 
@@ -17,9 +17,12 @@ def getVersionString():
     versionFile = open('version.txt', 'r')
     versionString = versionFile.readline().strip()
     versionFile.close()
-    revisionFile = open('revision.txt', 'r')
-    versionString += '+' + revisionFile.readline().strip()
-    revisionFile.close()
+    try:
+        revisionFile = open('revision.txt', 'r')
+        versionString += '+' + revisionFile.readline().strip()
+        revisionFile.close()
+    except:
+        versionString += '+' + getRevisionNumber()
     return versionString
 
 versionString = getVersionString() 
