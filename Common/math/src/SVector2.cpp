@@ -72,4 +72,24 @@ void SVector2::operator/=(const float &f){
     m_y /= f;
 }
 
+SVector2 SVector2::operator+(const SVector2 &other) const{
+    return SVector2(m_x + other.m_x, m_y + other.m_y);
+}
+
+SVector2 SVector2::operator-(const SVector2 &other) const{
+    return SVector2(m_x - other.m_x, m_y - other.m_y);
+}
+
+SVector2 SVector2::operator*(const float &f) const{
+    return SVector2(m_x * f, m_y * f);
+}
+
+SVector2 SVector2::operator/(const float &f) const{
+    return SVector2(m_x / f, m_y / f);
+}
+
+float SVector2::dot(const SVector2 &other) const{
+    return (m_x * other.m_x) + (m_y * other.m_y);
+}
+
 }

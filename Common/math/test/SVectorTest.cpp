@@ -98,3 +98,59 @@ TEST(SVector2, operatorDivideEqualsTest){
     DOUBLES_EQUAL(m_x / f, m_uut->getX(), 0.001);
     DOUBLES_EQUAL(m_y / f, m_uut->getY(), 0.001);
 }
+
+TEST(SVector2, operatorPlusTest){
+    Math::SVector2 result = (*m_uut) + (*m_other);
+
+    CHECK_EQUAL(m_uut->getX(), m_x);
+    CHECK_EQUAL(m_uut->getY(), m_y);
+    CHECK_EQUAL(m_other->getX(), m_x2);
+    CHECK_EQUAL(m_other->getY(), m_y2);
+
+    DOUBLES_EQUAL(m_x + m_x2, result.getX(), 0.001);
+    DOUBLES_EQUAL(m_y + m_y2, result.getY(), 0.001);
+}
+
+TEST(SVector2, operatorSubtractTest){
+    Math::SVector2 result = (*m_uut) - (*m_other);
+
+    CHECK_EQUAL(m_uut->getX(), m_x);
+    CHECK_EQUAL(m_uut->getY(), m_y);
+    CHECK_EQUAL(m_other->getX(), m_x2);
+    CHECK_EQUAL(m_other->getY(), m_y2);
+
+    DOUBLES_EQUAL(m_x - m_x2, result.getX(), 0.001);
+    DOUBLES_EQUAL(m_y - m_y2, result.getY(), 0.001);
+}
+
+TEST(SVector2, operatorMultiplyTest){
+    float f = 3;
+    Math::SVector2 result = (*m_uut) * f;
+
+    CHECK_EQUAL(m_uut->getX(), m_x);
+    CHECK_EQUAL(m_uut->getY(), m_y);
+
+    DOUBLES_EQUAL(m_x * f, result.getX(), 0.001);
+    DOUBLES_EQUAL(m_y * f, result.getY(), 0.001);
+}
+
+TEST(SVector2, operatorDivideTest){
+    float f = 3;
+    Math::SVector2 result = (*m_uut) / f;
+
+    CHECK_EQUAL(m_uut->getX(), m_x);
+    CHECK_EQUAL(m_uut->getY(), m_y);
+
+    DOUBLES_EQUAL(m_x / f, result.getX(), 0.001);
+    DOUBLES_EQUAL(m_y / f, result.getY(), 0.001);
+}
+
+TEST(SVector2, dotTest){
+    float f = m_uut->dot(*m_other);
+    CHECK_EQUAL(m_uut->getX(), m_x);
+    CHECK_EQUAL(m_uut->getY(), m_y);
+    CHECK_EQUAL(m_other->getX(), m_x2);
+    CHECK_EQUAL(m_other->getY(), m_y2);
+
+    CHECK_EQUAL(f, (m_x * m_x2) + (m_y * m_y2));
+}
