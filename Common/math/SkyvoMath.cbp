@@ -56,6 +56,11 @@
 			<Option target="release_lib" />
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="include/SVector2.h">
+			<Option target="debug_lib" />
+			<Option target="release_lib" />
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="include/SkyvoMathDateVersion.h">
 			<Option target="debug_lib" />
 			<Option target="release_lib" />
@@ -71,6 +76,11 @@
 			<Option target="release_lib" />
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="src/SVector2.cpp">
+			<Option target="debug_lib" />
+			<Option target="release_lib" />
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="src/SkyvoMathDateVersion.cpp">
 			<Option target="debug_lib" />
 			<Option target="release_lib" />
@@ -82,10 +92,10 @@
 		<Unit filename="test/PointTest.cpp">
 			<Option target="unit_test" />
 		</Unit>
-		<Unit filename="test/SkyvoMathDateVersionTest.cpp">
+		<Unit filename="test/SVectorTest.cpp">
 			<Option target="unit_test" />
 		</Unit>
-		<Unit filename="test/UnitTestRunner.cpp">
+		<Unit filename="test/SkyvoMathDateVersionTest.cpp">
 			<Option target="unit_test" />
 		</Unit>
 		<Extensions>
