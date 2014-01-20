@@ -3,6 +3,10 @@
 
 namespace Math{
 
+SVector2 SVector2::fromPolar(const float &magnitude, const float &angleRadians){
+    return Operations::polarToCartesian(magnitude, angleRadians);
+}
+
 SVector2::SVector2() :
     m_x(0),
     m_y(0)
@@ -94,11 +98,11 @@ float SVector2::dot(const SVector2 &other) const{
 }
 
 float SVector2::magnitudeSquared() const{
-    return Operations::distanceSquared(m_x, m_y);
+    return Operations::magnitudeSquared(m_x, m_y);
 }
 
 float SVector2::magnitude() const{
-    return Operations::distance(m_x, m_y);
+    return Operations::magnitude(m_x, m_y);
 }
 
 }

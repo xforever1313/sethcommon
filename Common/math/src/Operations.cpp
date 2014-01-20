@@ -6,20 +6,20 @@
 
 namespace Math{
 
-float Operations::distanceSquared(const float &x, const float &y){
+float Operations::magnitudeSquared(const float &x, const float &y){
     return (x * x) + (y * y);
 }
 
-float Operations::distanceSquared(const float &x, const float &y, const float &z){
+float Operations::magnitudeSquared(const float &x, const float &y, const float &z){
     return (x * x) + (y * y) + (z * z);
 }
 
-float Operations::distance(const float &x, const float &y){
-    return std::sqrt(distanceSquared(x, y));
+float Operations::magnitude(const float &x, const float &y){
+    return std::sqrt(magnitudeSquared(x, y));
 }
 
-float Operations::distance(const float &x, const float &y, const float &z){
-    return std::sqrt(distanceSquared(x, y, z));
+float Operations::magnitude(const float &x, const float &y, const float &z){
+    return std::sqrt(magnitudeSquared(x, y, z));
 }
 
 float Operations::radians(const float &degrees){
@@ -38,4 +38,9 @@ SVector2 Operations::polarToCartesian(const float &radius, const float &angleRad
     return SVector2(radius * std::cos(angleRadians) + offset.getX(), radius * std::sin(angleRadians) + offset.getY());
 }
 
+SVector2 Operations::midPoint(const float &x1, const float &y1, const float &x2, const float &y2){
+    return SVector2((x1 + x2) / 2.0f, (y1 + y2) / 2.0f);
 }
+
+}
+

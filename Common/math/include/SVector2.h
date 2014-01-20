@@ -5,6 +5,8 @@ namespace Math{
 
 class SVector2{
     public:
+        /// \brief creates an SVector based on the given polar coordiante
+        static SVector2 fromPolar(const float &magnitude, const float &angleRadians);
 
         /// \brief Construct a vector whose X and Y are both zero
         SVector2();

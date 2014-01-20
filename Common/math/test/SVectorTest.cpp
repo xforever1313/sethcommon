@@ -30,6 +30,17 @@ TEST_GROUP(SVector2){
     Math::SVector2 *m_other;
 };
 
+TEST(SVector2, fromPolarTest){
+    float radius = 20;
+    float angle = 135; //degrees
+    Math::SVector2 expected (-14.142135f, 14.142135f);
+
+    Math::SVector2 actual = Math::SVector2::fromPolar(radius, Math::Operations::radians(angle));
+
+    DOUBLES_EQUAL(expected.getX(), actual.getX(), 0.0001);
+    DOUBLES_EQUAL(expected.getY(), actual.getY(), 0.0001);
+}
+
 TEST(SVector2, defaultConstructorTest){
     Math::SVector2 s;
     CHECK_EQUAL(s.m_x, 0);
@@ -158,10 +169,10 @@ TEST(SVector2, dotTest){
 
 TEST(SVector2, magnitudeSquaredTest){
     float f = m_uut->magnitudeSquared();
-    DOUBLES_EQUAL(f, Math::Operations::distanceSquared(m_x, m_y), 0.001);
+    DOUBLES_EQUAL(f, Math::Operations::magnitudeSquared(m_x, m_y), 0.001);
 }
 
 TEST(SVector2, magnitudeTest){
     float f = m_uut->magnitude();
-    DOUBLES_EQUAL(f, Math::Operations::distance(m_x, m_y), 0.001);
+    DOUBLES_EQUAL(f, Math::Operations::magnitude(m_x, m_y), 0.001);
 }

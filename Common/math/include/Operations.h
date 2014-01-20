@@ -7,11 +7,11 @@ namespace Math{
 
 class Operations{
     public:
-        static float distanceSquared(const float &x, const float &y);
-        static float distanceSquared(const float &x, const float &y, const float &z);
+        static float magnitudeSquared(const float &x, const float &y);
+        static float magnitudeSquared(const float &x, const float &y, const float &z);
 
-        static float distance(const float &x, const float &y);
-        static float distance(const float &x, const float &y, const float &z);
+        static float magnitude(const float &x, const float &y);
+        static float magnitude(const float &x, const float &y, const float &z);
 
         /// \brief converts the given degrees to radians
         static float radians(const float &degrees);
@@ -32,6 +32,8 @@ class Operations{
         /// \return a vector of cartesian coordiantes
         static SVector2 polarToCartesian(const float &radius, const float &angleRadians, const SVector2 &offset);
 
+        static SVector2 midPoint(const float &x1, const float &y1, const float &x2, const float &y2);
+
     private:
         Operations();
         ~Operations();
@@ -40,3 +42,4 @@ class Operations{
 }
 
 #endif // OPERATIONS_H
+
