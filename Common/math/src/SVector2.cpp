@@ -1,3 +1,6 @@
+#include <cfloat>
+#include <cmath>
+
 #include "Operations.h"
 #include "SVector2.h"
 
@@ -97,12 +100,36 @@ float SVector2::dot(const SVector2 &other) const{
     return (m_x * other.m_x) + (m_y * other.m_y);
 }
 
-float SVector2::magnitudeSquared() const{
+float SVector2::getMagnitudeSquared() const{
     return Operations::magnitudeSquared(m_x, m_y);
 }
 
-float SVector2::magnitude() const{
+float SVector2::getMagnitude() const{
     return Operations::magnitude(m_x, m_y);
 }
 
+void SVector2::normalize(){
+    float mag = getMagnitude();
+    if (mag >= FLT_EPSILON){ //NO OP if zero.
+        m_x = m_x / mag;
+        m_y = m_y / mag;
+    }
 }
+
+void SVector2::setMagnitude(const float &mag){
+    normalize();
+    (*this) *= mag;
+}
+
+void SVector2::limit(const float &lim){
+    if ((getMagnitudeSquared()) > (lim * lim)){
+        setMagnitude(lim);
+    }
+}
+
+float SVector2::getHeading() const{
+    return -1.0f * (std::atan2(-m_y, m_x));
+}
+
+}
+

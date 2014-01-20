@@ -13,6 +13,13 @@ class Operations{
         static float magnitude(const float &x, const float &y);
         static float magnitude(const float &x, const float &y, const float &z);
 
+        static float distanceSquared(const float &x1, const float &y1, const float &x2, const float &y2);
+        static float distanceSquared(const float &x1, const float &y1, const float &z1, 
+                                     const float &x2, const float &y2, const float &z2);
+        static float distance(const float &x1, const float &y1, const float &x2, const float &y2);
+        static float distance(const float &x1, const float &y1, const float &z1, 
+                              const float &x2, const float &y2, const float &z2);
+
         /// \brief converts the given degrees to radians
         static float radians(const float &degrees);
 
@@ -41,5 +48,5 @@ class Operations{
 
 }
 
-#endif // OPERATIONS_H
+#endif 
 

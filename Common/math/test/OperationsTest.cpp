@@ -9,8 +9,11 @@
 
 TEST_GROUP(Operations){
     float x = 10;
+    float x2 = 15;
     float y = 20;
+    float y2 = 25;
     float z = 30;
+    float z2 = 35;
 };
 
 TEST(Operations, magnitudeSquaredTest2){
@@ -31,6 +34,29 @@ TEST(Operations, magnitudeTest2){
 TEST(Operations, magnitudeTest3){
     float ans = std::sqrt((x * x) + (y * y) + (z * z));
     DOUBLES_EQUAL(ans, Math::Operations::magnitude(x, y, z), 0.001);
+}
+
+///\details http://en.wikipedia.org/wiki/Distance
+TEST(Operations, distanceSquaredTest2){
+    float ans = ((x - x2) * (x - x2)) + ((y - y2) * (y - y2));
+    DOUBLES_EQUAL(ans, Math::Operations::distanceSquared(x, y, x2, y2), 0.0001);
+}
+
+TEST(Operations, distanceSquaredTest3){
+    float ans = ((x - x2) * (x - x2)) + ((y - y2) * (y - y2)) + ((z - z2) * (z - z2));
+    DOUBLES_EQUAL(ans, Math::Operations::distanceSquared(x, y, z, x2, y2, z2), 0.0001);
+}
+
+TEST(Operations, distanceTest2){
+    float ans = ((x - x2) * (x - x2)) + ((y - y2) * (y - y2));
+    ans =std::sqrt(ans);
+    DOUBLES_EQUAL(ans, Math::Operations::distance(x, y, x2, y2), 0.0001);
+}
+
+TEST(Operations, distanceTest3){
+    float ans = ((x - x2) * (x - x2)) + ((y - y2) * (y - y2)) + ((z - z2) * (z - z2));
+    ans = std::sqrt(ans);
+    DOUBLES_EQUAL(ans, Math::Operations::distance(x, y, z, x2, y2, z2), 0.0001);
 }
 
 /// \details http://www.analyzemath.com/Calculators_2/convert_degrees_radians.html

@@ -168,11 +168,71 @@ TEST(SVector2, dotTest){
 }
 
 TEST(SVector2, magnitudeSquaredTest){
-    float f = m_uut->magnitudeSquared();
+    float f = m_uut->getMagnitudeSquared();
     DOUBLES_EQUAL(f, Math::Operations::magnitudeSquared(m_x, m_y), 0.001);
 }
 
 TEST(SVector2, magnitudeTest){
-    float f = m_uut->magnitude();
+    float f = m_uut->getMagnitude();
     DOUBLES_EQUAL(f, Math::Operations::magnitude(m_x, m_y), 0.001);
 }
+
+TEST(SVector2, normalizeTest){
+    m_uut->setX(3);
+    m_uut->setY(4); //Create 3, 4, 5 right triangle
+    m_uut->normalize();
+    DOUBLES_EQUAL(3.0f / 5.0f, m_uut->getX(), 0.0001);
+    DOUBLES_EQUAL(4.0f / 5.0f, m_uut->getY(), 0.0001);
+    DOUBLES_EQUAL(m_uut->getMagnitude(), 1.0f, 0.0001);
+}
+
+TEST(SVector2, normalizeZeroTest){
+    m_uut->setX(0);
+    m_uut->setY(0);
+    m_uut->normalize();
+    CHECK_EQUAL(m_uut->getMagnitude(), 0);
+}
+
+TEST(SVector2, setMagnitudeTest){
+    m_uut->setX(3);
+    m_uut->setY(4); //Create 3, 4, 5 right triangle
+    m_uut->setMagnitude(10.0f);
+    DOUBLES_EQUAL(6.0f, m_uut->getX(), 0.0001);
+    DOUBLES_EQUAL(8.0f, m_uut->getY(), 0.0001);
+    DOUBLES_EQUAL(m_uut->getMagnitude(), 10.0f, 0.0001);
+}
+
+TEST(SVector2, setMagnitudeZeroTest){
+    m_uut->setX(0);
+    m_uut->setY(0);
+    m_uut->setMagnitude(12);
+    CHECK_EQUAL(m_uut->getMagnitude(), 0);
+}
+
+TEST(SVector2, overLimitTest){
+    m_uut->setX(6);
+    m_uut->setY(8);
+    m_uut->limit(5);
+    DOUBLES_EQUAL(3.0f, m_uut->getX(), 0.0001);
+    DOUBLES_EQUAL(4.0f, m_uut->getY(), 0.0001);
+    DOUBLES_EQUAL(m_uut->getMagnitude(), 5.0f, 0.0001);
+}
+
+TEST(SVector2, underLimitTest){
+    m_uut->setX(6);
+    m_uut->setY(8);
+    m_uut->limit(20);
+    CHECK_EQUAL(m_uut->getX(), 6);
+    CHECK_EQUAL(m_uut->getY(), 8);
+    DOUBLES_EQUAL(m_uut->getMagnitude(), 10.0f, 0.0001);
+}
+
+TEST(SVector2, headingTest){
+    m_uut->setX(3);
+    m_uut->setY(4); //Create 3, 4, 5 right triangle
+    DOUBLES_EQUAL(0.9272952f, m_uut->getHeading(), 0.0001);
+
+    m_uut->setX(-3);
+    DOUBLES_EQUAL(2.214297f, m_uut->getHeading(), 0.0001);
+}
+

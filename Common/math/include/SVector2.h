@@ -28,7 +28,7 @@ class SVector2{
         float getX() const;
         float getY() const;
 
-        /// \return the opposite of this vector (both x and y are negative)
+        /// \return the opposite of this vector (both x and y are negated)
         SVector2 operator-() const;
 
         /// \brief use vector addition to add another vector to THIS vector
@@ -68,10 +68,26 @@ class SVector2{
         float dot(const SVector2 &other) const;
 
         /// \return the square of the magnitude (length) of the vector
-        float magnitudeSquared() const;
+        float getMagnitudeSquared() const;
 
         /// \return the magnitude (length) of the vector.
-        float magnitude() const;
+        float getMagnitude() const;
+
+        /// \brief sets THIS vector's magnitude to 1.  The direction stays the same.
+        /// \note Nothing happens if the Vector's magnitude is zero.
+        void normalize();
+
+        ///\brief sets the magnitude of the vector to the given value.  Direction stays the same.
+        /// \note Nothing happens if the Vector's magnitude is zero.
+        void setMagnitude(const float &mag);
+
+        /// \brief If the magnitude of the vector is greater than the passed in value, the magnitude
+        /// Is set the the passed in value.
+        /// \note you must call this every time you want to limit the vector.
+        void limit(const float &lim);
+
+        /// \brief returns the angle of rotation of the vector.
+        float getHeading() const;
 
     private:
         float m_x;

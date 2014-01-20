@@ -22,6 +22,24 @@ float Operations::magnitude(const float &x, const float &y, const float &z){
     return std::sqrt(magnitudeSquared(x, y, z));
 }
 
+float Operations::distanceSquared(const float &x1, const float &y1, const float &x2, const float &y2){
+    return ((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2));
+}
+
+float Operations::distanceSquared(const float &x1, const float &y1, const float &z1, 
+                                  const float &x2, const float &y2, const float &z2){
+    return ((x1 - x2) * (x1 - x2)) + ((y1 - y2) * (y1 - y2)) + ((z1 - z2) * (z1 - z2));
+}
+
+float Operations::distance(const float &x1, const float &y1, const float &x2, const float &y2){
+    return std::sqrt(distanceSquared(x1, y1, x2, y2));
+}
+
+float Operations::distance(const float &x1, const float &y1, const float &z1, 
+                           const float &x2, const float &y2, const float &z2){
+    return std::sqrt(distanceSquared(x1, y1, z1, x2, y2, z2));
+}
+
 float Operations::radians(const float &degrees){
     return (degrees * PI) / 180.0f;
 }
