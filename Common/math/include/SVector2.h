@@ -65,6 +65,12 @@ class SVector2{
         /// \note This vector and other are not changed
         float dot(const SVector2 &other) const;
 
+        /// \return the square of the magnitude (length) of the vector
+        float magnitudeSquared() const;
+
+        /// \return the magnitude (length) of the vector.
+        float magnitude() const;
+
     private:
         float m_x;
         float m_y;

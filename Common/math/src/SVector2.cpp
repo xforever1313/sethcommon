@@ -1,3 +1,4 @@
+#include "Operations.h"
 #include "SVector2.h"
 
 namespace Math{
@@ -90,6 +91,14 @@ SVector2 SVector2::operator/(const float &f) const{
 
 float SVector2::dot(const SVector2 &other) const{
     return (m_x * other.m_x) + (m_y * other.m_y);
+}
+
+float SVector2::magnitudeSquared() const{
+    return Operations::distanceSquared(m_x, m_y);
+}
+
+float SVector2::magnitude() const{
+    return Operations::distance(m_x, m_y);
 }
 
 }

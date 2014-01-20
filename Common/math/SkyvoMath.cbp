@@ -51,6 +51,11 @@
 			<Option target="release_lib" />
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="include/Operations.h">
+			<Option target="debug_lib" />
+			<Option target="release_lib" />
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="include/Point.h">
 			<Option target="debug_lib" />
 			<Option target="release_lib" />
@@ -71,6 +76,11 @@
 			<Option target="release_lib" />
 			<Option target="unit_test" />
 		</Unit>
+		<Unit filename="src/Operations.cpp">
+			<Option target="debug_lib" />
+			<Option target="release_lib" />
+			<Option target="unit_test" />
+		</Unit>
 		<Unit filename="src/Point.cpp">
 			<Option target="debug_lib" />
 			<Option target="release_lib" />
@@ -87,6 +97,9 @@
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="test/BoxTest.cpp">
+			<Option target="unit_test" />
+		</Unit>
+		<Unit filename="test/OperationsTest.cpp">
 			<Option target="unit_test" />
 		</Unit>
 		<Unit filename="test/PointTest.cpp">

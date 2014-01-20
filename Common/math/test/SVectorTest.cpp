@@ -3,6 +3,7 @@
 #define private public
 #define protected public
 
+#include "Operations.h"
 #include "SVector2.h"
 
 TEST_GROUP(SVector2){
@@ -153,4 +154,14 @@ TEST(SVector2, dotTest){
     CHECK_EQUAL(m_other->getY(), m_y2);
 
     CHECK_EQUAL(f, (m_x * m_x2) + (m_y * m_y2));
+}
+
+TEST(SVector2, magnitudeSquaredTest){
+    float f = m_uut->magnitudeSquared();
+    DOUBLES_EQUAL(f, Math::Operations::distanceSquared(m_x, m_y), 0.001);
+}
+
+TEST(SVector2, magnitudeTest){
+    float f = m_uut->magnitude();
+    DOUBLES_EQUAL(f, Math::Operations::distance(m_x, m_y), 0.001);
 }
