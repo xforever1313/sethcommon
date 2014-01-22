@@ -3,6 +3,7 @@
 #define private public
 #define protected public
 
+#include "Constants.h"
 #include "Operations.h"
 #include "SVector2.h"
 
@@ -71,6 +72,24 @@ TEST(SVector2, setTest){
     m_uut->set(m_x2, m_y2);
     CHECK_EQUAL(m_uut->getX(), m_x2);
     CHECK_EQUAL(m_uut->getY(), m_y2);
+}
+
+TEST(SVector2, setFromPolarTest){
+    float radius = 2.0f;
+    float angle = Math::PI;
+    m_uut->setFromPolar(radius, angle);
+    DOUBLES_EQUAL(m_uut->getX(), -radius, 0.0001);
+    DOUBLES_EQUAL(m_uut->getY(), 0.0f, 0.0001);
+
+    angle = Math::HALF_PI;
+    m_uut->setFromPolar(radius, angle);
+    DOUBLES_EQUAL(m_uut->getX(), 0, 0.0001);
+    DOUBLES_EQUAL(m_uut->getY(), radius, 0.0001);
+
+    angle = 0;
+    m_uut->setFromPolar(radius, angle);
+    DOUBLES_EQUAL(m_uut->getX(), radius, 0.0001);
+    DOUBLES_EQUAL(m_uut->getY(), 0, 0.0001);
 }
 
 TEST(SVector2, setNegateTest){
@@ -234,5 +253,26 @@ TEST(SVector2, headingTest){
 
     m_uut->setX(-3);
     DOUBLES_EQUAL(2.214297f, m_uut->getHeading(), 0.0001);
+}
+
+TEST(SVector2, rotateTest){
+    m_uut->setX(1);
+    m_uut->setY(0);
+
+    m_uut->rotate(Math::HALF_PI);
+    DOUBLES_EQUAL(m_uut->getX(), 0, 0.0001);
+    DOUBLES_EQUAL(m_uut->getY(), 1, 0.0001);
+
+    m_uut->rotate(Math::HALF_PI);
+    DOUBLES_EQUAL(m_uut->getX(), -1, 0.0001);
+    DOUBLES_EQUAL(m_uut->getY(), 0, 0.0001);
+
+    m_uut->rotate(Math::HALF_PI);
+    DOUBLES_EQUAL(m_uut->getX(), 0, 0.0001);
+    DOUBLES_EQUAL(m_uut->getY(), -1, 0.0001);
+
+    m_uut->rotate(Math::HALF_PI);
+    DOUBLES_EQUAL(m_uut->getX(), 1, 0.0001);
+    DOUBLES_EQUAL(m_uut->getY(), 0, 0.0001);
 }
 

@@ -66,7 +66,7 @@ TEST(Operations, RadianTest){
 }
 
 TEST(Operations, DegreeTest){
-    float radians = TWO_PI;
+    float radians = Math::TWO_PI;
     DOUBLES_EQUAL(360, Math::Operations::degrees(radians), 0.0001);
 }
 

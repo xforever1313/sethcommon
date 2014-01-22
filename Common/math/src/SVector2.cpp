@@ -43,6 +43,11 @@ void SVector2::set(const float &x, const float &y){
     m_y = y;
 }
 
+void SVector2::setFromPolar(const float &radius, const float &angle){
+    m_x = radius * std::cos(angle);
+    m_y = radius * std::sin(angle);
+}
+
 void SVector2::setNegate(){
     m_x = -m_x;
     m_y = -m_y;
@@ -129,6 +134,12 @@ void SVector2::limit(const float &lim){
 
 float SVector2::getHeading() const{
     return -1.0f * (std::atan2(-m_y, m_x));
+}
+
+void SVector2::rotate(const float &angle){
+    float xTemp = m_x;
+    m_x = (xTemp * std::cos(angle)) - (m_y * std::sin(angle));
+    m_y = (xTemp * std::sin(angle)) + (m_y * std::cos(angle));
 }
 
 }

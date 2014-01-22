@@ -22,6 +22,10 @@ class SVector2{
         void setZero();
         void set(const float &x, const float &y);
 
+        /// \brief sets the X and Y coordinates based on the given polar coordinate.
+        /// \param angle The angle in RADIANS
+        void setFromPolar(const float &radius, const float &angle);
+
         ///\brief negates both x and y of THIS vector.
         void setNegate();
 
@@ -86,7 +90,14 @@ class SVector2{
         /// \note you must call this every time you want to limit the vector.
         void limit(const float &lim);
 
+        /// \brief rotates the Vector.
+        /// \param angle The angle in RADIANS
+        /// \note If you know the magnitude, and the resulting angle, consider using setFromPolar.
+        ///       rotate() uses 4 sin/cos functions, and setFromPolar uses 2.
+        void rotate(const float &angle);
+
         /// \brief returns the angle of rotation of the vector.
+        /// \return The rotation angle in RADIANS
         float getHeading() const;
 
     private:
