@@ -3,6 +3,9 @@ These flags are for Clangs compiler.  These are ADDITIONAL flags in addition to 
 defined in GnuCompilerGlobals
 '''
 import sys
+from SCons.Script import *
+from SCons.Environment import *
+from SCons.Builder import *
 
 from GnuCompilerGlobals import *
 
@@ -12,21 +15,24 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
         GnuCompilerGlobals.__init__(self)
 
         #CPPDefines
+        self.globalDefines += ['__STRICT_ANSI__']
         self.globalUnitTestDefines += ['GTEST_USE_OWN_TR1_TUPLE=1']
         
         #Compile Flags
         self.globalCCFlags += []
-        if (sys.platform = "darwin"):
+        if (sys.platform == "darwin"):
             self.globalCCFlags += ['-isystem', '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/c++/v1']
-        else if (sys.platform != "win32"):
+            self.globalCCFlags += ['stdlib=libc++']
+        elif (sys.platform != "win32"):
             self.globalCCFlags += ['-isystem', '/usr/include/i386-linux-gnu/c++/4.8']
-            self.globalCCFlags += ['-isystem', '/usr/include/c++/4.8.1']   
+            self.globalCCFlags += ['-isystem', '/usr/include/c++/4.8']  
+            self.globalCCFlags += ['-stdlib=libc++']
         
         self.globalCCDebugFlags += []
         self.globalCCReleaseFlags += []
         self.globalCCUnitTestFlags += []
         
-        self.globalCXXFlags += ['-Wno-return-type-c-linkage', '-stdlib=libc++']
+        self.globalCCFlags += ['-Wno-return-type-c-linkage']
         
         
         #Link Flags
@@ -67,7 +73,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
                 ASM_JS_BUILD = False,
                 SYSTEM = "clangx86"
             )
-        globalDefines += ['CLANG']
+        self.globalDefines += ['CLANG']
     
         return env
     

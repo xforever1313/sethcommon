@@ -65,7 +65,7 @@ Targets:
 ###
 libEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
 #Override flags
-libEnvironment['CPPDEFINES'] = ["UT_NEW_MACROS_DISABLED", "UT_NEW_OVERRIDES_DISABLED"]
+libEnvironment.Append(CPPDEFINES = ["UT_NEW_MACROS_DISABLED", "UT_NEW_OVERRIDES_DISABLED"])
 libEnvironment['CCFLAGS'] = ccFlags
 libEnvironment['LIBDIR'] = os.path.join(libDir, envBase['SYSTEM'])
 
