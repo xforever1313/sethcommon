@@ -71,7 +71,7 @@ TEST(Operations, DegreeTest){
 }
 
 TEST(Operations, polarToCartesianTestNoOffset){
-    Math::SVector2 expected (7.071067, 7.071067);
+    Math::SVector2 expected (7.071067f, 7.071067f);
     Math::SVector2 actual = Math::Operations::polarToCartesian(10.0f, Math::Operations::radians(45.0f));
 
     DOUBLES_EQUAL(expected.getX(), actual.getX(), 0.0001);

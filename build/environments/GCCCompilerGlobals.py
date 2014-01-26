@@ -57,6 +57,7 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
                 ARM_BUILD = False,
                 CLANG_BUILD = False,
                 ASM_JS_BUILD = False,
+                MSVC_BUILD = False,
                 SYSTEM = "mingw32"
             )
 
@@ -72,6 +73,7 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
                 ARM_BUILD = False,
                 CLANG_BUILD = False,
                 ASM_JS_BUILD = False,
+                MSVC_BUILD = False,
                 SYSTEM = "gccx86"
             )
             self.globalDefines += ['GCC']
@@ -84,6 +86,7 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
                 ARM_BUILD = False,
                 CLANG_BUILD = False,
                 ASM_JS_BUILD = False,
+                MSVC_BUILD = False,
                 SYSTEM = "gccx86"
             )
             self.globalDefines += ['GCC']

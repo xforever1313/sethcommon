@@ -55,6 +55,7 @@ def createBaseEnvironment (rootDir, skyvoCommonPath, args):
     clangBuild = (args.get('clang_build', '0') == '1')
     armBuild = (args.get('arm_build', '0') == '1')
     asmJSBuild = (args.get('asmjs', '0') == '1')
+    msvcTarget = (args.get('msvc_target', None))
 
     sys.path.append(os.path.join(skyvoCommonPath, "build/environments"))
 
@@ -66,6 +67,9 @@ def createBaseEnvironment (rootDir, skyvoCommonPath, args):
     elif (clangBuild):
         from ClangCompilerGlobals import ClangCompilerGlobals
         envClass = ClangCompilerGlobals()
+    elif (msvcTarget != None):
+        from MSVCCompilerGlobals import MSVCCompilerGlobals
+        envClass = MSVCCompilerGlobals()
     else:
         from GCCCompilerGlobals import GCCCompilerGlobals
         envClass = GCCCompilerGlobals()

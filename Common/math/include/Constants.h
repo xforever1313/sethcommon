@@ -5,7 +5,7 @@
 
 namespace Math{
 
-const static float PI = M_PI;
+const static float PI = static_cast<float>(M_PI);
 const static float HALF_PI = PI / 2.0f;
 const static float QUARTER_PI = PI / 4.0f;
 const static float EIGHTH_PI = PI / 8.0f;

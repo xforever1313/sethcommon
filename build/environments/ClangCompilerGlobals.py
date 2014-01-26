@@ -59,6 +59,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
                 ARM_BUILD = True,
                 CLANG_BUILD = True,
                 ASM_JS_BUILD = False,
+                MSVC_BUILD = False,
                 SYSTEM = "clangArm"    
             )
         else:
@@ -71,6 +72,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
                 ARM_BUILD = False,
                 CLANG_BUILD = True,
                 ASM_JS_BUILD = False,
+                MSVC_BUILD = False,
                 SYSTEM = "clangx86"
             )
         self.globalDefines += ['CLANG']

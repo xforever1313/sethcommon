@@ -75,3 +75,5 @@ Thumbs.db
 *.layout
 *.swp
 *~
+*.pdb
+*.idb

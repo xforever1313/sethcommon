@@ -20,10 +20,18 @@ envBase = createBaseEnvironment(baseDir, baseDir, ARGUMENTS)
 includePaths = [".", "include"]
 
 #CCFlags
-ccFlags = ['-Wall', '-g']
+if (not envBase['MSVC_BUILD']):
+    ccFlags = ['-Wall', '-g']
+else:
+    ccFlags = ['/EHsc']
 
 #source files
-sourceDirectories = ["src/CppUTest", "src/CppUTest/Extensions", "src/Platforms/Gcc"]
+sourceDirectories = ["src/CppUTest", "src/CppUTest/Extensions"]
+if (envBase['MSVC_BUILD']):
+    sourceDirectories += ["src/Platforms/VisualCpp"]
+else:    
+    sourceDirectories += ["src/Platforms/Gcc"]
+
 sourceTestDirectories = ["tests", "tests/Extensions"]
 
 sourceFiles = []
@@ -73,7 +81,7 @@ testEnvironment = createUnitTestEnvironment(envBase, includePaths, testLibs, tes
 #Override flags
 testEnvironment['CCFLAGS'] = ccFlags 
 if (not testEnvironment['CLANG_BUILD']):
-    testEnvironment['CCFLAGS'] += ["-fprofile-arcs", "-ftest-coverage"]
+    testEnvironment.Append(CCFLAGS = ["-fprofile-arcs", "-ftest-coverage"])
 
 #Doxygen 
 doxygenFiles = sourceFiles + testSourceFiles + glob.glob(os.path.join(includeDir, "*h")) +  glob.glob(os.path.join(includeDir, "*", "*h"))

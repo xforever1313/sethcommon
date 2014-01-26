@@ -54,6 +54,7 @@ class EmscriptenCompilerGlobals(GnuCompilerGlobals):
             ARM_BUILD = False,
             CLANG_BUILD = True,
             ASM_JS_BUILD = True,
+            MSVC_BUILD = False,
             SYSTEM = "asmjs"
         )
         env['ENV']['emscripten'] = os.environ['emscripten']
