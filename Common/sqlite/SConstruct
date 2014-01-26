@@ -15,8 +15,6 @@ from Globals import *
 from SConstructGlobals import *
 from SkyvoCommonGlobals import *
 
-serverBuild = parseArguments(ARGUMENTS)
-
 ###
 # Files to compile
 ###
@@ -93,7 +91,6 @@ debugEnvironment['CPPDEFINES'] = cppDefines
 debugEnvironment['CXXFLAGS'] = ['-std=gnu++11']
 debugEnvironment['CCFLAGS'] = debugFlags + commonCompileFlags
 debugEnvironment['LINKFLAGS'] = commonLinkFlags + debugLinkFlags
-addPlatformFlags(debugEnvironment)
 
 #Release Environment
 releaseEnvironment = createReleaseEnvironment(envBase, includePaths, libs, libPath)
@@ -101,12 +98,10 @@ releaseEnvironment['CPPDEFINES'] = cppDefines
 releaseEnvironment['CXXFLAGS'] = ['-std=gnu++11']
 releaseEnvironment['CCFLAGS'] = releaseFlags + commonCompileFlags
 releaseEnvironment['LINKFLAGS'] = commonLinkFlags + releaseLinkFlags
-addPlatformFlags(releaseEnvironment)
 
 #Unit test environment
 testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, testLibs, libPath)
 testEnvironment.Append(CPPDEFINES = cppDefines)
-addPlatformFlags(testEnvironment)
 
 #Doxygen
 doxygenFiles = sourceFiles + sourceTestFiles + glob.glob(os.path.join(includeDir, "*h")) + glob.glob(os.path.join(testDir, includeDir, "*h"))
@@ -133,7 +128,7 @@ Alias("run_unit_test", runTestTarget)
 Alias("run_test", [unitTestTarget, cppCheckTarget, runTestTarget])
 
 #used by auto build
-if (serverBuild):
+if (envBase['SERVER_BUILD']):
     Alias ("nightly", [debugLibTarget, releaseLibTarget, doxygenTarget, cppCheckTarget, runTestTarget])
     Alias ("delta", [debugLibTarget, releaseLibTarget, cppCheckTarget, runTestTarget])
     Alias("create_lib", [debugLibTarget, releaseLibTarget])

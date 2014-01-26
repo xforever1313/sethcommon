@@ -23,304 +23,113 @@ SetOption('num_jobs', cpu_count())  #Sets -j to the number of cores  This happen
 ###
 # Compile flags
 ###
-#Defines
-globalDefines = []
 
-if (sys.platform == "win32"):
-    globalDefines += ["WIN_32"]
-elif (sys.platform == "darwin"):
-    globalDefines += ["DARWIN"]
-else:
-    globalDefines += ["LINUX"]
-
-
-globalDebugDefines = ["DEBUG"]
-globalReleaseDefines = ["RELEASE"]
-globalUnitTestDefines = ["UNIT_TEST", "UT_NEW_MACROS_DISABLED", "UT_NEW_OVERRIDES_DISABLED"]
-
-
-#Compile Flags
-globalCXXFlags = ["-pedantic-errors", "-Werror", "-std=gnu++11", "-Wall", "-Wcast-align", "-Wsign-compare", \
-                  "-Wempty-body", "-Wcast-qual", "-Wmissing-field-initializers", "-Wtype-limits", "-fstack-protector-all"]
-globalCXXDebugFlags = ["-g", "-Wswitch-enum"]
-globalCXXReleaseFlags = ["-O3", "-Wswitch-enum", "-fdata-sections", "-ffunction-sections"]
-globalCXXUnitTestFlags = ["-g"]
-
-clangGlobalCXXFlags = ['-Wno-return-type-c-linkage', '-stdlib=libc++']
-clangUnitTestFlags = ['-DGTEST_USE_OWN_TR1_TUPLE=1']
-
-gccGlobalCXXFlags = ['-Wclobbered', '-Wdouble-promotion']
-gccUnitTestCXXFlags = ['-fprofile-arcs', '-ftest-coverage']
-
-if (sys.platform == "win32"):
-    globalCXXFlags += ["-pthread"]
-else:
-    globalCXXFlags += ["-pthread"]
-
-#Linker Flags
-globalLinkerFlags = ["-Wall", "-Werror", "-std=gnu++11"]
-releaseLinkerFlags = []
-if (sys.platform == "darwin"):
-    releaseLinkerFlags += ["-Wl,-dead_strip"]
-else:
-    releaseLinkerFlags += ['-s', '-Wl,--gc-sections', '-Wl,--strip-all']
-
-unitTestLinkerFlags = []
-
-if(sys.platform == "win32"):
-    globalLinkerFlags += ["-static", "-pthread"]
-elif (sys.platform == "darwin"):
-    globalLinkerFlags += []
-else:
-    globalLinkerFlags += ["-pthread"]
 
 #Libs
 globalLibsDebug = []
 globalLibsRelease = []
 globalLibsUnitTest = ["gtest", "gmock", "CppUTest"]
 
-gccUnitTestLibs = ['gcov']
 clangUnitTestLibs = []
 
-if (sys.platform == "win32"):
-    globalLibsDebug += ["ssp", "debug_new"] #Lib SSP is still needed in mingw, but not linux
-    globalLibsRelease += ["ssp"]
-    globalLibsUnitTest += ["ssp", "debug_new"]
-
-#Parses arguments
-def parseArguments(args):
-    serverBuild = (args.get('server_build', '0') == '1')
-    return serverBuild
-    
 ###
 # Environments
 ###
 
-def armBuildAdd(env):
-    if(env['ARM_BUILD']):
-        env.Append(CCFLAGS = ['-arch', 'armv7s', '-miphoneos-version-min=7.0', '-isysroot', '/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk'])
-        env.Append(LINKFLAGS = ['-arch', 'armv7s', '-miphoneos-version-min=7.0', '-isysroot', '/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk'])
-        env.Append(LIBPATH = ['/skyvo/lib/ios'])
-    elif (sys.platform == "darwin"):
-        env.Append(LIBPATH = ['/skyvo/lib/x86'])
-
-def clangBuildAdd(env):
-    if (env['CLANG_BUILD']):
-        if (sys.platform == "darwin"):
-            env.Append(CCFLAGS = ['-isystem', '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/c++/v1'])
-            env.Append(CCFLAGS = ['-isystem', '/skyvo/include'])
-        elif (sys.platform != "win32"):
-            env.Append(CCFLAGS = ['-isystem', '/usr/include/i386-linux-gnu/c++/4.8'])
-            env.Append(CCFLAGS = ['-isystem', '/usr/include/c++/4.8.1'])
-
-        env.Append(CCFLAGS = ['-D__STRICT_ANSI__'])
+envClass = None
 
 def serverBuildAdd(env):
     if (env['SERVER_BUILD']):
         env.Append(CPPPATH = ['/skyvo/include'])
         env.Append(LIBPATH = ['/skyvo/lib'])
-        env.Append(CCFLAGS = ['-isystem', '/skyvo/include'])
+        env.Append(CCFLAGS = ['-isystem', '/skyvo/include'])          
 
-def asmJSBuildAdd(env):
-    if (env['ASM_JS_BUILD']):
-        env.Append(CPPDEFINES = ['ASM_JS'])
-        env.Append(CCFLAGS = ['-s', 'ASM_JS=1', '-O2', '-Wno-warn-absolute-paths', '-s', 'DISABLE_EXCEPTION_CATCHING=0'])
-        env.Append(LINKFLAGS = ['-s', 'ASM_JS=1', '-O2', '-Wno-warn-absolute-paths', '-s', 'DISABLE_EXCEPTION_CATCHING=0'])
-        env['PROGSUFFIX'] = ".js"
-        if (sys.platform == "win32"):
-            try:
-                globalLibsDebug.remove("debug_new")
-                globalLibsUnitTest.remove("debug_new")
-            except:
-                pass #Fails on the second go around.
-            
-
+#TODO REMOVE THIS, all dependencies should be either in the repo, or easily installable.
 def windowsBuildAdd(env):
-    if (sys.platform == "win32"):
+    if (sys.platform == "win32" and (env['SYSTEM'] == "asmjs")):
         env.Append(CCFLAGS = ['-isystem', os.environ['CPPPATH']])
         env.Append(LIBPATH = [os.path.join(os.environ['LIBPATH'], env['SYSTEM'])])
 
-            
-def addPlatformFlags(env):
-    serverBuildAdd(env)
-    clangBuildAdd(env)
-    armBuildAdd(env)
-    asmJSBuildAdd(env)
-    windowsBuildAdd(env)
-
-def addSystemDefines(env):
-    system = ""
-    if (env['SYSTEM'] == "mingw32"):
-        system = "MINGW"
-    elif (env['SYSTEM'] == "clangArm" or env['SYSTEM'] == "clangx86" or env['SYSTEM'] == "asmjs"):
-        system = "CLANG"
-    else:
-        system = "GCC"
-    env.Append(CPPDEFINES = [system])
-
 def createBaseEnvironment (rootDir, skyvoCommonPath, args):
-    serverBuild = parseArguments(args)
+    serverBuild = (args.get('server_build', '0') == '1')
     clangBuild = (args.get('clang_build', '0') == '1')
     armBuild = (args.get('arm_build', '0') == '1')
     asmJSBuild = (args.get('asmjs', '0') == '1')
 
+    sys.path.append(os.path.join(skyvoCommonPath, "build/environments"))
+
+    global envClass
+
     if (asmJSBuild):
-        print "Building for ASM.js"
-        env = Environment(
-            tools = ["mingw"],
-            CC = "emcc",
-            CXX = "emcc",
-            LINK = "emcc",
-            AR = "emar",
-            RANLIB = "emranlib",
-            SERVER_BUILD = serverBuild,
-            ARM_BUILD = False,
-            CLANG_BUILD = True,
-            ASM_JS_BUILD = True,
-            SYSTEM = "asmjs"
-        )
-    
-    elif (sys.platform == "win32"):
-        print "Building for mingw32"
-        env = Environment(            
-            tools = ["mingw"],
-            SERVER_BUILD = False,
-            ARM_BUILD = False,
-            CLANG_BUILD = False,
-            ASM_JS_BUILD = False,
-            SYSTEM = "mingw32"
-        )
-    elif(clangBuild):
-        if (armBuild):
-            print "Building for clang arm"
-            env = Environment(
-                CC = "clang",
-                CXX = "clang++",
-                LINK = "clang++",
-                SERVER_BUILD = serverBuild,
-                ARM_BUILD = True,
-                CLANG_BUILD = True,
-                ASM_JS_BUILD = False,
-                SYSTEM = "clangArm"    
-            )
-        else:
-             print "Building for clang x86"
-             env = Environment(
-                CC = "clang",
-                CXX = "clang++",
-                LINK = "clang++",
-                SERVER_BUILD = serverBuild,
-                ARM_BUILD = False,
-                CLANG_BUILD = True,
-                ASM_JS_BUILD = False,
-                SYSTEM = "clangx86"
-            ) 
+        from EmscriptenCompilerGlobals import EmscriptenCompilerGlobals
+        envClass = EmscriptenCompilerGlobals()
+    elif (clangBuild):
+        from ClangCompilerGlobals import ClangCompilerGlobals
+        envClass = ClangCompilerGlobals()
     else:
-        print "Building for gcc x86"
-        if (serverBuild):
-            env = Environment(
-                CC = "gcc-4.8",
-                CXX = "g++-4.8",
-                LINK = "g++-4.8",
-                SERVER_BUILD = True,
-                ARM_BUILD = False,
-                CLANG_BUILD = False,
-                ASM_JS_BUILD = False,
-                SYSTEM = "gccx86"
-            )
-        else:
-            env = Environment(
-                tools = ["default", "gcc", "g++"],
-                SERVER_BUILD = False,
-                ARM_BUILD = False,
-                CLANG_BUILD = False,
-                ASM_JS_BUILD = False,
-                SYSTEM = "gccx86"
-            )
+        from GCCCompilerGlobals import GCCCompilerGlobals
+        envClass = GCCCompilerGlobals()
+
+    env = envClass.getBaseEnvironment(armBuild, serverBuild)
+
     baseEnvironment = env.Clone(
-        PROJECT_ROOT = os.path.abspath("."),
-        ENV = {'PATH' : os.environ['PATH']} #Look in path for tools
+        PROJECT_ROOT = os.path.abspath(".")
     )
-    if (sys.platform == "win32"):
-        baseEnvironment['ENV']['emscripten'] = os.environ['emscripten']
-        baseEnvironment['ENV']['HOME'] = os.environ['USERPROFILE']
-        baseEnvironment['ENV']['NUMBER_OF_PROCESSORS'] = cpu_count()
+    
+    baseEnvironment['ENV']['PATH'] = os.environ['PATH'] #Look in path for tools
+
     baseEnvironment['BASE_DIR'] = os.path.abspath(rootDir)
     baseEnvironment['COMMON_DIR'] = os.path.abspath(skyvoCommonPath)
     return baseEnvironment
     
 def createDebugEnvironment(envBase, includePaths, libs, libPath):
     debugEnvironment = envBase.Clone(
-        CPPDEFINES = globalDefines + globalDebugDefines,
         CPPPATH = includePaths,
-        CCFLAGS = globalCXXFlags + globalCXXDebugFlags,
-        LIBS = libs + globalLibsDebug, 
-        LIBPATH = libPath,
-        LINKFLAGS = globalLinkerFlags,
         OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, envBase['SYSTEM'], debugDir)) + '/',
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], debugDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], debugDir))
     )
-    addPlatformFlags(debugEnvironment)
 
-    if (debugEnvironment['CLANG_BUILD']):
-        debugEnvironment.Append(CCFLAGS = clangGlobalCXXFlags)
-    else:
-        debugEnvironment.Append(CCFLAGS = gccGlobalCXXFlags)
-
-    addSystemDefines(debugEnvironment)
+    envClass.extendDebugEnvironment(debugEnvironment, libs, libPath)
+    windowsBuildAdd(debugEnvironment)
+    if (envBase['SERVER_BUILD']):
+        serverBuildAdd(debugEnvironment)
 
     return debugEnvironment
     
 def createReleaseEnvironment(envBase, includePaths, libs, libPath):
     releaseEnvironment = envBase.Clone(
-        CPPDEFINES = globalDefines + globalReleaseDefines,
         CPPPATH = includePaths,
-        CCFLAGS = globalCXXFlags + globalCXXReleaseFlags,
-        LIBS = libs + globalLibsRelease, 
-        LIBPATH = libPath,
-        LINKFLAGS = globalLinkerFlags + releaseLinkerFlags,
         OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, envBase['SYSTEM'], releaseDir)) + '/',
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], releaseDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], releaseDir))
     )
-    addPlatformFlags(releaseEnvironment)
 
-    if (releaseEnvironment['CLANG_BUILD']):
-        releaseEnvironment.Append(CCFLAGS = clangGlobalCXXFlags)
-    else:
-        releaseEnvironment.Append(CCFLAGS = gccGlobalCXXFlags)
-
-    addSystemDefines(releaseEnvironment)
+    envClass.extendReleaseEnvironment(releaseEnvironment, libs, libPath)
+    windowsBuildAdd(releaseEnvironment)
+    if (envBase['SERVER_BUILD']):
+        serverBuildAdd(releaseEnvironment)
 
     return releaseEnvironment
     
 def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
     testEnvironment = envBase.Clone(
-        CPPDEFINES = globalDefines + globalUnitTestDefines,
         CPPPATH = includePaths + [os.path.join(getCppUTestPath(envBase['COMMON_DIR']), includeDir)],
-        CCFLAGS = globalCXXFlags + globalCXXUnitTestFlags,
-        LIBS = libs + globalLibsUnitTest, 
-        LIBPATH = libPath,
-        LINKFLAGS = globalLinkerFlags + unitTestLinkerFlags,
         OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, envBase['SYSTEM'], unitTestDir)) + '/',
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], unitTestDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], unitTestDir))
     )
-    testEnvironment.Append(LIBPATH = os.path.join(getCppUTestPath(envBase['COMMON_DIR']), libDir, testEnvironment['SYSTEM']))
-    addPlatformFlags(testEnvironment)
 
-    if(testEnvironment['CLANG_BUILD']):
-        testEnvironment.Append(CCFLAGS = clangGlobalCXXFlags + clangUnitTestFlags)
-        testEnvironment.Append(LIBS = clangUnitTestLibs)
-    else:
-        testEnvironment.Append(CCFLAGS = gccGlobalCXXFlags + gccUnitTestCXXFlags)
-        testEnvironment.Append(LIBS = gccUnitTestLibs)
+    windowsBuildAdd(testEnvironment)
+    envClass.extendUnitTestEnvironment(testEnvironment, libs, libPath)
+    testEnvironment.Append(LIBPATH = os.path.join(getCppUTestPath(envBase['COMMON_DIR']), libDir, testEnvironment['SYSTEM']))
+
+    if (envBase['SERVER_BUILD']):
+        serverBuildAdd(testEnvironment)
 
     RunTest = Builder(action = testRunner)
     testEnvironment.Append(BUILDERS = {"Test" : RunTest})
 
-    addSystemDefines(testEnvironment)
     return testEnvironment
 
 ###
