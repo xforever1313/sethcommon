@@ -17,7 +17,10 @@ def getDateVersionPath(baseDir):
     
 def getDebugNewPath(baseDir):
     return os.path.join(getCommonPath(baseDir), "debug_new")
-    
+
+def getGMockPath(baseDir):
+    return os.path.join(getCommonPath(baseDir), "gmock")
+
 def getMathPath(baseDir):
     return os.path.join(getCommonPath(baseDir), "math")
 

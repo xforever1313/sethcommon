@@ -40,5 +40,5 @@ class GlobalCompilerGlobals():
 
     globalDebugLibs = []
     globalReleaseLibs = []
-    globalUnitTestLibs = ['gtest', 'gmock', 'CppUTest']
+    globalUnitTestLibs = ['gmock', 'CppUTest']
 

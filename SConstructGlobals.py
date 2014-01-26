@@ -21,18 +21,6 @@ if (sys.platform == "win32"):
 SetOption('num_jobs', cpu_count())  #Sets -j to the number of cores  This happens when you import this file
 
 ###
-# Compile flags
-###
-
-
-#Libs
-globalLibsDebug = []
-globalLibsRelease = []
-globalLibsUnitTest = ["gtest", "gmock", "CppUTest"]
-
-clangUnitTestLibs = []
-
-###
 # Environments
 ###
 
@@ -43,12 +31,6 @@ def serverBuildAdd(env):
         env.Append(CPPPATH = ['/skyvo/include'])
         env.Append(LIBPATH = ['/skyvo/lib'])
         env.Append(CCFLAGS = ['-isystem', '/skyvo/include'])          
-
-#TODO REMOVE THIS, all dependencies should be either in the repo, or easily installable.
-def windowsBuildAdd(env):
-    if (sys.platform == "win32" and (env['SYSTEM'] == "asmjs")):
-        env.Append(CCFLAGS = ['-isystem', os.environ['CPPPATH']])
-        env.Append(LIBPATH = [os.path.join(os.environ['LIBPATH'], env['SYSTEM'])])
 
 def createBaseEnvironment (rootDir, skyvoCommonPath, args):
     serverBuild = (args.get('server_build', '0') == '1')
@@ -95,7 +77,7 @@ def createDebugEnvironment(envBase, includePaths, libs, libPath):
     )
 
     envClass.extendDebugEnvironment(debugEnvironment, libs, libPath)
-    windowsBuildAdd(debugEnvironment)
+
     if (envBase['SERVER_BUILD']):
         serverBuildAdd(debugEnvironment)
 
@@ -110,23 +92,35 @@ def createReleaseEnvironment(envBase, includePaths, libs, libPath):
     )
 
     envClass.extendReleaseEnvironment(releaseEnvironment, libs, libPath)
-    windowsBuildAdd(releaseEnvironment)
+    
     if (envBase['SERVER_BUILD']):
         serverBuildAdd(releaseEnvironment)
 
     return releaseEnvironment
-    
+
 def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
     testEnvironment = envBase.Clone(
-        CPPPATH = includePaths + [os.path.join(getCppUTestPath(envBase['COMMON_DIR']), includeDir)],
+        CPPPATH = includePaths,
         OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, envBase['SYSTEM'], unitTestDir)) + '/',
         LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], unitTestDir)),
         BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], unitTestDir))
     )
 
-    windowsBuildAdd(testEnvironment)
     envClass.extendUnitTestEnvironment(testEnvironment, libs, libPath)
-    testEnvironment.Append(LIBPATH = os.path.join(getCppUTestPath(envBase['COMMON_DIR']), libDir, testEnvironment['SYSTEM']))
+
+    unitTestIncludePaths = [os.path.join(getCppUTestPath(envBase['COMMON_DIR']), includeDir), \
+                            os.path.join(getGMockPath(envBase['COMMON_DIR']), includeDir)]
+
+    if (envBase['MSVC_BUILD']):
+        testEnvironment.Append(CPPPATH = unitTestIncludePaths)
+    else:
+        for p in unitTestIncludePaths:
+            testEnvironment.Append(CCFLAGS = ['-isystem', p])
+
+    unitTestLibPaths = [os.path.join(getCppUTestPath(envBase['COMMON_DIR']), libDir, testEnvironment['SYSTEM']), \
+                        os.path.join(getGMockPath(envBase['COMMON_DIR']), libDir, testEnvironment['SYSTEM'])]
+
+    testEnvironment.Append(LIBPATH = unitTestLibPaths)
 
     if (envBase['SERVER_BUILD']):
         serverBuildAdd(testEnvironment)

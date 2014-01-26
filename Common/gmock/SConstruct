@@ -1,0 +1,74 @@
+import SCons.Defaults
+import SCons
+from SCons.Util import unique
+import stat
+import os
+import sys
+import subprocess
+import glob
+import shutil
+from copy import deepcopy
+
+baseDir = "../../"
+sys.path.append(baseDir) #Get globals
+from Globals import *
+from SConstructGlobals import *
+
+envBase = createBaseEnvironment(baseDir, baseDir, ARGUMENTS)
+
+#include paths
+includePaths = ["include"]
+
+#CCFlags
+if (not envBase['MSVC_BUILD']):
+    ccFlags = ['-g']
+else:
+    ccFlags = ['/EHsc']
+
+#source files
+sourceFiles = ['src/gmock-gtest-all.cc']
+testSourceFiles = []
+
+    
+#Libs
+libs = []
+
+#libPath
+libPath = []
+
+#link flags
+linkFlags = []
+
+Help(
+'''
+SConstruct file for gmock
+
+Targets:
+    create_lib     Builds gmock lib
+'''
+)
+
+###
+# Environment creation
+###
+libEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
+#Override flags
+if (envBase['CLANG_BUILD']):
+    libEnvironment.Append(CPPDEFINES = ['GTEST_USE_OWN_TR1_TUPLE=1'])
+libEnvironment['CCFLAGS'] = ccFlags
+libEnvironment['LIBDIR'] = os.path.join(libDir, envBase['SYSTEM'])
+
+#Doxygen 
+doxygenFiles = sourceFiles + testSourceFiles + glob.glob(os.path.join(includeDir, "*h")) +  glob.glob(os.path.join(includeDir, "*", "*h"))
+
+###
+# Targets
+###
+libBuild  = createStaticLib(libEnvironment, "gmock", sourceFiles)
+
+Alias("create_lib", libBuild)
+
+Alias ("nightly", ["create_lib"])
+Alias ("delta", ["create_lib"])
+
+Default("create_lib")

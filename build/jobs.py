@@ -12,6 +12,9 @@ rootDir = os.path.abspath("..")
 targetLocations = []
 targetNames = []
 
+targetNames += ['gmock']
+targetLocations += [os.path.join(rootDir, "Common", "gmock")]
+
 targetNames += ["CppUTest"]
 targetLocations += [os.path.join(rootDir, "Common", "CppUTest")]
 
