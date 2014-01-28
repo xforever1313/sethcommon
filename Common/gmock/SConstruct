@@ -67,6 +67,7 @@ doxygenFiles = sourceFiles + testSourceFiles + glob.glob(os.path.join(includeDir
 libBuild  = createStaticLib(libEnvironment, "gmock", sourceFiles)
 
 Alias("create_lib", libBuild)
+Alias("doxygen", [])
 
 Alias ("nightly", ["create_lib"])
 Alias ("delta", ["create_lib"])

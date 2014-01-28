@@ -15,8 +15,7 @@ import sys
 import time
 
 if (sys.platform == "win32"):
-    #defaults to MSVC until set to MinGW
-    SCons.Defaults.DefaultEnvironment(tools = [])
+    SCons.Defaults.DefaultEnvironment(tools = ['mingw'])
 
 SetOption('num_jobs', cpu_count())  #Sets -j to the number of cores  This happens when you import this file
 
