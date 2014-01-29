@@ -1,3 +1,5 @@
+#ifndef ASM_JS //Do not test if emscripten, it will not link
+
 #include <CppUTest/TestHarness.h>
 
 #define private public
@@ -105,3 +107,5 @@ TEST(Semaphore, shutdownTest){
 
     delete uut2;
 }
+
+#endif

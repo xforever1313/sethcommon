@@ -1,3 +1,5 @@
+#ifndef ASM_JS
+
 #include <CppUTest/TestHarness.h>
 #include <fstream>
 #include <string>
@@ -111,3 +113,6 @@ TEST(cstdioWrapper, removeSuccessTest){
 TEST(cstdioWrapper, removeFailTest){
     CHECK(m_uut->remove(std::string("DERP")) != 0);
 }
+
+#endif
+

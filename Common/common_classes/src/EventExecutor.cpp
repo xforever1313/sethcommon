@@ -1,3 +1,5 @@
+#ifndef ASM_JS //Will not link do to threading
+
 #include <cstddef> //Needed for NULL
 #include <list>
 #include <SkyvoThread.h>
@@ -73,3 +75,6 @@ bool EventExecutor::isRunning(){
 }
 
 }
+
+#endif
+

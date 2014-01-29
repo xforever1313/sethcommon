@@ -1,3 +1,5 @@
+#ifndef ASM_JS //Not compatible with emscripten
+
 #include "SemaphorePoster.h"
 
 SemaphorePoster::SemaphorePoster(SkyvoOS::SkyvoSemaphore *semaphore) :
@@ -23,3 +25,6 @@ bool SemaphorePoster::getPosted(){
     m_posted_mutex.unlock();
     return posted;
 }
+
+#endif
+

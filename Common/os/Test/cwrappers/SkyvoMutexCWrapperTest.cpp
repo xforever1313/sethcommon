@@ -1,3 +1,5 @@
+#ifndef ASM_JS
+
 #include <gmock/gmock.h>
 #include <CppUTest/TestHarness.h>
 
@@ -32,3 +34,6 @@ TEST(SkyvoMutexCWrapper, unlockTest){
     EXPECT_CALL(*m_mutex, unlock());
     unlockMutex(m_uut);
 }
+
+#endif
+

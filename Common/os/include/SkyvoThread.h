@@ -1,6 +1,11 @@
 #ifndef SKYVOTHREAD_H
 #define SKYVOTHREAD_H
 
+#ifdef ASM_JS
+    #error "Threading is not supported with Emscripten"
+    //Undefined references are created
+#endif
+
 #include "SkyvoSemaphore.h"
 #include "SkyvoMutex.h"
 
@@ -10,6 +15,7 @@
 * \author Seth Hendrick
 *
 * \warning all functions are no-op if the thread is not started (start is not called)
+* \warning This file will not compile with the emscripten compiler.
 */
 namespace SkyvoOS{
 

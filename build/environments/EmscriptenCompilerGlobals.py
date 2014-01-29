@@ -25,9 +25,9 @@ class EmscriptenCompilerGlobals(GnuCompilerGlobals):
         
         #Compile Flags
         self.globalCCFlags += ['-s', 'ASM_JS=1', '-O2', '-Wno-warn-absolute-paths', \
-                               '-s', 'DISABLE_EXCEPTION_CATCHING=0']
+                               '-s', 'DISABLE_EXCEPTION_CATCHING=0', '-Wno-return-type-c-linkage']
         
-        self.globalCXXFlags += ['-Wno-return-type-c-linkage', '-stdlib=libc++']
+        self.globalCXXFlags += ['-stdlib=libc++']
         
         self.globalCCDebugFlags += []
         self.globalCCReleaseFlags += ['-O2']

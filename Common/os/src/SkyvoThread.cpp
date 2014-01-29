@@ -1,3 +1,5 @@
+#ifndef ASM_JS //Will not compile for emscripten
+
 #include <functional>
 #include <iostream>
 #include <thread>
@@ -102,3 +104,6 @@ SkyvoThread::SkyvoThreadStatus SkyvoThread::getStatus(){
 }
 
 }
+
+#endif
+

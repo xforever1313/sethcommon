@@ -1,7 +1,9 @@
+#ifndef ASM_JS //Only used in exectutor test, which is not usable with emscripten
 #include <SkyvoThread.h>
-#include <iostream>
+
 
 #include "DummyEvent.h"
+
 unsigned int DummyEvent::ranCount = 0;
 SkyvoOS::SkyvoMutex DummyEvent::ranCountMutex;
 SkyvoOS::SkyvoSemaphore DummyEvent::semaphore;
@@ -26,3 +28,6 @@ unsigned int DummyEvent::getRanCount(){
     DummyEvent::ranCountMutex.unlock();
     return ret;
 }
+
+#endif
+

@@ -1,3 +1,5 @@
+#ifndef ASM_JS
+
 #include "cwrappers/SkyvoBoolean.h"
 #include "cwrappers/SkyvoSemaphoreCWrapper.h"
 #include "cwrappers/SkyvoSemaphoreStruct.h"
@@ -50,3 +52,6 @@ SkyvoBoolean isSemaphoreShutDown(SkyvoSemaphore_t *semaphore){
     }
     return ret;
 }
+
+#endif
+

@@ -1,3 +1,5 @@
+#ifndef ASM_JS
+
 #include "cwrappers/SkyvoMutexCWrapper.h"
 #include "cwrappers/SkyvoMutexStruct.h"
 
@@ -16,3 +18,6 @@ void lockMutex(SkyvoMutex_t *mutex){
 void unlockMutex(SkyvoMutex_t *mutex){
     mutex->m_mutex->unlock();
 }
+
+#endif
+

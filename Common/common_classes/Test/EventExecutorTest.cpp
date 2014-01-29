@@ -1,3 +1,5 @@
+#ifndef ASM_JS 
+
 #include <CppUTest/TestHarness.h>
 
 #define private public
@@ -70,3 +72,6 @@ TEST(EventExecutor, destroyTest){
     delete uut;
     CHECK_EQUAL(DummyEvent::ranCount, 10);
 }
+
+#endif
+

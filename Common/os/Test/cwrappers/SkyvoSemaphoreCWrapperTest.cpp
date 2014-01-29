@@ -1,3 +1,5 @@
+#ifndef ASM_JS
+
 #include <gmock/gmock.h>
 #include <CppUTest/TestHarness.h>
 
@@ -88,3 +90,6 @@ TEST(SkyvoSemaphoreCWrapper, isShutdownTestFalse){
         .WillOnce(testing::Return(false));
     CHECK_EQUAL(isSemaphoreShutDown(m_uut), FALSE);
 }
+
+#endif
+

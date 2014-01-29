@@ -15,6 +15,9 @@ currentTime = time.strftime("%m_%d_%Y_%H_%M_%S")
 logDir = os.path.join(thisDir, "logs", sys.argv[1] + "-" + currentTime)
 os.makedirs(logDir)
 
+if ('asmjs=1' in sys.argv):
+        del targets['7sqlite']
+
 args = ""
 
 for arg in sys.argv[1:]:
@@ -26,13 +29,13 @@ if (sys.platform == 'win32'):
 else:
     sconsCommand = 'scons'
 
-i = 0
-while (i < len(targetLocations)):
-    logFile = os.path.join(logDir, targetNames[i] + ".log")
+for target in sorted(targets.keys()):
+    location = targets[target]
+    logFile = os.path.join(logDir, target[1:] + ".log")
 
-    print("Running scons " + args + "for " + targetNames[i])
+    print("Running scons " + args + "for " + target[1:])
 
-    process = subprocess.Popen([sconsCommand] + sys.argv[1:], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=targetLocations[i])
+    process = subprocess.Popen([sconsCommand] + sys.argv[1:], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=location)
     log = process.communicate()[0]
     f = open(logFile, 'w')
     f.write(log)
@@ -41,5 +44,3 @@ while (i < len(targetLocations)):
     if (status != 0):
         raise Exception('A compile error occured!')
     
-    i += 1
-

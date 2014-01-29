@@ -1,6 +1,11 @@
 #ifndef SKYVOSEMAPHORECWRAPPER_H
 #define SKYVOSEMAPHORECWRAPPER_H
 
+#ifdef ASM_JS
+    #error "Threading is not supported with Emscripten"
+    //Undefined references are created
+#endif
+
 #include "cwrappers/SkyvoBoolean.h"
 
 /**

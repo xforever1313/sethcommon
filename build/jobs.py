@@ -9,26 +9,20 @@ from Globals import getRedirectString
 rootDir = os.path.abspath("..")
 
 #Add to these lists where to call scons
-targetLocations = []
-targetNames = []
+targets = {}
 
-targetNames += ['gmock']
-targetLocations += [os.path.join(rootDir, "Common", "gmock")]
+#numbers in key give order
 
-targetNames += ["CppUTest"]
-targetLocations += [os.path.join(rootDir, "Common", "CppUTest")]
+targets['1gmock'] = os.path.join(rootDir, "Common", "gmock")
 
-targetNames += ["OSBuild"]
-targetLocations += [os.path.join(rootDir,"Common", "os")]
+targets["2CppUTest"] = os.path.join(rootDir, "Common", "CppUTest")
 
-targetNames += ["MathBuild"] 
-targetLocations += [os.path.join(rootDir,"Common", "math")]
+targets["3OSBuild"] = os.path.join(rootDir,"Common", "os")
 
-targetNames += ['CommonClassesBuild']
-targetLocations += [os.path.join(rootDir, "Common", "common_classes")]
+targets["4MathBuild"] = os.path.join(rootDir,"Common", "math")
 
-targetNames += ["SCSVBuild"]
-targetLocations += [os.path.join(rootDir, "Common", "SCSV")]
+targets['5CommonClassesBuild'] = os.path.join(rootDir, "Common", "common_classes")
 
-targetNames += ['sqlite']
-targetLocations += [os.path.join(rootDir, "Common", "sqlite")]
+targets["6SCSVBuild"] = os.path.join(rootDir, "Common", "SCSV")
+
+targets['7sqlite'] = os.path.join(rootDir, "Common", "sqlite")

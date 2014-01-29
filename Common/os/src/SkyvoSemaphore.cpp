@@ -1,3 +1,5 @@
+#ifndef ASM_JS //Will not compile for emscripten
+
 #include <condition_variable>
 #include <ctime>
 #include <mutex>
@@ -112,3 +114,6 @@ unsigned int SkyvoSemaphore::getSemaphoreCount(){
 }
 
 }
+
+#endif
+

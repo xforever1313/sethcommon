@@ -1,6 +1,10 @@
 #ifndef FILE_SYSTEM_H_INCLUDED
 #define FILE_SYSTEM_H_INCLUDED
 
+#ifdef ASM_JS
+    #pragma message("FileSystem not fully supported nor tested with emscripten. Some functions may not work like with C++. Use at own risk.  Good luck!")
+#endif
+
 #include <deque>
 #include <string>
 
@@ -14,6 +18,8 @@ namespace SkyvoOS{
 * \brief This will be our interface to the file system. It wraps all unistd
 * functionality we'll need
 * \warning Shortcuts, SymLinks, and hardlinks result in undefined behavior
+* \warning FileSystem is not fully supported nor has been tested with emscripten.
+*          Some functions may not work like with C++.  Use at own risk.  Good Luck!
 *
 * \author Seth Hendrick
 */

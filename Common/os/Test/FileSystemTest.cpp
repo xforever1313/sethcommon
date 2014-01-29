@@ -1,3 +1,5 @@
+#ifndef ASM_JS
+
 #include <gmock/gmock.h>
 #include <CppUTest/TestHarness.h>
 #include <fstream>
@@ -741,3 +743,5 @@ TEST(FileSystem, pathJoinTest){
 
     CHECK_EQUAL(SkyvoOS::FileSystem::pathJoin(parent, child),ss.str());
 }
+
+#endif

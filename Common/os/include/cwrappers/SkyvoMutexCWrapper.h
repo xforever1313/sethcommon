@@ -1,6 +1,11 @@
 #ifndef SKYVOMUTEXCWRAPPER_H_INCLUDED
 #define SKYVOMUTEXCWRAPPER_H_INCLUDED
 
+#ifdef ASM_JS
+    #error "Threading is not supported with Emscripten"
+    //Undefined references are created
+#endif
+
 /**
 * \file SkyvoMutexCWrapper.h
 * \brief This file wrappers the C++ Skyvo Mutex so it can be called from C or Obj-C

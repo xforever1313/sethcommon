@@ -1,6 +1,10 @@
 #ifndef SKYVOSEMAPHORE_H
 #define SKYVOSEMAPHORE_H
 
+#ifdef ASM_JS
+    #error "Threading is not supported with Emscripten"
+#endif
+
 #include "SkyvoSemaphoreInterface.h"
 
 namespace SkyvoOS{

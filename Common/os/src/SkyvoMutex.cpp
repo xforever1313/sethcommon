@@ -1,3 +1,5 @@
+#ifndef ASM_JS //This will not linkn with emscripten
+
 #include <mutex>
 #include <thread>
 
@@ -38,3 +40,6 @@ void  SkyvoMutex::unlock(){
 }
 
 }
+
+#endif
+

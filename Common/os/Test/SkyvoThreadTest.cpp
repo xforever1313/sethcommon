@@ -1,3 +1,5 @@
+#ifndef ASM_JS
+
 #include <CppUTest/TestHarness.h>
 #include <iostream>
 
@@ -73,3 +75,6 @@ TEST(SkyvoThread, HardwareConcurrencyTest){
     CHECK(SkyvoOS::SkyvoThread::hardware_concurrency() > 0);
     std::cout << "\nHardware Concurrency: " << SkyvoOS::SkyvoThread::hardware_concurrency() << std::endl;
 }
+
+#endif
+

@@ -1,6 +1,10 @@
 #ifndef SKYVOMUTEX_H
 #define SKYVOMUTEX_H
 
+#ifdef ASM_JS
+    #error "Threading is not supported with Emscripten"
+#endif
+
 #include "SkyvoMutexInterface.h"
 
 namespace SkyvoOS{
@@ -21,3 +25,4 @@ class SkyvoMutex : public SkyvoMutexInterface{
 
 }
 #endif // SKYVOMUTEX_H
+

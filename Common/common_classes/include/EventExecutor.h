@@ -1,6 +1,10 @@
 #ifndef EVENT_EXECUTOR_H
 #define EVENT_EXECUTOR_H
 
+#ifdef ASM_JS
+    #error "Emscripten does not support threading."
+#endif
+
 #include <SkyvoMutex.h>
 #include <SkyvoSemaphore.h>
 #include <SkyvoThread.h>
@@ -43,3 +47,4 @@ class EventExecutor : public SkyvoOS::SkyvoThread, public EventExecutorInterface
 }
 
 #endif // EVENT_EXECUTOR_H
+
