@@ -17,7 +17,7 @@ from SConstructGlobals import *
 
 #Make common environment
 projectName = "SkyvoOS"
-targetFlags = CREATE_LIB_TARGET | DEBUG_RELEASE_LIB_TARGET | DOXYGEN_TARGET | CPP_CHECK_TARGET | TESTING_TARGET
+targetFlags = CREATE_LIB_TARGET | DEBUG_RELEASE_LIB_TARGET | DOXYGEN_TARGET | CPP_CHECK_TARGET | TESTING_TARGET | NET_BEANS_TARGET
 envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGUMENTS)
 
 ###
@@ -84,10 +84,13 @@ releaseTarget = createStaticLib(releaseEnvironment, "SkyvoOS", getCompiledObject
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
 cppCheckTarget = createCppCheckTarget(releaseEnvironment, coverageFiles)
 
+netBeansTarget = generateNetBeansFiles(envBase, testIncludePaths + includePaths, "")
+
 Alias("debug_lib", debugTarget)
 Alias("release_lib", releaseTarget)
 Alias ("create_lib", [debugTarget, releaseTarget])
 Alias("doxygen", doxygenTarget)
+Alias("net_beans", netBeansTarget)
 Alias("cpp_check", cppCheckTarget)
 Alias("unit_test", unitTestTarget)
 Alias("run_unit_test", runTestTarget)

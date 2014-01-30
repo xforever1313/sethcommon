@@ -26,6 +26,7 @@ DOXYGEN_TARGET = (2 << 1)
 CPP_CHECK_TARGET = (2 << 2)
 TESTING_TARGET = (2 << 3)
 EXE_TARGET = (2 << 4)
+NET_BEANS_TARGET = (2 << 5)
 
 #Target Aliases
 CREATE_LIB_ALIAS = "create_lib"
@@ -37,6 +38,7 @@ UNIT_TEST_ALIAS = "unit_test"
 RUN_TEST_ALIAS = "run_test"
 DEBUG_ALIAS = "debug"
 RELEASE_ALIAS = "release"
+NET_BEANS_ALIAS = "net_beans"
 
 #Possible Args
 CLANG_BUILD_ARG = "clang_build"
@@ -68,7 +70,10 @@ def addPossibleTargets(env, targetFlags):
 
     if ((EXE_TARGET & targetFlags) == EXE_TARGET):
         env['POSSIBLE_TARGETS'][DEBUG_ALIAS] = "\tBuilds debug executable"
-        env['POSSIBLE_TARGETS'][RELEASE_ALIAS] = "\tBuilds release executable "
+        env['POSSIBLE_TARGETS'][RELEASE_ALIAS] = "\tBuilds release executable"
+
+    if ((NET_BEANS_TARGET & targetFlags) == NET_BEANS_TARGET):
+        env['POSSIBLE_TARGETS'][NET_BEANS_ALIAS] = "Builds a netbeans project"
 
 ###
 # Environments
@@ -119,6 +124,7 @@ def createBaseEnvironment (rootDir, skyvoCommonPath, projectName, targetFlags, a
 
     baseEnvironment['BASE_DIR'] = os.path.abspath(rootDir)
     baseEnvironment['COMMON_DIR'] = os.path.abspath(skyvoCommonPath)
+
     return baseEnvironment
     
 def createDebugEnvironment(envBase, includePaths, libs, libPath):
@@ -424,11 +430,128 @@ def testRunner(target, source, env):
             
     return status
 
-def generateNetBeansFiles(projectName, env, possibleTargets, additionalArgs, sourceFiles):
-    b = Builder(action = generateNetBeansFileBuilder)
-    env.Append(BUILDERS = {"net_beans" : b})
+def generateNetBeansFiles(env, includePath, exeName):
+
+    netEnv = env.Clone(CPPPATH = includePath, 
+                       EXE_NAME = exeName)
+
+    b = Builder(action = generateNetBeansFilesBuilder)
+    netEnv.Append(BUILDERS = {"net_beans" : b})
+    
+    projectFolder = "nbproject"
+
+    sources = ["SConstruct"]
+    targets = [os.path.join(projectFolder, 'project.xml'), 
+               os.path.join(projectFolder, 'configurations.xml')]
+
+    return netEnv.net_beans(target = targets, source = [sources])
+
+def getProjectXML(env):
+    projectXML = '''<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://www.netbeans.org/ns/project/1">
+    <type>org.netbeans.modules.cnd.makeproject</type>
+    <configuration>
+        <data xmlns="http://www.netbeans.org/ns/make-project/1">
+            <name>''' + env['PROJECT_NAME'] + '''</name>
+            <c-extensions>c</c-extensions>
+            <cpp-extensions>cpp</cpp-extensions>
+            <header-extensions>h</header-extensions>
+            <sourceEncoding>UTF-8</sourceEncoding>
+            <make-dep-projects/>
+            <sourceRootList>
+                <sourceRootElem>.</sourceRootElem>
+            </sourceRootList>
+            <confList>
+    '''
+
+    for target in sorted(env['POSSIBLE_TARGETS'].keys()):
+        projectXML += '<confElem>\n<name>' + target + '</name>\n'
+        projectXML += '<type>0</type>\n</confElem>\n'
+
+    projectXML += '''
+            </confList>
+            <formatting>
+                <project-formatting-style>false</project-formatting-style>
+            </formatting>
+        </data>
+    </configuration>
+</project>
+    '''
+
+    return projectXML
+
+def getConfigurationsXml(env):
+    configureXML = '''<?xml version="1.0" encoding="UTF-8"?>
+<configurationDescriptor version="90">
+  <logicalFolder name="root" displayName="root" projectFiles="true" kind="ROOT">
+    <df root="." name="0">
+    </df>
+  </logicalFolder>
+    <sourceFolderFilter>^(nbproject|obj|lib)$</sourceFolderFilter>
+        <sourceRootList>
+            <Elem>.</Elem>
+        </sourceRootList>
+    <projectmakefile>SConstruct</projectmakefile>
+  <confs>
+    '''
+    targetKeys = env['POSSIBLE_TARGETS'].keys()
+    targetKeys.remove(NET_BEANS_ALIAS)
+
+    for target in sorted(targetKeys):
+        configureXML += '<conf name = "' + target + '" type = "0">'
+        configureXML += '''
+            <toolsSet>
+        <compilerSet>default</compilerSet>
+        <dependencyChecking>false</dependencyChecking>
+        <rebuildPropChanged>false</rebuildPropChanged>
+      </toolsSet>
+      <codeAssistance>
+      </codeAssistance>
+      <makefileType>
+        <makeTool>
+          <buildCommandWorkingDir>.</buildCommandWorkingDir>
+         '''
+        configureXML += '<buildCommand>${MAKE} -f SConstruct '
+        configureXML += target + '</buildCommand>\n'
+        configureXML += '<cleanCommand>${MAKE} -f SConstruct '
+        configureXML += target + ' --clean</cleanCommand>\n'
+        if (target == DEBUG_ALIAS):
+            configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], DEBUG_ALIAS, env['EXE_NAME'] + '-d') + '</executablePath>\n'
+        elif(target == RELEASE_ALIAS):
+            configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], RELEASE_ALIAS, env['EXE_NAME']) + '</executablePath>\n'
+        elif(target == UNIT_TEST_ALIAS):
+            configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], UNIT_TEST_ALIAS, 'unit_test') + '</executablePath>\n'
+        else:
+            configureXML += '<executablePath></executablePath>\n'
+
+
+        configureXML += '\n</makeTool>\n</makefileType>\n'
+
+        configureXML += '\n<cTool>\n<incDir>\n'
+        for include in env['CPPPATH']:
+            configureXML += '<pElem>' + include + '</pElem>\n'
+        configureXML += '</incDir>\n</cTool>\n'
+
+        configureXML += '\n<ccTool>\n<incDir>\n'
+        for include in env['CPPPATH']:
+            configureXML += '<pElem>' + include + '</pElem>\n'
+        configureXML += '</incDir>\n</ccTool>\n'
+
+        configureXML += '</conf>\n'
+    
+    configureXML += '</confs>\n</configurationDescriptor>'
+
+    return configureXML
 
 def generateNetBeansFilesBuilder(target, source, env):
-    pass
+    projectXML = open(str(target[0]), "w")
+    projectXML.write(getProjectXML(env))
+    projectXML.close()
+
+    configureXML = open(str(target[1]), "w")
+    configureXML.write(getConfigurationsXml(env))
+    configureXML.close()
+
+
 
     
