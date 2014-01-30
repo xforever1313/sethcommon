@@ -444,7 +444,9 @@ def generateNetBeansFiles(env, includePath, exeName):
     targets = [os.path.join(projectFolder, 'project.xml'), 
                os.path.join(projectFolder, 'configurations.xml')]
 
-    return netEnv.net_beans(target = targets, source = [sources])
+    ret = netEnv.net_beans(target = targets, source = [sources])
+    Clean(ret, projectFolder)
+    return ret
 
 def getProjectXML(env):
     projectXML = '''<?xml version="1.0" encoding="UTF-8"?>

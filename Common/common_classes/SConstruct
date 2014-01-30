@@ -101,7 +101,7 @@ Alias("unit_test", unitTestTarget)
 Alias("run_unit_test", runTestTarget)
 Alias("run_test", [unitTestTarget, cppCheckTarget, runTestTarget])
 
-Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, runTestTarget])
+Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, runTestTarget, netBeansTarget])
 Alias ("delta", [debugTarget, releaseTarget, cppCheckTarget, runTestTarget])
 
 Default([debugTarget])
