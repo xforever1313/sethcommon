@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
-<CodeBlocks_workspace_file>
-	<Workspace title="Workspace">
-		<Project filename="Common/os/SkyvoOS.cbp" />
-		<Project filename="Common/common_classes/SkyvoCommon.cbp" />
-		<Project filename="Common/date_version/dateVersion.cbp" />
-		<Project filename="Common/math/SkyvoMath.cbp" />
-	</Workspace>
-</CodeBlocks_workspace_file>
