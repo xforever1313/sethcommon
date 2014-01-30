@@ -16,7 +16,9 @@ from SkyvoCommonGlobals import *
 from SConstructGlobals import *
 
 #Make common environment
-envBase = createBaseEnvironment(baseDir, baseDir, ARGUMENTS)
+projectName = "Common Classes"
+targetFlags = CREATE_LIB_TARGET | DEBUG_RELEASE_LIB_TARGET | DOXYGEN_TARGET | CPP_CHECK_TARGET | TESTING_TARGET
+envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGUMENTS)
 
 osPath = getSkyvoOSPath(baseDir)
 
@@ -43,20 +45,7 @@ if (sys.platform != "win32" and sys.platform != "darwin"):
 ###libPath
 libPath = [os.path.join(osPath, libDir, envBase['SYSTEM'], debugDir)]
 
-Help(
-'''
-SConstruct file for Skyvo OS project
-
-Targets:
-    debug          Builds the project for Debug lib (Default)
-    release        Builds the project for Release lib
-    create_lib     Builds both the debug and release libs
-    cpp_check      Runs cppcheck on the source files
-    doxygen        Builds the doxygen documentation
-    unit_test      Builds the project for Unit Tests
-    run_test       Builds and runs the Unit Tests and memcheck and coverage
-'''
-)
+Help(getHelpMessage(envBase))
 
 ###
 # Environment creation

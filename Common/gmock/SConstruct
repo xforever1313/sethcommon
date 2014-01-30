@@ -14,7 +14,9 @@ sys.path.append(baseDir) #Get globals
 from Globals import *
 from SConstructGlobals import *
 
-envBase = createBaseEnvironment(baseDir, baseDir, ARGUMENTS)
+projectName = "gmock"
+targetFlags = CREATE_LIB_TARGET
+envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGUMENTS)
 
 #include paths
 includePaths = ["include"]
@@ -39,14 +41,7 @@ libPath = []
 #link flags
 linkFlags = []
 
-Help(
-'''
-SConstruct file for gmock
-
-Targets:
-    create_lib     Builds gmock lib
-'''
-)
+Help(getHelpMessage(envBase))
 
 ###
 # Environment creation

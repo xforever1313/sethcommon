@@ -16,7 +16,9 @@ from SkyvoCommonGlobals import *
 from SConstructGlobals import *
 
 #Make common environment
-envBase = createBaseEnvironment(baseDir, baseDir, ARGUMENTS)
+projectName = "SkyvoOS"
+targetFlags = CREATE_LIB_TARGET | DEBUG_RELEASE_LIB_TARGET | DOXYGEN_TARGET | CPP_CHECK_TARGET | TESTING_TARGET
+envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGUMENTS)
 
 ###
 # Files to compile
@@ -42,20 +44,7 @@ if (not envBase['ASM_JS_BUILD']):
 ###libPath
 libPath = []
 
-Help(
-'''
-SConstruct file for Skyvo OS project
-
-Targets:
-    debug_lib      Builds the project for Debug lib (Default)
-    release_lib    Builds the project for Release lib
-    create_lib     Builds both the debug and release libs
-    cpp_check      Runs cppcheck on the source files
-    doxygen        Builds the doxygen documentation
-    unit_test      Builds the project for Unit Tests
-    run_test       Builds and runs the Unit Tests and memcheck and coverage
-'''
-)
+Help(getHelpMessage(envBase))
 
 ###
 # Environment creation

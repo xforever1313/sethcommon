@@ -20,7 +20,9 @@ from SkyvoCommonGlobals import *
 ###
 
 #Make common environment
-envBase = createBaseEnvironment(baseDir, baseDir, ARGUMENTS)
+projectName = "sqlite"
+targetFlags = (CREATE_LIB_TARGET | DEBUG_RELEASE_LIB_TARGET | DOXYGEN_TARGET | CPP_CHECK_TARGET | TESTING_TARGET | EXE_TARGET)
+envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGUMENTS)
 
 ###cpp defines
 cppDefines = ['PACKAGE_NAME="\\"sqlite\\""', 'PACKAGE_TARNAME="\\"sqlite\\""', 'PACKAGE_VERSION="\\"3.7.17\\""'] + \
@@ -64,22 +66,7 @@ testLibs = [] + libs
 ###libPath
 libPath = []
 
-Help(
-'''
-SConstruct file for SQLite project
-
-Targets:
-    debug          Builds the debug version of the sqlite shell
-    release        Builds the release version of the sqlite shell
-    debug_lib      Builds the project for sqlite Debug lib
-    release_lib    Builds the project for sqlite Release lib
-    create_lib     Builds both the debug and release libs
-    cpp_check      Runs cppcheck on the source files
-    doxygen        Builds the doxygen documentation
-    unit_test      Builds the project for Unit Tests
-    run_test       Builds and runs the Unit Tests and memcheck and coverage
-'''
-)
+Help(getHelpMessage(envBase))
 
 ###
 # Environment creation

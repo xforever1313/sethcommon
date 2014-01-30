@@ -16,7 +16,9 @@ from SkyvoCommonGlobals import *
 from SConstructGlobals import *
 
 #Make common environment
-envBase = createBaseEnvironment(baseDir, baseDir, ARGUMENTS)
+projectName = "SCSV"
+targetFlags = CREATE_LIB_TARGET | DEBUG_RELEASE_LIB_TARGET | DOXYGEN_TARGET | CPP_CHECK_TARGET | TESTING_TARGET
+envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGUMENTS)
 
 #additional flags
 testLinkFlags = []
@@ -43,20 +45,7 @@ libs = []
 ###libPath
 libPath = []
 
-Help(
-'''
-SConstruct file for SCSV project
-
-Targets:
-    debug          Builds the project for Debug lib (Default)
-    release        Builds the project for Release lib
-    create_lib     Builds both the debug and release libs
-    doxygen        Builds the doxygen documentation
-    cpp_check      Runs cppcheck on the source files
-    unit_test      Builds the project for Unit Tests
-    run_test       Builds and runs the Unit Tests and memcheck and coverage
-'''
-)
+Help(getHelpMessage(envBase))
 
 ###
 # Environment creation

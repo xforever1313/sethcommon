@@ -14,7 +14,9 @@ sys.path.append(baseDir) #Get globals
 from Globals import *
 from SConstructGlobals import *
 
-envBase = createBaseEnvironment(baseDir, baseDir, ARGUMENTS)
+targetFlags = (CREATE_LIB_TARGET | TESTING_TARGET | DOXYGEN_TARGET)
+projectName = "CppUTest"
+envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGUMENTS)
 
 #include paths
 includePaths = [".", "include"]
@@ -56,18 +58,6 @@ testLibPath = [os.path.join(libDir, envBase['SYSTEM'])]
 #link flags
 linkFlags = []
 
-Help(
-'''
-SConstruct file for CppUTEST
-
-Targets:
-    create_lib     Builds the CppUTest
-    doxygen        Builds the doxygen documentation
-    unit_test      Builds the project for Unit Tests
-    run_test       Builds and runs the Unit Tests and memcheck and coverage
-'''
-)
-
 ###
 # Environment creation
 ###
@@ -85,6 +75,8 @@ if (not testEnvironment['CLANG_BUILD']):
 
 #Doxygen 
 doxygenFiles = sourceFiles + testSourceFiles + glob.glob(os.path.join(includeDir, "*h")) +  glob.glob(os.path.join(includeDir, "*", "*h"))
+
+Help(getHelpMessage(envBase))
 
 ###
 # Targets

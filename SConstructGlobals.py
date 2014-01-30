@@ -19,6 +19,57 @@ if (sys.platform == "win32"):
 
 SetOption('num_jobs', cpu_count())  #Sets -j to the number of cores  This happens when you import this file
 
+#TargetFlags
+CREATE_LIB_TARGET = 1
+DEBUG_RELEASE_LIB_TARGET = (2 << 0)
+DOXYGEN_TARGET = (2 << 1)
+CPP_CHECK_TARGET = (2 << 2)
+TESTING_TARGET = (2 << 3)
+EXE_TARGET = (2 << 4)
+
+#Target Aliases
+CREATE_LIB_ALIAS = "create_lib"
+DEBUG_LIB_ALIAS = "debug_lib"
+RELEASE_LIB_ALIAS = "release_lib"
+DOXYGEN_ALIAS = "doxygen"
+CPP_CHECK_ALIAS = "cpp_check"
+UNIT_TEST_ALIAS = "unit_test"
+RUN_TEST_ALIAS = "run_test"
+DEBUG_ALIAS = "debug"
+RELEASE_ALIAS = "release"
+
+#Possible Args
+CLANG_BUILD_ARG = "clang_build"
+ARM_BUILD_ARG = "arm_build"
+ASM_JS_ARG = "asmjs"
+
+POSSIBLE_ARGS = {}
+POSSIBLE_ARGS[CLANG_BUILD_ARG] = "Build with clang"
+POSSIBLE_ARGS[ARM_BUILD_ARG] = "Target for arm platform.  Only good with ipads right now"
+POSSIBLE_ARGS[ASM_JS_ARG] = "\tBuild with emscripten"
+
+def addPossibleTargets(env, targetFlags):
+    if ((CREATE_LIB_TARGET & targetFlags) == CREATE_LIB_TARGET):
+        env['POSSIBLE_TARGETS'][CREATE_LIB_ALIAS] = "Creates all the libraries"
+
+    if ((DEBUG_RELEASE_LIB_TARGET & targetFlags) == DEBUG_RELEASE_LIB_TARGET):
+        env['POSSIBLE_TARGETS'][DEBUG_LIB_ALIAS] = "Creates the debug libary"
+        env['POSSIBLE_TARGETS'][RELEASE_LIB_ALIAS] = "Creates the release library"
+
+    if ((DOXYGEN_TARGET & targetFlags) == DOXYGEN_TARGET):
+        env['POSSIBLE_TARGETS'][DOXYGEN_ALIAS] = "\tCreates the doxygen documentation"
+
+    if ((CPP_CHECK_TARGET & targetFlags) == CPP_CHECK_TARGET):
+        env['POSSIBLE_TARGETS'][CPP_CHECK_ALIAS] = "Runs CPP Check"
+
+    if ((TESTING_TARGET & targetFlags) == TESTING_TARGET):
+        env['POSSIBLE_TARGETS'][UNIT_TEST_ALIAS] = "Builds unit test binary"
+        env['POSSIBLE_TARGETS'][RUN_TEST_ALIAS] = "Builds and runs the unit test binary"
+
+    if ((EXE_TARGET & targetFlags) == EXE_TARGET):
+        env['POSSIBLE_TARGETS'][DEBUG_ALIAS] = "\tBuilds debug executable"
+        env['POSSIBLE_TARGETS'][RELEASE_ALIAS] = "\tBuilds release executable "
+
 ###
 # Environments
 ###
@@ -31,11 +82,11 @@ def serverBuildAdd(env):
         env.Append(LIBPATH = ['/skyvo/lib'])
         env.Append(CCFLAGS = ['-isystem', '/skyvo/include'])          
 
-def createBaseEnvironment (rootDir, skyvoCommonPath, args):
+def createBaseEnvironment (rootDir, skyvoCommonPath, projectName, targetFlags, args):
     serverBuild = (args.get('server_build', '0') == '1')
-    clangBuild = (args.get('clang_build', '0') == '1')
-    armBuild = (args.get('arm_build', '0') == '1')
-    asmJSBuild = (args.get('asmjs', '0') == '1')
+    clangBuild = (args.get(CLANG_BUILD_ARG, '0') == '1')
+    armBuild = (args.get(ARM_BUILD_ARG, '0') == '1')
+    asmJSBuild = (args.get(ASM_JS_ARG, '0') == '1')
     msvcTarget = (args.get('msvc_target', None))
 
     sys.path.append(os.path.join(skyvoCommonPath, "build/environments"))
@@ -58,9 +109,12 @@ def createBaseEnvironment (rootDir, skyvoCommonPath, args):
     env = envClass.getBaseEnvironment(armBuild, serverBuild)
 
     baseEnvironment = env.Clone(
-        PROJECT_ROOT = os.path.abspath(".")
+        PROJECT_ROOT = os.path.abspath("."),
+        POSSIBLE_TARGETS = {},
+        PROJECT_NAME = projectName
     )
-    
+    addPossibleTargets(baseEnvironment, targetFlags)
+    baseEnvironment['TARGET_FLAGS'] = targetFlags
     baseEnvironment['ENV']['PATH'] = os.environ['PATH'] #Look in path for tools
 
     baseEnvironment['BASE_DIR'] = os.path.abspath(rootDir)
@@ -189,6 +243,24 @@ def getCompiledObjectsWithDateVersionObject(env, sources, dateVersionFile, args)
 ###
 # Other helper functions
 ###
+
+def getHelpMessage(env):
+    ret = '\nSConstruct file for ''' + env['PROJECT_NAME']
+    ret += ':\n\nTargets:\n'
+    
+    for target in sorted(env['POSSIBLE_TARGETS'].keys()):
+        ret += '\t' + target + '\t' + env['POSSIBLE_TARGETS'][target]
+        ret += '\n'
+
+    ret += '\nArguments:\n'
+
+    for arg in sorted(POSSIBLE_ARGS.keys()):
+        ret += '\t' + arg + '=1\t' + POSSIBLE_ARGS[arg]
+        ret += '\n'
+    
+    ret += '\n'
+    return ret
+
 def getVersionFile(env, args):
     if (args.get('version_file', '0') == '0'): #If version file not specified, use the default one
         versionFile = os.path.join(env['BASE_DIR'], buildDir, 'version.txt')
@@ -351,3 +423,12 @@ def testRunner(target, source, env):
             shutil.move(file, codeCoverageDir)
             
     return status
+
+def generateNetBeansFiles(projectName, env, possibleTargets, additionalArgs, sourceFiles):
+    b = Builder(action = generateNetBeansFileBuilder)
+    env.Append(BUILDERS = {"net_beans" : b})
+
+def generateNetBeansFilesBuilder(target, source, env):
+    pass
+
+    

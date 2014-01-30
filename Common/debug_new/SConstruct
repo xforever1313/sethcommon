@@ -10,13 +10,17 @@ from Globals import *
 from SConstructGlobals import *
 from SkyvoCommonGlobals import *
 
-envBase = createBaseEnvironment(baseDir, baseDir, ARGUMENTS)
+#Make Common environment
+projectName = "Debug New"
+targetFlags = CREATE_LIB_TARGET
+envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGUMENTS)
+
+Help(getHelpMessage(envBase))
 
 #Make commonCXX environment
 CXXEnvironment = createDebugEnvironment(envBase, [], [], [])
 CXXEnvironment['CCFLAGS'] = ['-g', '-std=gnu++11']
 CXXEnvironment['LIBDIR'] = os.path.join(libDir, CXXEnvironment['SYSTEM'])
-addPlatformFlags(CXXEnvironment)
 
 debugNewObject = CXXEnvironment.Object(glob.glob("*.cpp"))
 
@@ -25,3 +29,4 @@ buildDebugNew = createStaticLib(CXXEnvironment, "debug_new", debugNewObject)
 Alias("create_lib", buildDebugNew)
 
 Default("create_lib")
+
