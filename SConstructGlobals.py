@@ -41,6 +41,7 @@ RELEASE_ALIAS = "release"
 NET_BEANS_ALIAS = "net_beans"
 
 #Possible Args
+DEFAULT = ""
 CLANG_BUILD_ARG = "clang_build"
 ARM_BUILD_ARG = "arm_build"
 ASM_JS_ARG = "asmjs"
@@ -49,6 +50,11 @@ POSSIBLE_ARGS = {}
 POSSIBLE_ARGS[CLANG_BUILD_ARG] = "Build with clang"
 POSSIBLE_ARGS[ARM_BUILD_ARG] = "Target for arm platform.  Only good with ipads right now"
 POSSIBLE_ARGS[ASM_JS_ARG] = "\tBuild with emscripten"
+
+compilerTypeArgs = {}
+compilerTypeArgs[DEFAULT] = ""
+compilerTypeArgs[CLANG_BUILD_ARG] = "clang_"
+compilerTypeArgs[ASM_JS_ARG] = "asm_js_"
 
 def addPossibleTargets(env, targetFlags):
     if ((CREATE_LIB_TARGET & targetFlags) == CREATE_LIB_TARGET):
@@ -499,9 +505,16 @@ def getConfigurationsXml(env):
     targetKeys = env['POSSIBLE_TARGETS'].keys()
     targetKeys.remove(NET_BEANS_ALIAS)
 
-    for target in sorted(targetKeys):
-        configureXML += '<conf name = "' + target + '" type = "0">'
-        configureXML += '''
+    for compiler in sorted(compilerTypeArgs):
+        for target in sorted(targetKeys):    
+            targetName = compilerTypeArgs[compiler] + target
+            targetCommand = target
+            if (compiler != ''):
+                targetCommand += ' ' + compiler + '=1'
+            if (env['SERVER_BUILD']):
+                targetCommand += ' server_build=1'
+            configureXML += '<conf name = "' + targetName + '" type = "0">'
+            configureXML += '''
             <toolsSet>
         <compilerSet>default</compilerSet>
         <dependencyChecking>false</dependencyChecking>
@@ -513,33 +526,33 @@ def getConfigurationsXml(env):
         <makeTool>
           <buildCommandWorkingDir>.</buildCommandWorkingDir>
          '''
-        configureXML += '<buildCommand>${MAKE} -f SConstruct '
-        configureXML += target + '</buildCommand>\n'
-        configureXML += '<cleanCommand>${MAKE} -f SConstruct '
-        configureXML += target + ' --clean</cleanCommand>\n'
-        if (target == DEBUG_ALIAS):
-            configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], DEBUG_ALIAS, env['EXE_NAME'] + '-d') + '</executablePath>\n'
-        elif(target == RELEASE_ALIAS):
-            configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], RELEASE_ALIAS, env['EXE_NAME']) + '</executablePath>\n'
-        elif(target == UNIT_TEST_ALIAS):
-            configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], UNIT_TEST_ALIAS, 'unit_test') + '</executablePath>\n'
-        else:
-            configureXML += '<executablePath></executablePath>\n'
+            configureXML += '<buildCommand>${MAKE} -f SConstruct '
+            configureXML += targetCommand + '</buildCommand>\n'
+            configureXML += '<cleanCommand>${MAKE} -f SConstruct '
+            configureXML += targetCommand + ' --clean</cleanCommand>\n'
+            if (target == DEBUG_ALIAS):
+                configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], DEBUG_ALIAS, env['EXE_NAME'] + '-d') + '</executablePath>\n'
+            elif(target == RELEASE_ALIAS):
+                configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], RELEASE_ALIAS, env['EXE_NAME']) + '</executablePath>\n'
+            elif(target == UNIT_TEST_ALIAS):
+                configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], UNIT_TEST_ALIAS, 'unit_test') + '</executablePath>\n'
+            else:
+                configureXML += '<executablePath></executablePath>\n'
 
 
-        configureXML += '\n</makeTool>\n</makefileType>\n'
+            configureXML += '\n</makeTool>\n</makefileType>\n'
 
-        configureXML += '\n<cTool>\n<incDir>\n'
-        for include in env['CPPPATH']:
-            configureXML += '<pElem>' + include + '</pElem>\n'
-        configureXML += '</incDir>\n</cTool>\n'
+            configureXML += '\n<cTool>\n<incDir>\n'
+            for include in env['CPPPATH']:
+                configureXML += '<pElem>' + include + '</pElem>\n'
+            configureXML += '</incDir>\n</cTool>\n'
 
-        configureXML += '\n<ccTool>\n<incDir>\n'
-        for include in env['CPPPATH']:
-            configureXML += '<pElem>' + include + '</pElem>\n'
-        configureXML += '</incDir>\n</ccTool>\n'
+            configureXML += '\n<ccTool>\n<incDir>\n'
+            for include in env['CPPPATH']:
+                configureXML += '<pElem>' + include + '</pElem>\n'
+            configureXML += '</incDir>\n</ccTool>\n'
 
-        configureXML += '</conf>\n'
+            configureXML += '</conf>\n'
     
     configureXML += '</confs>\n</configurationDescriptor>'
 
