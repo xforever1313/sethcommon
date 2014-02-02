@@ -1,18 +1,27 @@
 This document describes what each directory in this project is.  Please turn word wrapping on, or you wont be able to read this.
 
 Common:
-    The projects contained in this folder are classes used in more than one project.  For example, threading is used in SkyWrite-Core and Notebook-Core.
+    The projects contained in this folder are classes and scripts used in more than one project.  
     
-    Common_classes
+    Common_classes:
         Classes contained in here are common throughout the repo.  This is a level higher than the os layer, and should be built after the os layer is built.  Classes in here should be programmed such that they are cross platform, that is, C/C++.
+    
+    CppUTest:
+        Unit test framework found online.  
+    
+    date_version:
+        C++ files that keep track of the versioning information in the program.
     
     debug_new:
         debug_new is a memory leak detector.  For platforms with valgrind, this really isnt needed.  On platforms without valgrind (win32), then debug_new is needed to detect memory leaks.  Building the project inside of here makes a static library of debug_new.  For win32 users, the debug_new lib is already included inside of Skyvo's MinGW compiler.
     
+    gmock:
+        Google Mock.  Mock classes that allow unit tests to be easier.
+    
     math:
-        Common math functions.  Ignore for now, as its out of date.  Ideally, this language should be as cross platform as possible.  That is, C.  If C is not feasable, C++.
-
-    Common/os:
+        Common math functions.  
+        
+    os:
         This is platform specific os calls.  This includes threading and filesystem calls.  The implementation of these classes can be platform-specific, but should be abstracted in a way to be cross-platform.  This is the lowest level, and should be built first.  The language is C++, unless other platforms required a different language (they must, however, be wrapped so c++ can call them).    
 
     rapidjson:
@@ -32,3 +41,6 @@ Doc:
 
 Build:
     Build scripts are located here.  The deliverable creation script is also here.
+    
+Tools:
+    Useful tools used.
