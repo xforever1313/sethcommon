@@ -26,7 +26,7 @@ DOXYGEN_TARGET = (2 << 1)
 CPP_CHECK_TARGET = (2 << 2)
 TESTING_TARGET = (2 << 3)
 EXE_TARGET = (2 << 4)
-NET_BEANS_TARGET = (2 << 5)
+PROJECT_TARGET = (2 << 5)
 
 #Target Aliases
 CREATE_LIB_ALIAS = "create_lib"
@@ -39,6 +39,7 @@ RUN_TEST_ALIAS = "run_test"
 DEBUG_ALIAS = "debug"
 RELEASE_ALIAS = "release"
 NET_BEANS_ALIAS = "net_beans"
+VS_ALIAS = "vs_project"
 
 #Possible Args
 DEFAULT = ""
@@ -78,8 +79,9 @@ def addPossibleTargets(env, targetFlags):
         env['POSSIBLE_TARGETS'][DEBUG_ALIAS] = "\tBuilds debug executable"
         env['POSSIBLE_TARGETS'][RELEASE_ALIAS] = "\tBuilds release executable"
 
-    if ((NET_BEANS_TARGET & targetFlags) == NET_BEANS_TARGET):
+    if ((PROJECT_TARGET & targetFlags) == PROJECT_TARGET):
         env['POSSIBLE_TARGETS'][NET_BEANS_ALIAS] = "Builds a netbeans project"
+        env['POSSIBLE_TARGETS'][VS_ALIAS] = "Builds a visual studio project"
 
 ###
 # Environments
@@ -436,6 +438,181 @@ def testRunner(target, source, env):
             
     return status
 
+###
+# Project Generation
+###
+def createProjectTargets(env, includePath, exeName):
+    netBeansTarget = generateNetBeansFiles(env, includePath, exeName)
+    Alias(NET_BEANS_ALIAS, netBeansTarget)
+
+    vsTarget = generateVSFiles(env, includePath, exeName)
+    Alias(VS_ALIAS, vsTarget)
+
+    return (netBeansTarget, vsTarget)
+
+###
+# Visual Studio project generation
+###
+def generateVSFiles(env, includePath, exeName):
+    VSEnv = env.Clone(CPPPATH = includePath,
+                      EXE_NAME = exeName)
+
+    b = Builder(action = generateVSFilesBuilder)
+    VSEnv.Append(BUILDERS = {"vs" : b} )
+
+    projectFolder = "vsproject"
+
+    sources = ["SConstruct", os.path.join(env['COMMON_DIR'], 'SConstructGlobals.py')]
+    targets = [os.path.join(projectFolder, VSEnv['PROJECT_NAME'] + '.vcxproj'), 
+              os.path.join(projectFolder, VSEnv['PROJECT_NAME'] + '.vcxproj.filters')]
+
+    ret = VSEnv.vs(target = targets, source = sources)
+    Clean(ret, projectFolder)
+    return ret
+
+def generateVSFilters():
+    ret = '''<?xml version="1.0" encoding="utf-8"?>
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;wav;mfcribbon-ms</Extensions>
+    </Filter>
+  </ItemGroup>
+</Project>
+    '''
+    return ret
+
+def getVSProjectXML(env):
+    ret = '''<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">    
+    '''
+    targetKeys = env['POSSIBLE_TARGETS'].keys()
+    targetKeys.remove(NET_BEANS_ALIAS)
+    targetKeys.remove(VS_ALIAS)
+
+    for compiler in sorted(compilerTypeArgs):
+        for target in sorted(targetKeys):
+            targetName = compilerTypeArgs[compiler] + target
+            ret += '<ProjectConfiguration Include ="' + targetName + '|win32">\n'
+            ret += '<Configuration>' + targetName + '</Configuration>\n'
+            ret += '<Platform>win32</Platform>\n'
+            ret += '</ProjectConfiguration>\n'
+
+    ret += '</ItemGroup>\n'
+    ret += '''  <PropertyGroup Label="Globals">
+    <Keyword>MakeFileProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  '''
+    for compiler in sorted(compilerTypeArgs):
+        for target in sorted(targetKeys):
+            targetName = compilerTypeArgs[compiler] + target
+            ret += '  <PropertyGroup Condition="\'$(Configuration)|$(Platform)\'==\'' + targetName + '|win32\'" Label="Configuration">\n'
+            ret += '''
+    <ConfigurationType>Makefile</ConfigurationType>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+            '''
+  
+    ret += '''
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+    '''
+
+    for compiler in sorted(compilerTypeArgs):
+        for target in sorted(targetKeys):
+            targetName = compilerTypeArgs[compiler] + target
+             
+            ret += '<ImportGroup Label="PropertySheets" Condition="\'$(Configuration)|$(Platform)\'==\'' + targetName + '|win32\'">\n'
+            ret += '<Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists(\'$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props\')" Label="LocalAppDataPlatform" />\n'
+            ret += '</ImportGroup>\n'
+
+    ret += '<PropertyGroup Label="UserMacros" />\n'
+    for compiler in sorted(compilerTypeArgs):
+        for target in sorted(targetKeys):
+            targetName = compilerTypeArgs[compiler] + target
+
+            ret += '<PropertyGroup Condition="\'$(Configuration)|$(Platform)\'==\'' + targetName + '|win32\'">\n'
+            
+            if (compiler != ''):
+                command = 'cd .. &amp; scons ' + target + ' ' + compiler + '=1'
+            else:
+                command = 'cd .. &amp; scons ' + target
+                
+            ret += '<NMakeBuildCommandLine>' + command + '</NMakeBuildCommandLine>\n'
+            ret += '<NMakeCleanCommandLine>' + command + ' --clean</NMakeCleanCommandLine>'
+            
+            ret += '<NMakeReBuildCommandLine>' + command + '--clean; &amp; ' + command + '</NMakeReBuildCommandLine>\n'
+
+            if (target == DEBUG_ALIAS):
+                ret += '<NMakeOutput>' + os.path.join('bin', env['SYSTEM'], DEBUG_ALIAS, env['EXE_NAME'] + '-d') + '</NMakeOutput>\n'
+            elif(target == RELEASE_ALIAS):
+                ret += '<NMakeOutput>' + os.path.join('bin', env['SYSTEM'], RELEASE_ALIAS, env['EXE_NAME']) + '</NMakeOutput>\n'
+            elif(target == UNIT_TEST_ALIAS):
+                ret += '<NMakeOutput>' + os.path.join('bin', env['SYSTEM'], UNIT_TEST_ALIAS, 'unit_test') + '</NMakeOutput>\n'
+            else:
+                ret += '<NMakeOutput></NMakeOutput>\n'
+
+            ret += '<IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);'
+            for path in env['CPPPATH']:
+                ret += path + ';'
+            ret += '</IncludePath>\n'
+
+            ret += '<OutDir>.</OutDir>\n'
+            ret += '<IntDir>.</IntDir>\n'
+            ret += '<NMakeIncludeSearchPath>'
+            for path in env['CPPPATH']:
+                ret += os.path.abspath(path) + ';'
+            ret += '</NMakeIncludeSearchPath>\n'
+
+            ret += '</PropertyGroup>\n'
+
+    ret += '<ItemDefinitionGroup>\n</ItemDefinitionGroup>\n<ItemGroup>\n'
+    projectIncludeFiles = getFilesInDirectory(includeDir)
+    for f in projectIncludeFiles:
+        ret += '<ClInclude Include="' + os.path.abspath(f) + '" />\n'
+    ret += '</ItemGroup>\n'
+
+    ret += '<ItemGroup>\n'
+    sourceFiles = getFilesInDirectory(srcDir)
+    for f in sourceFiles:
+        ret += '<ClCompile Include="' + os.path.abspath(f) + '" />\n'
+    ret += '</ItemGroup>\n'
+
+    ret += '<ItemGroup>\n'
+    testFiles = getFilesInDirectory(testDir)
+    for f in testFiles:
+        ret += '<ClCompile Include="' + os.path.abspath(f) + '" />\n'
+    ret += '</ItemGroup>\n'
+
+    ret += '<ItemGroup>\n<None Include="' + os.path.abspath('SConstruct') + '" />\n</ItemGroup>\n'
+
+
+    ret += '<Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />\n'
+    ret += '<ImportGroup Label="ExtensionTargets">\n</ImportGroup>\n'
+    ret += '</Project>'
+
+    return ret
+
+def generateVSFilesBuilder(target, source, env):
+    projectXML = open(str(target[0]), "w")
+    projectXML.write(getVSProjectXML(env))
+    projectXML.close()
+
+    filtersXML = open(str(target[1]), "w")
+    filtersXML.write(generateVSFilters())
+    filtersXML.close()
+
+###
+# Netbean Project Generation
+###
 def generateNetBeansFiles(env, includePath, exeName):
 
     netEnv = env.Clone(CPPPATH = includePath, 
@@ -446,7 +623,7 @@ def generateNetBeansFiles(env, includePath, exeName):
     
     projectFolder = "nbproject"
 
-    sources = ["SConstruct"]
+    sources = ["SConstruct", os.path.join(env['COMMON_DIR'], 'SConstructGlobals.py')]
     targets = [os.path.join(projectFolder, 'project.xml'), 
                os.path.join(projectFolder, 'configurations.xml')]
 
@@ -504,6 +681,7 @@ def getConfigurationsXml(env):
     '''
     targetKeys = env['POSSIBLE_TARGETS'].keys()
     targetKeys.remove(NET_BEANS_ALIAS)
+    targetKeys.remove(VS_ALIAS)
 
     for compiler in sorted(compilerTypeArgs):
         for target in sorted(targetKeys):    
@@ -566,7 +744,4 @@ def generateNetBeansFilesBuilder(target, source, env):
     configureXML = open(str(target[1]), "w")
     configureXML.write(getConfigurationsXml(env))
     configureXML.close()
-
-
-
     

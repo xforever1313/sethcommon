@@ -49,6 +49,14 @@ def parseArguments():
 def replaceSpacesWithUnderscores(s):
     return string.replace(s, ' ', '_')
 
+def getFilesInDirectory(directory):
+    ret = []
+    for root, directories, files in os.walk(directory):
+        for filename in files:
+            filepath = os.path.join(root, filename)
+            ret.append(filepath)
+    return ret
+
 def getRevisionNumber():
     revProc = subprocess.Popen("git rev-list --count HEAD", shell=True, stdout=subprocess.PIPE)
     rawString = revProc.communicate()[0]
