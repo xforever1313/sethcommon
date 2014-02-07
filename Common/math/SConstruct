@@ -88,7 +88,8 @@ releaseTarget = createStaticLib(releaseEnvironment, "SkyvoMath", getCompiledObje
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
 cppCheckTarget = createCppCheckTarget(releaseEnvironment, coverageFiles)
 
-(netBeansTarget, vsTarget) = createProjectTargets(envBase, testIncludePaths + includePaths, "")
+otherIncludeFiles = [os.path.join(getCppUTestPath(baseDir), includeDir), os.path.join(getGMockPath(baseDir), includeDir)]
+(netBeansTarget, vsTarget) = createProjectTargets(envBase, testEnvironment['CPPPATH'] + otherIncludeFiles, "")
 
 Alias("debug_lib", debugTarget)
 Alias("release_lib", releaseTarget)

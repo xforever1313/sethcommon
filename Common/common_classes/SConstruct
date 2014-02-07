@@ -17,7 +17,7 @@ from SConstructGlobals import *
 
 #Make common environment
 projectName = "Common Classes"
-targetFlags = CREATE_LIB_TARGET | DEBUG_RELEASE_LIB_TARGET | DOXYGEN_TARGET | CPP_CHECK_TARGET | TESTING_TARGET | NET_BEANS_TARGET
+targetFlags = CREATE_LIB_TARGET | DEBUG_RELEASE_LIB_TARGET | DOXYGEN_TARGET | CPP_CHECK_TARGET | TESTING_TARGET | PROJECT_TARGET
 envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGUMENTS)
 
 osPath = getSkyvoOSPath(baseDir)
@@ -89,19 +89,20 @@ releaseTarget = createStaticLib(releaseEnvironment, "SkyvoCommon", getCompiledOb
 
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
 cppCheckTarget = createCppCheckTarget(releaseEnvironment, coverageFiles)
-netBeansTarget = generateNetBeansFiles(envBase, testIncludePaths + includePaths, "")
+
+otherIncludeFiles = [os.path.join(getCppUTestPath(baseDir), includeDir), os.path.join(getGMockPath(baseDir), includeDir)]
+(netBeansTarget, vsTarget) = createProjectTargets(envBase, testEnvironment['CPPPATH'] + otherIncludeFiles, "")
 
 Alias("debug_lib", debugTarget)
 Alias("release_lib", releaseTarget)
 Alias ("create_lib", [debugTarget, releaseTarget])
 Alias("doxygen", doxygenTarget)
-Alias("net_beans", netBeansTarget)
 Alias("cpp_check", cppCheckTarget)
 Alias("unit_test", unitTestTarget)
 Alias("run_unit_test", runTestTarget)
 Alias("run_test", [unitTestTarget, cppCheckTarget, runTestTarget])
 
-Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, runTestTarget, netBeansTarget])
+Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, runTestTarget, netBeansTarget, vsTarget])
 Alias ("delta", [debugTarget, releaseTarget, cppCheckTarget, runTestTarget])
 
 Default([debugTarget])

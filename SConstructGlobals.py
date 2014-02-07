@@ -470,24 +470,63 @@ def generateVSFiles(env, includePath, exeName):
     Clean(ret, projectFolder)
     return ret
 
-def generateVSFilters():
+def generateVSFilters(includeFiles, sourceFiles, testIncludeFiles, testSourceFiles, testFiles):
     ret = '''<?xml version="1.0" encoding="utf-8"?>
+    <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="src">
     </Filter>
-    <Filter Include="Header Files">
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="include">
     </Filter>
-    <Filter Include="Resource Files">
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;wav;mfcribbon-ms</Extensions>
+    <Filter Include="test">
+    </Filter>
+    <Filter Include = "test\\include">
+    </Filter>
+    <Filter Include = "test\\src">
     </Filter>
   </ItemGroup>
-</Project>
     '''
+    
+    ret += '<ItemGroup>\n'
+    for f in includeFiles:
+        ret += '<ClInclude Include="' + os.path.abspath(f) + '">\n'
+        ret += '<Filter>include</Filter>\n'
+        ret += '</ClInclude>\n'
+    ret += '</ItemGroup>\n'
+
+    ret += '<ItemGroup>\n'
+    for f in sourceFiles:
+        ret += '<ClCompile Include="' + os.path.abspath(f) + '">\n'
+        ret += '<Filter>src</Filter>\n'
+        ret += '</ClCompile>\n'
+    ret += '</ItemGroup>\n'
+
+    ret += '<ItemGroup>\n'
+    for f in testIncludeFiles:
+        ret += '<ClInclude Include="' + os.path.abspath(f) + '">\n'
+        ret += '<Filter>test\\include</Filter>\n'
+        ret += '</ClInclude>\n'
+    ret += '</ItemGroup>\n'
+
+    ret += '<ItemGroup>\n'
+    for f in testSourceFiles:
+        ret += '<ClCompile Include="' + os.path.abspath(f) + '">\n'
+        ret += '<Filter>test\\src</Filter>\n'
+        ret += '</ClCompile>\n'
+    ret += '</ItemGroup>\n'
+
+    ret += '<ItemGroup>\n'
+    for f in testFiles:
+        ret += '<ClCompile Include="' + os.path.abspath(f) + '">\n'
+        ret += '<Filter>test</Filter>\n'
+        ret += '</ClCompile>\n'
+    ret += '</ItemGroup>\n'
+
+    ret += '</Project>'
+
     return ret
 
-def getVSProjectXML(env):
+def getVSProjectXML(env, includeFiles, sourceFiles, testIncludeFiles, testSourceFiles, testFiles):
     ret = '''<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">    
@@ -552,11 +591,11 @@ def getVSProjectXML(env):
             ret += '<NMakeReBuildCommandLine>' + command + '--clean; &amp; ' + command + '</NMakeReBuildCommandLine>\n'
 
             if (target == DEBUG_ALIAS):
-                ret += '<NMakeOutput>' + os.path.join('bin', env['SYSTEM'], DEBUG_ALIAS, env['EXE_NAME'] + '-d') + '</NMakeOutput>\n'
+                ret += '<NMakeOutput>' + os.path.join('..', binDir, env['SYSTEM'], DEBUG_ALIAS, env['EXE_NAME'] + '-d') + '</NMakeOutput>\n'
             elif(target == RELEASE_ALIAS):
-                ret += '<NMakeOutput>' + os.path.join('bin', env['SYSTEM'], RELEASE_ALIAS, env['EXE_NAME']) + '</NMakeOutput>\n'
+                ret += '<NMakeOutput>' + os.path.join('..', binDir, env['SYSTEM'], RELEASE_ALIAS, env['EXE_NAME']) + '</NMakeOutput>\n'
             elif(target == UNIT_TEST_ALIAS):
-                ret += '<NMakeOutput>' + os.path.join('bin', env['SYSTEM'], UNIT_TEST_ALIAS, 'unit_test') + '</NMakeOutput>\n'
+                ret += '<NMakeOutput>' + os.path.join('..', binDir, env['SYSTEM'], UNIT_TEST_ALIAS, 'unit_test') + '</NMakeOutput>\n'
             else:
                 ret += '<NMakeOutput></NMakeOutput>\n'
 
@@ -575,20 +614,28 @@ def getVSProjectXML(env):
             ret += '</PropertyGroup>\n'
 
     ret += '<ItemDefinitionGroup>\n</ItemDefinitionGroup>\n<ItemGroup>\n'
-    projectIncludeFiles = getFilesInDirectory(includeDir)
-    for f in projectIncludeFiles:
+    
+    for f in includeFiles:
         ret += '<ClInclude Include="' + os.path.abspath(f) + '" />\n'
     ret += '</ItemGroup>\n'
 
     ret += '<ItemGroup>\n'
-    sourceFiles = getFilesInDirectory(srcDir)
     for f in sourceFiles:
         ret += '<ClCompile Include="' + os.path.abspath(f) + '" />\n'
     ret += '</ItemGroup>\n'
 
     ret += '<ItemGroup>\n'
-    testFiles = getFilesInDirectory(testDir)
     for f in testFiles:
+        ret += '<ClCompile Include="' + os.path.abspath(f) + '" />\n'
+    ret += '</ItemGroup>\n'
+
+    ret += '<ItemGroup>\n'
+    for f in testIncludeFiles:
+        ret += '<ClInclude Include="' + os.path.abspath(f) + '" />\n'
+    ret += '</ItemGroup>\n'
+
+    ret += '<ItemGroup>\n'
+    for f in testSourceFiles:
         ret += '<ClCompile Include="' + os.path.abspath(f) + '" />\n'
     ret += '</ItemGroup>\n'
 
@@ -602,12 +649,25 @@ def getVSProjectXML(env):
     return ret
 
 def generateVSFilesBuilder(target, source, env):
+
+    includeFiles = getFilesInDirectory(includeDir)
+    sourceFiles = getFilesInDirectory(srcDir)
+    testIncludeFiles = getFilesInDirectory(os.path.join(testDir, includeDir))
+    testSourceFiles = getFilesInDirectory(os.path.join(testDir, srcDir))
+    testFiles = getFilesInDirectory(testDir)
+    
+    for f in testIncludeFiles:
+        testFiles.remove(f)
+
+    for f in testSourceFiles:
+        testFiles.remove(f)
+
     projectXML = open(str(target[0]), "w")
-    projectXML.write(getVSProjectXML(env))
+    projectXML.write(getVSProjectXML(env, includeFiles, sourceFiles, testIncludeFiles, testSourceFiles, testFiles))
     projectXML.close()
 
     filtersXML = open(str(target[1]), "w")
-    filtersXML.write(generateVSFilters())
+    filtersXML.write(generateVSFilters(includeFiles, sourceFiles, testIncludeFiles, testSourceFiles, testFiles))
     filtersXML.close()
 
 ###
