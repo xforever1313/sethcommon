@@ -27,6 +27,10 @@ debugNewObject = CXXEnvironment.Object(glob.glob("*.cpp"))
 buildDebugNew = createStaticLib(CXXEnvironment, "debug_new", debugNewObject)
 
 Alias("create_lib", buildDebugNew)
+Alias("doxygen", [])
+
+Alias("delta", buildDebugNew)
+Alias("nightly", buildDebugNew)
 
 Default("create_lib")
 

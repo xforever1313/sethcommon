@@ -95,6 +95,11 @@ def serverBuildAdd(env):
         env.Append(LIBPATH = ['/skyvo/lib'])
         env.Append(CCFLAGS = ['-isystem', '/skyvo/include'])          
 
+def addDebugNewLibPath(env):
+    if (not env['ASM_JS_BUILD']):
+        env.Append(LIBPATH = os.path.join(getDebugNewPath(env['COMMON_DIR']), libDir, env['SYSTEM']))
+        env['ENV']['GLIBCXX_FORCE_NEW'] = '1'
+
 def createBaseEnvironment (rootDir, skyvoCommonPath, projectName, targetFlags, args):
     serverBuild = (args.get('server_build', '0') == '1')
     clangBuild = (args.get(CLANG_BUILD_ARG, '0') == '1')
@@ -148,6 +153,8 @@ def createDebugEnvironment(envBase, includePaths, libs, libPath):
     if (envBase['SERVER_BUILD']):
         serverBuildAdd(debugEnvironment)
 
+    addDebugNewLibPath(debugEnvironment)
+
     return debugEnvironment
     
 def createReleaseEnvironment(envBase, includePaths, libs, libPath):
@@ -191,6 +198,8 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
 
     if (envBase['SERVER_BUILD']):
         serverBuildAdd(testEnvironment)
+
+    addDebugNewLibPath(testEnvironment)
 
     RunTest = Builder(action = testRunner)
     testEnvironment.Append(BUILDERS = {"Test" : RunTest})

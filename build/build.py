@@ -16,7 +16,8 @@ logDir = os.path.join(thisDir, "logs", sys.argv[1] + "-" + currentTime)
 os.makedirs(logDir)
 
 if ('asmjs=1' in sys.argv):
-        del targets['7sqlite']
+        del targets['8sqlite']
+        del targets['3DebugNew']
 
 args = ""
 

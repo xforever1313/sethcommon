@@ -17,12 +17,14 @@ targets['1gmock'] = os.path.join(rootDir, "Common", "gmock")
 
 targets["2CppUTest"] = os.path.join(rootDir, "Common", "CppUTest")
 
-targets["3OSBuild"] = os.path.join(rootDir,"Common", "os")
+targets["3DebugNew"] = os.path.join(rootDir, "Common", "debug_new")
 
-targets["4MathBuild"] = os.path.join(rootDir,"Common", "math")
+targets["4OSBuild"] = os.path.join(rootDir,"Common", "os")
 
-targets['5CommonClassesBuild'] = os.path.join(rootDir, "Common", "common_classes")
+targets["5MathBuild"] = os.path.join(rootDir,"Common", "math")
 
-targets["6SCSVBuild"] = os.path.join(rootDir, "Common", "SCSV")
+targets['6CommonClassesBuild'] = os.path.join(rootDir, "Common", "common_classes")
 
-targets['7sqlite'] = os.path.join(rootDir, "Common", "sqlite")
+targets["7SCSVBuild"] = os.path.join(rootDir, "Common", "SCSV")
+
+targets['8sqlite'] = os.path.join(rootDir, "Common", "sqlite")
