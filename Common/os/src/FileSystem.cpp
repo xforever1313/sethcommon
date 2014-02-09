@@ -1,17 +1,20 @@
 #include <algorithm>
 #include <cstdio>
-#include <dirent.h>
 #include <errno.h>
 #include <fstream>
 #include <string>
 #include <sstream>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include <unistd.h>
 #include <vector>
 
+#ifndef MSVC
+	#include <dirent.h>
+	#include <unistd.h>
+#endif
+
 #ifdef WIN32
-#include <windows.h>
+	#include <windows.h>
 #endif
 
 #include "cstdioWrapper.h"
@@ -22,17 +25,19 @@ namespace SkyvoOS{
 const std::string FileSystem::THIS_DIR = ".";
 const std::string FileSystem::UP_DIR = "..";
 
+const char FileSystem::FILE_SEPARATOR = '/';
+
 FileSystemInterface *FileSystem::getInstance(){
     static FileSystem fs;
     return &fs;
 }
 
 std::string FileSystem::pathJoin(const std::string &parent, const std::string &child){
-    return std::string(parent + "/" + child);
+	return std::string(parent + FileSystem::FILE_SEPARATOR + child);
 }
 
 FileSystem::FileSystem() :
-    m_cstdio(new cstdioWrapper)
+    m_cstdio(new cstdioWrapper())
 {
     #ifdef UNIT_TEST
         m_failListFilesInDir = false;
@@ -47,7 +52,7 @@ std::string FileSystem::getCWD(){
     std::string ret;
     #ifdef WIN32
     char dir[MAX_PATH];
-    GetModuleFileName( NULL, dir, MAX_PATH );
+	GetModuleFileNameA( NULL, dir, MAX_PATH );
     ret = std::string (dir);
     std::string::size_type pos = ret.find_last_of( "\\/" ); //Get rid of the filename
     ret = ret.substr(0, pos);
@@ -121,18 +126,18 @@ bool FileSystem::createDir(const std::string &dirPath){
 
     char firstChar = ss.peek();
     //If the first character is /, it means we want to create a dir in root.
-    if (firstChar == '/'){
+	if (firstChar == FileSystem::FILE_SEPARATOR){
         std::string nextDir;
-        std::getline(ss, nextDir, '/');
+		std::getline(ss, nextDir, FileSystem::FILE_SEPARATOR);
         if (ss.str() != ""){                //If empty string, ignore
-            nextDir = "/" + nextDir;
+			nextDir = FileSystem::FILE_SEPARATOR + nextDir;
             dirsToMake.push_back(nextDir);
         }
         ss.peek();
     }
     while (!ss.eof()){
         std::string nextDir;
-        std::getline(ss, nextDir, '/');
+		std::getline(ss, nextDir, FileSystem::FILE_SEPARATOR);
         dirsToMake.push_back(nextDir);
         ss.peek();
     }
@@ -140,12 +145,20 @@ bool FileSystem::createDir(const std::string &dirPath){
     std::string currentDir = dirsToMake[0];
     for (unsigned int i = 1; i < dirsToMake.size()+1; ++i){
         if (!dirExists(currentDir)){
-			#ifdef _WIN32
-            int status = mkdir(currentDir.c_str());
+			#ifdef MSVC
+				int status = CreateDirectoryA(currentDir.c_str(), NULL);
+				if (status != 0){
+					status = 0;
+				}
+				else{
+					status = 1;
+				}
+			#elif WIN32
+				int status = mkdir(currentDir.c_str());
             #else
-            mode_t mode = (S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); //rwxr-xr-x
+				mode_t mode = (S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH); //rwxr-xr-x
 
-            int status = mkdir (currentDir.c_str(), mode);
+				int status = mkdir (currentDir.c_str(), mode);
             #endif
             if (status != 0){
                 return false;
@@ -173,17 +186,26 @@ bool FileSystem::fileExists(const std::string &filePath){
 
 bool FileSystem::dirExists(const std::string &dirPath){
     bool ret = false;
-    DIR *dir;
-    dir = opendir(dirPath.c_str());
-    if (dir == NULL){
-        ret = false;
-    }
-    else{
-        ret = true;
-    }
-    if (dir != NULL){
-        closedir(dir);
-    }
+
+	#ifdef MSVC
+	    int status = GetFileAttributesA(dirPath.c_str());
+		if (status == FILE_ATTRIBUTE_DIRECTORY){
+			ret = true;
+		}
+	#else
+		DIR *dir;
+		dir = opendir(dirPath.c_str());
+		if (dir == NULL){
+			ret = false;
+		}
+		else{
+			ret = true;
+		}
+		if (dir != NULL){
+			closedir(dir);
+		}
+
+	#endif
     return ret;
 }
 
@@ -344,8 +366,13 @@ bool FileSystem::deleteDir (const std::string &dirPath){
     }
     //Finally, delete the root dir
     if (ret){
-        int status = rmdir(dirPath.c_str());
-        ret = (status == 0);
+		#ifdef MSVC
+			int status = RemoveDirectoryA(dirPath.c_str());
+			ret = (status != 0);
+		#else	
+			int status = rmdir(dirPath.c_str());
+			ret = (status == 0);
+		#endif
     }
     return ret;
 }
@@ -353,26 +380,45 @@ bool FileSystem::deleteDir (const std::string &dirPath){
 bool FileSystem::listFilesInDir(const std::string &dirPath, std::deque<std::string> &fileNamesInDir){
 
     #ifdef UNIT_TEST
-    if (m_failListFilesInDir){
-        return false;
-    }
+		if (m_failListFilesInDir){
+			return false;
+		}
     #endif // UNIT_TEST
 
-    bool ret = false;
-    DIR *dir;
-    dir = opendir(dirPath.c_str());
-    if (dir == NULL){
-        ret = false;
-    }
-    else{
-        dirent *de = readdir(dir);
-        while (de != NULL){
-            fileNamesInDir.push_back(de->d_name);
-            de = readdir(dir);
-        }
-        closedir(dir);
-        ret = true;
-    }
+	bool ret = false;
+
+	#ifdef MSVC
+		HANDLE hFind;
+		WIN32_FIND_DATAA data;
+
+		std::string glob = dirPath + "/*.*";
+		hFind = FindFirstFileA(glob.c_str(), &data);
+		if (hFind == INVALID_HANDLE_VALUE) {
+			ret = false;
+		}
+		else{
+			do {
+				fileNamesInDir.push_back(std::string(data.cFileName));
+			} while (FindNextFileA(hFind, &data));
+			FindClose(hFind);
+			ret = true;
+		}
+	#else
+		DIR *dir;
+		dir = opendir(dirPath.c_str());
+		if (dir == NULL){
+			ret = false;
+		}
+		else{
+			dirent *de = readdir(dir);
+			while (de != NULL){
+				fileNamesInDir.push_back(de->d_name);
+				de = readdir(dir);
+			}
+			closedir(dir);
+			ret = true;
+		}
+	#endif
     return ret;
 }
 

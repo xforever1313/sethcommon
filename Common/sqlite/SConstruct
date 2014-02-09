@@ -29,13 +29,6 @@ cppDefines = ['PACKAGE_NAME="\\"sqlite\\""', 'PACKAGE_TARNAME="\\"sqlite\\""', '
              ['PACKAGE_STRING="\\"sqlite',  '3.7.17\\""', 'PACKAGE_BUGREPORT="\\"http://www.sqlite.org\\""', 'PACKAGE_URL="\\"\\""'] + \
              ['PACKAGE="\\"sqlite\\""', 'VERSION="\\"3.7.17\\""', '_FILE_OFFSET_BITS=64', '_REENTRANT=1', 'SQLITE_THREADSAFE=1'] + \
              ['SQLITE_ENABLE_FTS3', 'SQLITE_ENABLE_RTREE']
-if (envBase['CLANG_BUILD']):
-    cppDefines += ['__STRICT_ANSI__']
-
-###Compile flags
-commonCompileFlags = []
-debugFlags = ['-O0', '-g', '-pthread']
-releaseFlags = ['-O3', '-fdata-sections', '-ffunction-sections', '-s', '-pthread']
 
 ###include paths:
 includePaths = [includeDir, getDateVersionPath(baseDir)]
@@ -48,17 +41,10 @@ sourceFiles = glob.glob(os.path.join(srcDir, "*.cpp")) #our source files
 sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + [getTestMain(baseDir)]
 coverageFiles = deepcopy(sourceFiles)
 
-###Link flags
-commonLinkFlags = ['-std=gnu++11']
-debugLinkFlags = ['-g']
-releaseLinkFlags = []
-if (sys.platform == "darwin"):
-    releaseLinkFlags += ['-Wl,-dead_strip']
-else:
-    releaseLinkFlags += ['-Wl,--gc-sections', '-Wl,--strip-all', '-s']
-
 ###Libs
-libs = ["pthread"]
+libs = []
+if (not envBase['MSVC_BUILD']):
+    libs += ["pthread"]
 if (not sys.platform == "win32"):
     libs += ['dl']
 testLibs = [] + libs
@@ -72,19 +58,23 @@ Help(getHelpMessage(envBase))
 # Environment creation
 ###
 
+def addFlags(env):
+    env.Append(CPPDEFINES = cppDefines)
+    if (not env['MSVC_BUILD']):
+        env['CCFLAGS'].remove('-Werror')
+        env['CCFLAGS'].remove('-pedantic-errors')
+    else:
+        env['CCFLAGS'].remove('/WX')
+        env['CCFLAGS'].remove('/W3')
+        env.Append(CCFLAGS = ['/wd4996', '/w'])
+
 #Debug Environment
 debugEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
-debugEnvironment['CPPDEFINES'] = cppDefines
-debugEnvironment['CXXFLAGS'] = ['-std=gnu++11']
-debugEnvironment['CCFLAGS'] = debugFlags + commonCompileFlags
-debugEnvironment['LINKFLAGS'] = commonLinkFlags + debugLinkFlags
+addFlags(debugEnvironment)
 
 #Release Environment
 releaseEnvironment = createReleaseEnvironment(envBase, includePaths, libs, libPath)
-releaseEnvironment['CPPDEFINES'] = cppDefines
-releaseEnvironment['CXXFLAGS'] = ['-std=gnu++11']
-releaseEnvironment['CCFLAGS'] = releaseFlags + commonCompileFlags
-releaseEnvironment['LINKFLAGS'] = commonLinkFlags + releaseLinkFlags
+addFlags(releaseEnvironment)
 
 #Unit test environment
 testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, testLibs, libPath)

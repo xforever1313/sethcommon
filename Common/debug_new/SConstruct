@@ -19,7 +19,12 @@ Help(getHelpMessage(envBase))
 
 #Make commonCXX environment
 CXXEnvironment = createDebugEnvironment(envBase, [], [], [])
-CXXEnvironment['CCFLAGS'] = ['-g', '-std=gnu++11']
+if (envBase['MSVC_BUILD']):
+    CXXEnvironment['CCFLAGS'].remove('/WX')
+else:
+    CXXEnvironment['CCFLAGS'].remove('-Werror')
+    CXXEnvironment['CCFLAGS'].remove('-pedantic-errors')
+
 CXXEnvironment['LIBDIR'] = os.path.join(libDir, CXXEnvironment['SYSTEM'])
 
 debugNewObject = CXXEnvironment.Object(glob.glob("*.cpp"))

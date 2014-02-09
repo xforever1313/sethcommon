@@ -28,7 +28,7 @@ TEST(FilenameChecker, longCharacterCheck){
         FAIL("Exception did not throw");
     }
     catch(const Common::FilenameCheckerException &e){
-    
+		e.what(); //Override MSVC warning about unreference var
     }
     catch(...){
         FAIL("Incorrect exception thrown");

@@ -10,22 +10,24 @@ namespace SCSV{
 
 class SCSVException : public std::exception{
     public:
-	SCSVException(const SCSVLoadErrors &e);
+		SCSVException(const SCSVLoadErrors &e);
 
-	virtual ~SCSVException();
+		virtual ~SCSVException();
 
-	SCSVLoadErrors getError() const;
+		SCSVLoadErrors getError() const;
 
-	const char* what() const throw() override;
+		virtual const char* what() const throw() override;
 
-    private:
-	SCSVException();
+#ifndef UNIT_TEST //This is here since otherwise MSVC throws up a linker error
+    private: 
+#endif
+		SCSVException();
 
-	static std::string getErrorMessage(const SCSVLoadErrors &e);
+		static std::string getErrorMessage(const SCSVLoadErrors &e);
 
-	SCSVLoadErrors m_error;
+		SCSVLoadErrors m_error;
 
-	std::string m_errorMessage;
+		std::string m_errorMessage;
 };
 
 }

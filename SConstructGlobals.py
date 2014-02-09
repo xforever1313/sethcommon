@@ -411,7 +411,7 @@ def testRunner(target, source, env):
     else:
         status = subprocess.call("./unit_test", cwd=cwdDir, shell=True)
 
-    if ((status == 0) and not env['CLANG_BUILD']):
+    if ((status == 0) and not env['CLANG_BUILD'] and not env['MSVC_BUILD']):
         print("Running Coverage")
         try:
             Execute(Delete(codeCoverageDir)) #Remove old code coverage

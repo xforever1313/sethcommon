@@ -21,12 +21,6 @@ envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGU
 #include paths
 includePaths = [".", "include"]
 
-#CCFlags
-if (not envBase['MSVC_BUILD']):
-    ccFlags = ['-Wall', '-g']
-else:
-    ccFlags = ['/EHsc']
-
 #source files
 sourceDirectories = ["src/CppUTest", "src/CppUTest/Extensions"]
 if (envBase['MSVC_BUILD']):
@@ -64,13 +58,26 @@ linkFlags = []
 libEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
 #Override flags
 libEnvironment.Append(CPPDEFINES = ["UT_NEW_MACROS_DISABLED", "UT_NEW_OVERRIDES_DISABLED"])
-libEnvironment['CCFLAGS'] = ccFlags
+
+if (envBase['MSVC_BUILD']):
+    libEnvironment['CCFLAGS'].remove('/WX')
+    libEnvironment.Append(CPPDEFINES = ['_CRT_SECURE_NO_WARNINGS'])
+else:
+    libEnvironment['CCFLAGS'].remove('-Werror')
+    libEnvironment['CCFLAGS'].remove('-pedantic-errors')
+
 libEnvironment['LIBDIR'] = os.path.join(libDir, envBase['SYSTEM'])
 
 testEnvironment = createUnitTestEnvironment(envBase, includePaths, testLibs, testLibPath)
 #Override flags
-testEnvironment['CCFLAGS'] = ccFlags 
-if (not testEnvironment['CLANG_BUILD']):
+if (envBase['MSVC_BUILD']):
+    testEnvironment['CCFLAGS'].remove('/WX')
+else:
+    testEnvironment['CCFLAGS'].remove('-Werror')
+    testEnvironment['CCFLAGS'].remove('-pedantic-errors')
+
+
+if (not testEnvironment['CLANG_BUILD'] and not testEnvironment['MSVC_BUILD']):
     testEnvironment.Append(CCFLAGS = ["-fprofile-arcs", "-ftest-coverage"])
 
 #Doxygen 

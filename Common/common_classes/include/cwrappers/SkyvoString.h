@@ -7,8 +7,9 @@
 /**
 * \file SkyvoString
 * \brief this class provides a wrapper to std::string so it can be used in C.
+* \warning Does not provide c linkage with MSVC, only with GCC/Clang.
 */
-#ifdef __cplusplus
+#if defined(__cplusplus) && !defined(MSVC)
 extern "C" {
 #endif
 
@@ -45,7 +46,7 @@ SkyvoBoolean areStringsEqual(const SkyvoString &s1, const SkyvoString &s2);
 */
 const char *getCString(const SkyvoString_t &s);
 
-#ifdef __cplusplus
+#if defined(__cplusplus) && !defined(MSVC)
 }
 #endif
 

@@ -14,7 +14,7 @@ class MSVCCompilerGlobals(GlobalCompilerGlobals):
 
     def __init__(self):
         #CppDefines
-        self.globalDefines += ["WIN32", "_LIB", "_UNICODE", "UNICODE", '_USE_MATH_DEFINES']
+        self.globalDefines += ["WIN32", "_LIB", "_UNICODE", "UNICODE", '_USE_MATH_DEFINES', '_MT', '_MBCS', '_CRT_SECURE_NO_WARNINGS']
 
         self.globalDebugDefines += ["_DEBUG"]
         self.globalReleaseDefines += []
@@ -25,40 +25,46 @@ class MSVCCompilerGlobals(GlobalCompilerGlobals):
                              'C:\Program Files (x86)\Windows Kits\8.1\Include\um', \
                              'C:\Program Files (x86)\Windows Kits\8.1\Include\shared']
 
-        self.globalCCFlags += ['/EHsc', '/WX', '/W3', '/nologo', '/FS']
+        #TODO Remove /Gd from x64 builds.  Only works on x86
+        self.globalCCFlags += ['/EHsc', '/WX', '/W3', '/nologo', '/FS', '/GS', '/sdl', '/fp:precise'] + \
+                              ['/Zc:wchar_t', '/Zc:forScope', '/Oy-', '/Gd']
         self.globalCXXFlags += []
 
-        self.globalCCDebugFlags += ['/GS', '/Zc:wchar_t', '/ZI', '/Od', '/sdl', \
-                                    '/fp:precise', '/RTC1', '/Gd', '/Oy', '/MDd']
+        self.globalCCDebugFlags += ['/Zc:wchar_t', '/ZI', '/Od', \
+                                     '/RTC1', '/Gd', '/MDd', '/Gm']
 
-        self.globalCCReleaseFlags += []
+        self.globalCCReleaseFlags += ['/GL', '/O2', '/Oi', '/MD', '/Gm-', '/Gy']
         self.globalCCUnitTestFlags += [] + self.globalCCDebugFlags
 
         #AR Flags
         self.globalARFlags = ['/NOLOGO']
 
         #Linker Flags
-        self.globalLinkerFlags += ['/NXCOMPAT', '/DYNAMICBASE', '/INCREMENTAL', \
-                                   '/MACHINE:X86', '/SUBSYSTEM:CONSOLE', \
-                                   '/NOLOGO']
+        #TODO Remove x86 when the time comes
+        self.globalLinkerFlags += ['/NXCOMPAT', '/INCREMENTAL', \
+                                   '/MACHINE:X86', '/NOLOGO', '/WX']
 
         self.globalDebugLinkerFlags += ['/DEBUG']
-        self.globalReleaseLinkerFlags += []
-        self.globalUnitTestLinkerFlags += []
+        self.globalReleaseLinkerFlags += ['/RELEASE', '/OPT:REF', '/OPT:ICF', '/SAFESEH']
+        self.globalUnitTestLinkerFlags += ['/DEBUG']
 
         #Libs
-        self.globalLibs += ["kernel32.lib", "user32.lib", "gdi32.lib", "winspool.lib", \
+        self.globalLibs += ["winmm.lib", "kernel32.lib", "user32.lib", "gdi32.lib", "winspool.lib", \
                             "comdlg32.lib", "advapi32.lib", "shell32.lib", "ole32.lib", \
                             "oleaut32.lib", "uuid.lib", "odbc32.lib", "odbccp32.lib"]
 
-        self.globalDebugLibs += []
+        self.globalDebugLibs += ['debug_new']
         self.globalReleaseLibs += []
-        self.globalUnitTestLibs += []
+        self.globalUnitTestLibs += ['debug_new']
 
         #LibPath
-        self.globalLibPaths = ['C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x86']
+        self.globalLibPaths = ['C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x86',
+                              'C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\VC\\lib']
 
     def getBaseEnvironment(self, armBuild, serverBuild):
+
+        print "Building for MSVC-12 Win32"
+
         #Ensure this is the right path for your system:
         compilerPath = '"C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\bin"'
         env = Environment(
@@ -71,7 +77,7 @@ class MSVCCompilerGlobals(GlobalCompilerGlobals):
             CLANG_BUILD = False,
             ASM_JS_BUILD = False,
             MSVC_BUILD = True,
-            SYSTEM = "MSVC"
+            SYSTEM = "msvc_12_win32"
         )
         self.globalDefines += ['MSVC']
             

@@ -1,3 +1,5 @@
+#include <string>
+
 #include "SCSVException.h"
 #include "SCSVParser.h"
 

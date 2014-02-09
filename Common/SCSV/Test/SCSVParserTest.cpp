@@ -1,4 +1,5 @@
 #include <CppUTest/TestHarness.h>
+#include <string>
 
 #define private public
 
@@ -219,7 +220,7 @@ TEST(SCSVParser, convertEscapeCodesTest){
     //Test a good case
     std::string ret;
     try{
-        ret = uut.convertEscapeCodes("&comma; &amp;;");
+        ret = uut.convertEscapeCodes(std::string("&comma; &amp;;"));
     }
     catch(...){
         FAIL("Unhandled Exception");

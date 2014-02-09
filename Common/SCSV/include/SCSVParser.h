@@ -3,9 +3,6 @@
 
 #include <cstring>
 #include <fstream>
-#ifdef UNIT_TEST
-    #include <iostream>
-#endif
 #include <sstream>
 #include <string>
 #include <vector>
@@ -18,11 +15,11 @@ class SCSVParser{
 
     public:
         ///\brief the status of parsing a file
-        typedef struct SCSVFileStatus{
+        struct SCSVFileStatus_t{
             SCSVLoadErrors errorNumber;         ///<The error number (CSV_OKAY if no error)
             std::string errorMessage;      ///<The error message ("" if no error)
             std::vector<std::vector <std::string> >  CSVValues; ///<Empty if error
-        }SCSVFileStatus_t;
+        };
 
         ///\brief creates a SCSVParser with the default empty cell set at ""
         SCSVParser();
@@ -35,7 +32,9 @@ class SCSVParser{
         ///\param csvFileLocation - path, relitive to exe file, to the csv file
         SCSVFileStatus_t parseCsvFile(const std::string &csvFileLocation) const;
 
+#ifndef UNIT_TEST //This is here since otherwise MSVC will not link properly
     private:
+#endif
         std::string getLine(std::ifstream &inFile) const;
 
         std::vector<std::string> parseCSVLine(const std::string &csvLine) const;

@@ -21,7 +21,7 @@ TEST_GROUP(FileSystem){
         m_file = "File";
         m_stringToWrite = "Writing!";
         m_cstdio = NULL;
-        m_uut = new SkyvoOS::FileSystem;
+        m_uut = new SkyvoOS::FileSystem();
         if (firstRun){
             firstSetup();
             firstRun = false;
@@ -35,7 +35,7 @@ TEST_GROUP(FileSystem){
         //First, create the directory we are going to be in
         CHECK(m_uut->createDir(fileTestOutputPath));
         CHECK(m_uut->dirExists(fileTestOutputPath));
-        #if defined(_WIN32) | defined(_WIN64)
+        #ifdef WIN32
             illegalDir = "con";
         #else
             illegalDir = "/lost+found/derp";
@@ -243,7 +243,7 @@ TEST(FileSystem, createDirTest){
     CHECK(m_uut->createDir(testDirLocation3));
     CHECK(m_uut->dirExists(testDirLocation3));
 
-	#ifdef _WIN32
+	#ifdef WIN32
     CHECK(!m_uut->createDir(SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, illegalDir)));
     #else
     CHECK(!m_uut->createDir(illegalDir));
@@ -262,14 +262,15 @@ TEST(FileSystem, createDirFromRootTest){
     CHECK(m_uut->dirExists(relTestDirLocation));
 }
 
+#ifndef MSVC //This test will pass on MSVC.  This is mainly to test linux systems.
 ///\brief tests the case where a directory tries to be made in root
 TEST(FileSystem, createDirInRootTest){
     //You should not be able to create a dir in root.
     std::string testDir = "/sethderp";
-    std::string absPath = m_uut->getCWD();
     CHECK(!m_uut->createDir(testDir));
     CHECK(!m_uut->dirExists(testDir));
 }
+#endif
 
 ///\brief tests the case where the directory has two '//' in it
 TEST(FileSystem, createDirDoubleSlashes){
@@ -365,7 +366,7 @@ TEST(FileSystem, copyDirTest){
     CHECK(!m_uut->copyDir("derp", "herp"));
 
     //Tests the case where we are copying to an illegal directory
-    #ifdef _WIN32
+    #ifdef WIN32
     CHECK(!m_uut->copyDir(testDir, SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, illegalDir)));
 	#else
 	CHECK(!m_uut->copyDir(testDir, illegalDir));

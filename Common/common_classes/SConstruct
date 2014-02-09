@@ -38,8 +38,11 @@ sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.
 coverageFiles = deepcopy(sourceFiles + [dateVersionFile])
 
 ###Libs
-libs = [] #Only need debug lib for unit tests.
-testLibs = ['SkyvoOS-d', "pthread"] + libs
+libs = [] 
+testLibs = ['SkyvoOS-d'] + libs
+if (not envBase['ASM_JS_BUILD'] and not envBase['MSVC_BUILD']):
+    testLibs += ['pthread']
+
 if (sys.platform != "win32" and sys.platform != "darwin"):
     testLibs += ["rt", 'c']
 ###libPath
