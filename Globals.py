@@ -57,6 +57,17 @@ def getFilesInDirectory(directory):
             ret.append(filepath)
     return ret
 
+def getDirectoryStructure(directory):
+    r = []                                                                                                            
+    subdirs = [x[0] for x in os.walk(directory)]                                                                            
+    for subdir in subdirs:                                                                                            
+        files = os.walk(subdir).next()[2]                                                                             
+        if (len(files) > 0):                                                                                          
+            for file in files:   
+                if (subdir not in r):                                                                              
+                    r.append(subdir)                                                                         
+    return r  
+
 def getRevisionNumber():
     revProc = subprocess.Popen("git rev-list --count HEAD", shell=True, stdout=subprocess.PIPE)
     rawString = revProc.communicate()[0]

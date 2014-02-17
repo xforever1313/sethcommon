@@ -480,33 +480,44 @@ def generateVSFiles(env, includePath, exeName):
     return ret
 
 def generateVSFilters(includeFiles, sourceFiles, testIncludeFiles, testSourceFiles, testFiles):
-    ret = '''<?xml version="1.0" encoding="utf-8"?>
-    <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <ItemGroup>
-    <Filter Include="src">
-    </Filter>
-    <Filter Include="include">
-    </Filter>
-    <Filter Include="test">
-    </Filter>
-    <Filter Include = "test\\include">
-    </Filter>
-    <Filter Include = "test\\src">
-    </Filter>
-  </ItemGroup>
-    '''
+    ret = '<?xml version="1.0" encoding="utf-8"?>'
+    ret += '<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">'
+    ret += '<ItemGroup>'
+
+    filePaths = getDirectoryStructure(srcDir)
+    for d in filePaths:
+        ret += '<Filter Include="' + d + '">\n'
+        ret += '</Filter>\n'
+
+    filePaths = getDirectoryStructure(includeDir)
+    for d in filePaths:
+        ret += '<Filter Include="' + d + '">\n'
+        ret += '</Filter>\n'
+    ret += '<Filter Include="test">\n'
+    ret += '</Filter>\n'
+    ret += '<Filter Include="test\\include">\n'
+    ret += '</Filter>\n'
+    ret += '<Filter Include="test\\src">\n'
+    ret += '</Filter>\n'
+    ret += '</ItemGroup>\n'
     
     ret += '<ItemGroup>\n'
     for f in includeFiles:
+        filePath = os.path.abspath(f)
+        beginning = filePath.find(os.sep + 'fathom' + os.sep + 'fathom' + os.sep) + 15
+        last = filePath.rfind(os.sep)
         ret += '<ClInclude Include="' + os.path.abspath(f) + '">\n'
-        ret += '<Filter>include</Filter>\n'
+        ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
         ret += '</ClInclude>\n'
     ret += '</ItemGroup>\n'
 
     ret += '<ItemGroup>\n'
     for f in sourceFiles:
+        filePath = os.path.abspath(f)
+        beginning = filePath.find(os.sep + 'fathom' + os.sep + 'fathom' + os.sep) + 15
+        last = filePath.rfind(os.sep)
         ret += '<ClCompile Include="' + os.path.abspath(f) + '">\n'
-        ret += '<Filter>src</Filter>\n'
+        ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
         ret += '</ClCompile>\n'
     ret += '</ItemGroup>\n'
 
@@ -658,7 +669,6 @@ def getVSProjectXML(env, includeFiles, sourceFiles, testIncludeFiles, testSource
     return ret
 
 def generateVSFilesBuilder(target, source, env):
-
     includeFiles = getFilesInDirectory(includeDir)
     sourceFiles = getFilesInDirectory(srcDir)
     testIncludeFiles = getFilesInDirectory(os.path.join(testDir, includeDir))
