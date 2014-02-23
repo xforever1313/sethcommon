@@ -246,6 +246,11 @@ SimpleString& SimpleString::operator+=(const char* rhs)
   return *this;
 }
 
+SimpleString StringFrom (size_t value)
+{
+    return StringFromFormat("%zu", value);
+}
+
 SimpleString StringFrom (bool value)
 {
   return SimpleString(StringFromFormat("%s", value ? "true" : "false"));
@@ -268,7 +273,7 @@ SimpleString StringFrom (long value)
 
 SimpleString StringFrom (void* value)
 {
-    return SimpleString("0x") + HexStringFrom((long)value);
+    return SimpleString("0x") + HexStringFrom((size_t)value);
 }
 
 SimpleString HexStringFrom (long value)

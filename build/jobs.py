@@ -26,5 +26,3 @@ targets["5MathBuild"] = os.path.join(rootDir,"Common", "math")
 targets['6CommonClassesBuild'] = os.path.join(rootDir, "Common", "common_classes")
 
 targets["7SCSVBuild"] = os.path.join(rootDir, "Common", "SCSV")
-
-targets['8sqlite'] = os.path.join(rootDir, "Common", "sqlite")
