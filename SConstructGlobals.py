@@ -212,10 +212,11 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
 
 def createExe(env, exeName, sourceFiles):
     exeTarget = env.Program(target = os.path.join(env['BINDIR'], exeName), source = sourceFiles)
+    Clean(exeTarget, [os.path.join(env['BINDIR'])])
     return exeTarget
     
 def createUnitTestExe(env, sourceFiles, coverageFiles):
-    testExeTarget = env.Program(target = os.path.join(env['BINDIR'], "unit_test"), source = sourceFiles)
+    testExeTarget = createExe(env, "unit_test", sourceFiles)
     runTestTarget = env.Test(target = profilingDataFile, source = coverageFiles)
     AlwaysBuild(runTestTarget)
     Execute(Delete(Glob(os.path.join(testOutputDir, '*')))) #Remove old test outputs

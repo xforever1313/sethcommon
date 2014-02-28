@@ -103,6 +103,9 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
         
         return env
 
+    def addMapFlag(self, env, mapName):
+        env.Append(LINKFLAGS = ['-Wl,-Map,' + os.path.join(env['BINDIR'], mapName)])
+
     def extendDebugEnvironment(self, envBase, libs, libPath):
         envBase.Append(CPPDEFINES = self.globalDefines + self.globalDebugDefines)
         envBase.Append(CXXFLAGS = self.globalCXXFlags + self.globalCXXDebugFlags)
@@ -110,6 +113,7 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
         envBase.Append(LINKFLAGS = self.globalLinkerFlags + self.globalDebugLinkerFlags)
         envBase.Append(LIBS = libs + self.globalLibs + self.globalDebugLibs)
         envBase.Append(LIBPATH = libPath)
+        self.addMapFlag(envBase, envBase['PROJECT_NAME'] + '.map')
 
     def extendReleaseEnvironment(self, envBase, libs, libPath):
         envBase.Append(CPPDEFINES = self.globalDefines + self.globalReleaseDefines)
@@ -118,6 +122,7 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
         envBase.Append(LINKFLAGS = self.globalLinkerFlags + self.globalReleaseLinkerFlags)
         envBase.Append(LIBS = libs + self.globalLibs + self.globalReleaseLibs)
         envBase.Append(LIBPATH = libPath)
+        self.addMapFlag(envBase, envBase['PROJECT_NAME'] + '.map')
 
     def extendUnitTestEnvironment(self, envBase, libs, libPath):
         envBase.Append(CPPDEFINES = self.globalDefines + self.globalUnitTestDefines)
@@ -126,4 +131,5 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
         envBase.Append(LINKFLAGS = self.globalLinkerFlags + self.globalUnitTestLinkerFlags)
         envBase.Append(LIBS = libs + self.globalLibs + self.globalUnitTestLibs)
         envBase.Append(LIBPATH = libPath)
+        self.addMapFlag(envBase, 'unit_test.map')
 
