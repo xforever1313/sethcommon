@@ -20,6 +20,12 @@ class GnuCompilerGlobals(GlobalCompilerGlobals):
         self.globalCCReleaseFlags += ["-O3", "-Wswitch-enum", "-fdata-sections", "-ffunction-sections"]
         self.globalCCUnitTestFlags += ["-g"]
 
+        self.globalCXXFlags += []
+
+        self.globalCXXDebugFlags += ['-fno-rtti']
+        self.globalCXXReleaseFlags += ['-fno-rtti']
+        self.globalCXXUnitTestFlags += []
+
         #Link Flags
         self.globalLinkerFlags += ["-Wall", "-Werror", "-std=gnu++11"]
         if(sys.platform == "win32"):

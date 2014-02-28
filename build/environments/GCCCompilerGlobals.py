@@ -23,11 +23,16 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
 
         #Compile Flags
         self.globalCCFlags += ['-Wclobbered', '-Wdouble-promotion']
-        self.globalCXXFlags += []
 
         self.globalCCDebugFlags += []
         self.globalCCReleaseFlags += []
         self.globalCCUnitTestFlags += ['-fprofile-arcs', '-ftest-coverage']
+
+        self.globalCXXFlags += []
+
+        self.globalCXXDebugFlags += []
+        self.globalCXXReleaseFlags += []
+        self.globalCXXUnitTestFlags += []
 
         #Linker Flags
         self.globalLinkerFlags += []
@@ -100,7 +105,7 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
 
     def extendDebugEnvironment(self, envBase, libs, libPath):
         envBase.Append(CPPDEFINES = self.globalDefines + self.globalDebugDefines)
-        envBase.Append(CXXFLAGS = self.globalCXXFlags)
+        envBase.Append(CXXFLAGS = self.globalCXXFlags + self.globalCXXDebugFlags)
         envBase.Append(CCFLAGS = self.globalCCFlags + self.globalCCDebugFlags)
         envBase.Append(LINKFLAGS = self.globalLinkerFlags + self.globalDebugLinkerFlags)
         envBase.Append(LIBS = libs + self.globalLibs + self.globalDebugLibs)
@@ -108,7 +113,7 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
 
     def extendReleaseEnvironment(self, envBase, libs, libPath):
         envBase.Append(CPPDEFINES = self.globalDefines + self.globalReleaseDefines)
-        envBase.Append(CXXFLAGS = self.globalCXXFlags)
+        envBase.Append(CXXFLAGS = self.globalCXXFlags + self.globalCXXReleaseFlags)
         envBase.Append(CCFLAGS = self.globalCCFlags + self.globalCCReleaseFlags)
         envBase.Append(LINKFLAGS = self.globalLinkerFlags + self.globalReleaseLinkerFlags)
         envBase.Append(LIBS = libs + self.globalLibs + self.globalReleaseLibs)
@@ -116,7 +121,7 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
 
     def extendUnitTestEnvironment(self, envBase, libs, libPath):
         envBase.Append(CPPDEFINES = self.globalDefines + self.globalUnitTestDefines)
-        envBase.Append(CXXFLAGS = self.globalCXXFlags)
+        envBase.Append(CXXFLAGS = self.globalCXXFlags + self.globalCXXUnitTestFlags)
         envBase.Append(CCFLAGS = self.globalCCFlags + self.globalCCUnitTestFlags)
         envBase.Append(LINKFLAGS = self.globalLinkerFlags + self.globalUnitTestLinkerFlags)
         envBase.Append(LIBS = libs + self.globalLibs + self.globalUnitTestLibs)

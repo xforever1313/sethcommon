@@ -22,11 +22,16 @@ class GlobalCompilerGlobals():
 
     #Compile Flags
     globalCCFlags = []
-    globalCXXFlags = []
 
     globalCCDebugFlags = []
     globalCCReleaseFlags = []
     globalCCUnitTestFlags = []
+
+    globalCXXFlags = []
+
+    globalCXXDebugFlags = []
+    globalCXXReleaseFlags = []
+    globalCXXUnitTestFlags = []
 
     #Link Flags
     globalLinkerFlags = []
