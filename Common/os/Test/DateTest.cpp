@@ -134,7 +134,7 @@ TEST(Date, AtMidNight){
     CHECK_EQUAL(date.getMonthString(), date.getMonthNames()[month]);
     CHECK_EQUAL(date.getDay(), day);
     CHECK_EQUAL(date.getYear(), year);
-    CHECK_EQUAL(date.get12Hour(), (unsigned int) 12);
+    CHECK_EQUAL(date.get12Hour(), static_cast<unsigned int>(12));
     CHECK_EQUAL(date.get24Hour(), hour);
     CHECK_EQUAL(date.getMinute(), minute);
     CHECK_EQUAL(date.getSecond(), second);
@@ -278,19 +278,19 @@ TEST(Date, Default){
     SkyvoOS::Date date;
     struct tm *currentTime = date.getTimeStruct();
 
-    CHECK_EQUAL(date.getMonthNumber(), (unsigned int) currentTime->tm_mon + 1);
-    CHECK_EQUAL(date.getDay(), (unsigned int) currentTime->tm_mday);
-    CHECK_EQUAL(date.getYear(), (unsigned int) currentTime->tm_year + 1900);
+    CHECK_EQUAL(date.getMonthNumber(), static_cast<unsigned int>(currentTime->tm_mon + 1));
+    CHECK_EQUAL(date.getDay(), static_cast<unsigned int>(currentTime->tm_mday));
+    CHECK_EQUAL(date.getYear(), static_cast<unsigned int>(currentTime->tm_year + 1900));
     if (currentTime->tm_hour > 12){
-        CHECK_EQUAL(date.get12Hour(), (unsigned int) currentTime->tm_hour - 12);
+        CHECK_EQUAL(date.get12Hour(), static_cast<unsigned int>(currentTime->tm_hour - 12));
     }
     else if (currentTime->tm_hour == 0){
-        CHECK_EQUAL(date.get12Hour(), (unsigned int) 12);
+        CHECK_EQUAL(date.get12Hour(), static_cast<unsigned int>(12));
     }
     else{
-        CHECK_EQUAL(date.get12Hour(), (unsigned int) currentTime->tm_hour);
+        CHECK_EQUAL(date.get12Hour(), static_cast<unsigned int>(currentTime->tm_hour));
     }
-    CHECK_EQUAL(date.get24Hour(), (unsigned int) currentTime->tm_hour);
-    CHECK_EQUAL(date.getMinute(), (unsigned int) currentTime->tm_min);
-    CHECK_EQUAL(date.getSecond(), (unsigned int) currentTime->tm_sec);
+    CHECK_EQUAL(date.get24Hour(), static_cast<unsigned int>(currentTime->tm_hour));
+    CHECK_EQUAL(date.getMinute(), static_cast<unsigned int>(currentTime->tm_min));
+    CHECK_EQUAL(date.getSecond(), static_cast<unsigned int>(currentTime->tm_sec));
 }

@@ -20,7 +20,7 @@ class GnuCompilerGlobals(GlobalCompilerGlobals):
         self.globalCCReleaseFlags += ["-O3", "-Wswitch-enum", "-fdata-sections", "-ffunction-sections"]
         self.globalCCUnitTestFlags += ["-g"]
 
-        self.globalCXXFlags += []
+        self.globalCXXFlags += ['-Wold-style-cast']
 
         self.globalCXXDebugFlags += ['-fno-rtti']
         self.globalCXXReleaseFlags += ['-fno-rtti']
