@@ -4,7 +4,7 @@ def getCppUTestPath(baseDir):
     return os.path.join(getCommonPath(baseDir), "CppUTest")
 
 def getTestMain(baseDir):
-    return(os.path.join(getCppUTestPath(baseDir), "skyvoTestMain.cpp"))
+    return(os.path.join(getCppUTestPath(baseDir), "sethTestMain.cpp"))
 
 def getCommonClassesPath(baseDir):
     return os.path.join(getCommonPath(baseDir), "common_classes")
@@ -27,7 +27,7 @@ def getMathPath(baseDir):
 def getSCSVPath(baseDir):
     return os.path.join(getCommonPath(baseDir), "SCSV")
     
-def getSkyvoOSPath(baseDir):
+def getOSPath(baseDir):
     return os.path.join(getCommonPath(baseDir), "os")
 
 def getRapidJSONPath(baseDir):

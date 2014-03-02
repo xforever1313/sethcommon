@@ -1,5 +1,5 @@
 #CreateDeliverable.py
-#Creates the SkyvoCommon deliverable.
+#Creates the SethCommon deliverable.
 
 import glob
 import os
@@ -10,7 +10,7 @@ import tarfile
 baseDir = "../"
 sys.path.append(baseDir) #Get globals
 from Globals import *
-from SkyvoCommonGlobals import *
+from SethCommonGlobals import *
 from jobs import *
 
 revisionFile = 'revision.txt'
@@ -21,7 +21,7 @@ def createRevisionFile():
     revFile.close()
 
 versionNumber = getReleaseVersionNumber(baseDir)
-tarFileName = "SkyvoCommon-" + versionNumber + ".tar.gz"
+tarFileName = "SethCommon-" + versionNumber + ".tar.gz"
 createRevisionFile()
 
 if os.path.exists(tarFileName):
@@ -54,7 +54,7 @@ releaseFiles += [getRapidJSONPath(baseDir)]
 
 releaseFiles += [os.path.join(baseDir, "Globals.py")]
 releaseFiles += [os.path.join(baseDir, "SConstructGlobals.py")]
-releaseFiles += [os.path.join(baseDir, "SkyvoCommonGlobals.py")]
+releaseFiles += [os.path.join(baseDir, "SethCommonGlobals.py")]
 
 releaseFiles += [getTestMain(baseDir)]
 

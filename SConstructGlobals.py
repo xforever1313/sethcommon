@@ -3,7 +3,7 @@ from SCons.Script import *
 from SCons.Environment import *
 from SCons.Builder import *
 from Globals import *
-from SkyvoCommonGlobals import *
+from SethCommonGlobals import *
 from multiprocessing import cpu_count
 from operator import itemgetter
 import glob
@@ -91,23 +91,22 @@ envClass = None
 
 def serverBuildAdd(env):
     if (env['SERVER_BUILD']):
-        env.Append(CPPPATH = ['/skyvo/include'])
-        env.Append(LIBPATH = ['/skyvo/lib'])
-        env.Append(CCFLAGS = ['-isystem', '/skyvo/include'])          
+        #TODO when we have CI up and running
+        pass
 
 def addDebugNewLibPath(env):
     if (not env['ASM_JS_BUILD']):
         env.Append(LIBPATH = os.path.join(getDebugNewPath(env['COMMON_DIR']), libDir, env['SYSTEM']))
         env['ENV']['GLIBCXX_FORCE_NEW'] = '1'
 
-def createBaseEnvironment (rootDir, skyvoCommonPath, projectName, targetFlags, args):
+def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, args):
     serverBuild = (args.get('server_build', '0') == '1')
     clangBuild = (args.get(CLANG_BUILD_ARG, '0') == '1')
     armBuild = (args.get(ARM_BUILD_ARG, '0') == '1')
     asmJSBuild = (args.get(ASM_JS_ARG, '0') == '1')
     msvcTarget = (args.get('msvc_target', None))
 
-    sys.path.append(os.path.join(skyvoCommonPath, "build/environments"))
+    sys.path.append(os.path.join(sethCommonPath, "build/environments"))
 
     global envClass
 
@@ -136,7 +135,7 @@ def createBaseEnvironment (rootDir, skyvoCommonPath, projectName, targetFlags, a
     baseEnvironment['ENV']['PATH'] = os.environ['PATH'] #Look in path for tools
 
     baseEnvironment['BASE_DIR'] = os.path.abspath(rootDir)
-    baseEnvironment['COMMON_DIR'] = os.path.abspath(skyvoCommonPath)
+    baseEnvironment['COMMON_DIR'] = os.path.abspath(sethCommonPath)
 
     return baseEnvironment
     

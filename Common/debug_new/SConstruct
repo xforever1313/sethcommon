@@ -8,7 +8,7 @@ baseDir = "../../"
 sys.path.append(baseDir) #Get globals
 from Globals import *
 from SConstructGlobals import *
-from SkyvoCommonGlobals import *
+from SethCommonGlobals import *
 
 #Make Common environment
 projectName = "Debug New"

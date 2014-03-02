@@ -13,7 +13,7 @@ Common:
         C++ files that keep track of the versioning information in the program.
     
     debug_new:
-        debug_new is a memory leak detector.  For platforms with valgrind, this really isnt needed.  On platforms without valgrind (win32), then debug_new is needed to detect memory leaks.  Building the project inside of here makes a static library of debug_new.  For win32 users, the debug_new lib is already included inside of Skyvo's MinGW compiler.
+        debug_new is a memory leak detector.  On platforms without valgrind (win32), then debug_new is needed to detect memory leaks.  Building the project inside of here makes a static library of debug_new.
     
     gmock:
         Google Mock.  Mock classes that allow unit tests to be easier.
@@ -34,7 +34,7 @@ Common:
         This is SQLITE.
     
     SCSV:
-        Us at skyvo disliked CSV as a format, so we created our own standard called Skyvo CSV (SCSV).  This project contains the SCSV parser.  The language is C++.
+        I disliked CSV as a format, so we created our own standard called Seth CSV (SCSV).  This project contains the SCSV parser.  The language is C++.
     
 Doc:
     Project-wide documentation

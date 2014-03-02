@@ -34,4 +34,4 @@ for arg in sys.argv[1:]:
 
 status = subprocess.call(['python', 'build.py'] + args)
 if (status != 0):
-    raise Exception("Skyvo common release build failed")
+    raise Exception("Seth common release build failed")

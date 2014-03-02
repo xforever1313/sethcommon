@@ -12,7 +12,7 @@ from copy import deepcopy
 baseDir = os.path.abspath("../../")
 sys.path.append(baseDir) #Get globals
 from Globals import *
-from SkyvoCommonGlobals import *
+from SethCommonGlobals import *
 from SConstructGlobals import *
 
 #Make common environment

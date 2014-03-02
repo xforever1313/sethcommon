@@ -12,7 +12,7 @@ from copy import deepcopy
 baseDir = os.path.abspath("../../")
 sys.path.append(baseDir) #Get globals
 from Globals import *
-from SkyvoCommonGlobals import *
+from SethCommonGlobals import *
 from SConstructGlobals import *
 
 #Make common environment
@@ -20,7 +20,7 @@ projectName = "Common Classes"
 targetFlags = CREATE_LIB_TARGET | DEBUG_RELEASE_LIB_TARGET | DOXYGEN_TARGET | CPP_CHECK_TARGET | TESTING_TARGET | PROJECT_TARGET
 envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGUMENTS)
 
-osPath = getSkyvoOSPath(baseDir)
+osPath = getOSPath(baseDir)
 
 ###
 # Files to compile

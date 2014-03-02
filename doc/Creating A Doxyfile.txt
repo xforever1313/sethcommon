@@ -10,13 +10,11 @@ Remeber to make sure doxygen/bin is in your path
 4.  Modify the following fields (I recommend using CTRL+F to find these).  Put each parameter in quotes.
     a. PROJECT_NAME (usually what the folder is called)
     b. PROJECT_BRIEF (A description of the project)
-    c. PROJECT_LOGO (Have this point to our logo, located in doc/SkyvoLogo.png. Relative paths are allowed)
+    c. RECURSIVE (Set to YES)
     d. OUTPUT_DIRECTORY (set this to "doc/doxygen")
     e. INPUT (located around line 664) 
         Put the directories of wherever there is a hearder or source file in the project, including any unit tests. For most projects, you need a minimum of this:
         INPUT = "./include" "./src" "./Test" "./Test/include" "./Test/src"
-        NOTE:  Everytime a folder is added that contains source code, this needs to be updated.
-        Set RECURSIVE to "YES"
     f. GENERATE_HTML (set to YES if it isn't already)
     g. GENERATE_LATEX (set to NO if it isn't already)
     h. GENERATE_RTF (set to NO if it isn't already)

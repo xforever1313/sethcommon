@@ -12,15 +12,13 @@ from copy import deepcopy
 baseDir = os.path.abspath("../../")
 sys.path.append(baseDir) #Get globals
 from Globals import *
-from SkyvoCommonGlobals import *
+from SethCommonGlobals import *
 from SConstructGlobals import *
 
 #Make common environment
 projectName = "SMath"
 targetFlags = CREATE_LIB_TARGET | DEBUG_RELEASE_LIB_TARGET | DOXYGEN_TARGET | CPP_CHECK_TARGET | TESTING_TARGET | PROJECT_TARGET
 envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGUMENTS)
-
-osPath = getSkyvoOSPath(baseDir)
 
 testDir = "test"
 
@@ -29,7 +27,7 @@ testDir = "test"
 ###
 
 ###include paths:
-includePaths = [includeDir, os.path.join(osPath, includeDir), getDateVersionPath(baseDir)]
+includePaths = [includeDir, getDateVersionPath(baseDir)]
 testIncludePaths = [os.path.join(testDir, includeDir)]
 
 ###Source Files
