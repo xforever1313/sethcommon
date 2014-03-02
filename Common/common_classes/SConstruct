@@ -39,7 +39,7 @@ coverageFiles = deepcopy(sourceFiles + [dateVersionFile])
 
 ###Libs
 libs = [] 
-testLibs = ['SkyvoOS-d'] + libs
+testLibs = ['SethOS-d'] + libs
 if (not envBase['ASM_JS_BUILD'] and not envBase['MSVC_BUILD']):
     testLibs += ['pthread']
 

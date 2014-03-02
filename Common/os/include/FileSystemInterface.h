@@ -10,7 +10,7 @@
 #include <deque>
 #include <string>
 
-namespace SkyvoOS{
+namespace OS{
 class FileSystemInterface{
     public:
         enum FileStatus{

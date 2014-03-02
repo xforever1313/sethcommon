@@ -4,14 +4,14 @@
 //    (See accompanying file ../../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYVOBOOLEAN_H_INCLUDED
-#define SKYVOBOOLEAN_H_INCLUDED
+#ifndef CBOOLEAN_H_INCLUDED
+#define CBOOLEAN_H_INCLUDED
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-enum SkyvoBoolean{
+enum CBoolean{
     FALSE = 0,
     TRUE = 1
 };
@@ -20,4 +20,4 @@ enum SkyvoBoolean{
 }
 #endif
 
-#endif // SKYVOBOOLEAN_H_INCLUDED
+#endif

@@ -13,7 +13,7 @@
 #include "FileSystemInterface.h"
 #include "gmock/gmock.h"
 
-class MockFilesystem : public SkyvoOS::FileSystemInterface{
+class MockFilesystem : public OS::FileSystemInterface{
 
     public:
         virtual ~MockFilesystem(){};
@@ -23,8 +23,8 @@ class MockFilesystem : public SkyvoOS::FileSystemInterface{
         MOCK_METHOD2(writeFile, bool(const std::string &stringToWrite, const std::string &fileName));
         MOCK_METHOD1(createFile, bool(const std::string &filePath));
         MOCK_METHOD1(createDir, bool(const std::string &dirPath));
-        MOCK_METHOD1(isFile, SkyvoOS::FileSystemInterface::FileStatus(const std::string &filePath));
-        MOCK_METHOD1(isDir, SkyvoOS::FileSystemInterface::FileStatus(const std::string &dirPath));
+        MOCK_METHOD1(isFile, OS::FileSystemInterface::FileStatus(const std::string &filePath));
+        MOCK_METHOD1(isDir, OS::FileSystemInterface::FileStatus(const std::string &dirPath));
         MOCK_METHOD1(fileExists, bool(const std::string &filePath));
         MOCK_METHOD1(dirExists, bool(const std::string &dirPath));
         MOCK_METHOD2(copyFile, bool(const std::string &originalFile, const std::string &destinationPath));
@@ -34,8 +34,8 @@ class MockFilesystem : public SkyvoOS::FileSystemInterface{
         MOCK_METHOD1(deleteFile, bool(const std::string &filePath));
         MOCK_METHOD1(deleteDir, bool(const std::string &dirPath));
         MOCK_METHOD2(listFilesInDir, bool(const std::string &dirPath, std::deque<std::string> &fileNamesInDir));
-        MOCK_METHOD2(compareFiles, SkyvoOS::FileSystemInterface::FileStatus(const std::string &fileOne, const std::string &fileTwo));
-        MOCK_METHOD2(compareDirs, SkyvoOS::FileSystemInterface::FileStatus(const std::string &dirOne, const std::string &dirTwo));
+        MOCK_METHOD2(compareFiles, OS::FileSystemInterface::FileStatus(const std::string &fileOne, const std::string &fileTwo));
+        MOCK_METHOD2(compareDirs, OS::FileSystemInterface::FileStatus(const std::string &dirOne, const std::string &dirTwo));
 };
 
 #endif // MOCKFILESYSTEM_H_INCLUDED

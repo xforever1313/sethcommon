@@ -4,31 +4,31 @@
 //    (See accompanying file ../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYVOMUTEX_H
-#define SKYVOMUTEX_H
+#ifndef SMUTEX_H
+#define SMUTEX_H
 
 #ifdef ASM_JS
     #error "Threading is not supported with Emscripten"
 #endif
 
-#include "SkyvoMutexInterface.h"
+#include "SMutexInterface.h"
 
-namespace SkyvoOS{
+namespace OS{
 
 typedef struct mutexImpl mutexImpl_t;
 
-class SkyvoMutex : public SkyvoMutexInterface{
+class SMutex : public SMutexInterface{
     public:
-        SkyvoMutex();
-        virtual ~SkyvoMutex();
+        SMutex();
+        virtual ~SMutex();
         void lock();
         void unlock();
     private:
-        SkyvoMutex(const SkyvoMutex&);
-        SkyvoMutex &operator=(const SkyvoMutex&);
+        SMutex(const SMutex&);
+        SMutex &operator=(const SMutex&);
         mutexImpl_t *m_impl;
 };
 
 }
-#endif // SKYVOMUTEX_H
+#endif 
 

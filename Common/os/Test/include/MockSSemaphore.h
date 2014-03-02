@@ -4,18 +4,18 @@
 //    (See accompanying file ../../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef MOCKSKYVOSEMAPHORE_H_INCLUDED
-#define MOCKSKYVOSEMAPHORE_H_INCLUDED
+#ifndef MOCKSSEMAPHORE_H_INCLUDED
+#define MOCKSSEMAPHORE_H_INCLUDED
 
 #include <gmock/gmock.h>
 
-#include "SkyvoSemaphoreInterface.h"
+#include "SSemaphoreInterface.h"
 
-namespace SkyvoOS{
+namespace OS{
 
-class MockSkyvoSemaphore : public SkyvoSemaphoreInterface{
+class MockSSemaphore : public SSemaphoreInterface{
     public:
-        virtual ~MockSkyvoSemaphore(){}
+        virtual ~MockSSemaphore(){}
 
         MOCK_METHOD0(post, void());
         MOCK_METHOD0(wait, void());
@@ -27,4 +27,4 @@ class MockSkyvoSemaphore : public SkyvoSemaphoreInterface{
 
 }
 
-#endif // MOCKSKYVOSEMAPHORE_H_INCLUDED
+#endif 

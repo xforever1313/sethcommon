@@ -9,9 +9,9 @@
 #include <mutex>
 #include <thread>
 
-#include "SkyvoMutex.h"
+#include "SMutex.h"
 
-namespace SkyvoOS{
+namespace OS{
 
 typedef struct mutexImpl{
     mutexImpl() :
@@ -28,24 +28,23 @@ typedef struct mutexImpl{
         mutexImpl(const mutexImpl&);
 }mutexImpl_t;
 
-SkyvoMutex::SkyvoMutex() :
+SMutex::SMutex() :
     m_impl(new mutexImpl_t())
 {
 }
 
-SkyvoMutex::~SkyvoMutex(){
+SMutex::~SMutex(){
     delete m_impl;
 }
 
-void SkyvoMutex::lock(){
+void SMutex::lock(){
     m_impl->m_mutex->lock();
 }
 
-void  SkyvoMutex::unlock(){
+void  SMutex::unlock(){
     m_impl->m_mutex->unlock();
 }
 
 }
 
 #endif
-

@@ -11,13 +11,13 @@
 
 #define private public
 
-#include "MockSkyvoMutex.h"
-#include "cwrappers/SkyvoMutexCWrapper.h"
-#include "cwrappers/SkyvoMutexStruct.h"
+#include "MockSMutex.h"
+#include "cwrappers/SMutexCWrapper.h"
+#include "cwrappers/SMutexStruct.h"
 
-TEST_GROUP(SkyvoMutexCWrapper){
+TEST_GROUP(SMutexCWrapper){
     TEST_SETUP(){
-        m_mutex = new testing::StrictMock<SkyvoOS::MockSkyvoMutex>();
+        m_mutex = new testing::StrictMock<OS::MockSMutex>();
         m_uut = createMutex();
         delete m_uut->m_mutex;
         m_uut->m_mutex = m_mutex;
@@ -27,19 +27,18 @@ TEST_GROUP(SkyvoMutexCWrapper){
         deleteMutex(m_uut);
         //m_mutex is deleted in m_uut
     }
-    testing::StrictMock<SkyvoOS::MockSkyvoMutex> *m_mutex;
-    SkyvoMutex_t *m_uut;
+    testing::StrictMock<OS::MockSMutex> *m_mutex;
+    SMutex_t *m_uut;
 };
 
-TEST(SkyvoMutexCWrapper, lockTest){
+TEST(SMutexCWrapper, lockTest){
     EXPECT_CALL(*m_mutex, lock());
     lockMutex(m_uut);
 }
 
-TEST(SkyvoMutexCWrapper, unlockTest){
+TEST(SMutexCWrapper, unlockTest){
     EXPECT_CALL(*m_mutex, unlock());
     unlockMutex(m_uut);
 }
 
 #endif
-

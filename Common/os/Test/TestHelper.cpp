@@ -9,7 +9,7 @@
 #include "Date.h"
 #include "TestHelper.h"
 
-SkyvoOS::Date testTimeStamp;
+OS::Date testTimeStamp;
 
 std::string fileTestOutputPath = "../../../testOutput/fileSystemTest/fileTest-" + testTimeStamp.getFullDateUnderscores();
 

@@ -5,14 +5,14 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef ASM_JS //Only used in exectutor test, which is not usable with emscripten
-#include <SkyvoThread.h>
+#include "SThread.h"
 
 
 #include "DummyEvent.h"
 
 unsigned int DummyEvent::ranCount = 0;
-SkyvoOS::SkyvoMutex DummyEvent::ranCountMutex;
-SkyvoOS::SkyvoSemaphore DummyEvent::semaphore;
+OS::SMutex DummyEvent::ranCountMutex;
+OS::SSemaphore DummyEvent::semaphore;
 DummyEvent::DummyEvent()
 {
 }

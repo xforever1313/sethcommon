@@ -4,13 +4,13 @@
 //    (See accompanying file ../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYVOOSDATEVERSION_H
-#define SKYVOOSDATEVERSION_H
+#ifndef OSDATEVERSION_H
+#define OSDATEVERSION_H
 
 #include <string>
 
-namespace SkyvoOS{
+namespace OS{
 #include "DateVersion.h"
 }
 
-#endif // SKYVOOSDATEVERSION_H
+#endif 

@@ -10,7 +10,7 @@
 #include "cstdioWrapperInterface.h"
 #include <string>
 
-namespace SkyvoOS{
+namespace OS{
 
 /**
 * \class cstdioWrapper

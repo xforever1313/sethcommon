@@ -4,8 +4,8 @@
 //    (See accompanying file ../../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYVOMUTEXCWRAPPER_H_INCLUDED
-#define SKYVOMUTEXCWRAPPER_H_INCLUDED
+#ifndef SMUTEXCWRAPPER_H_INCLUDED
+#define SMUTEXCWRAPPER_H_INCLUDED
 
 #ifdef ASM_JS
     #error "Threading is not supported with Emscripten"
@@ -13,26 +13,26 @@
 #endif
 
 /**
-* \file SkyvoMutexCWrapper.h
-* \brief This file wrappers the C++ Skyvo Mutex so it can be called from C or Obj-C
+* \file SMutexCWrapper.h
+* \brief This file wrappers the C++ SMutex so it can be called from C or Obj-C
 */
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-typedef struct SkyvoMutex SkyvoMutex_t;
+typedef struct SMutex SMutex_t;
 
-SkyvoMutex_t *createMutex();
+SMutex_t *createMutex();
 
-void deleteMutex(SkyvoMutex_t *mutex);
+void deleteMutex(SMutex_t *mutex);
 
-void lockMutex(SkyvoMutex_t *mutex);
+void lockMutex(SMutex_t *mutex);
 
-void unlockMutex(SkyvoMutex_t *mutex);
+void unlockMutex(SMutex_t *mutex);
 
 #ifdef __cplusplus
 }
 #endif
 
-#endif // MUTEXCWRAPPER_H_INCLUDED
+#endif

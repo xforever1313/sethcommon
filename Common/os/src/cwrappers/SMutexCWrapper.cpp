@@ -6,24 +6,23 @@
 
 #ifndef ASM_JS
 
-#include "cwrappers/SkyvoMutexCWrapper.h"
-#include "cwrappers/SkyvoMutexStruct.h"
+#include "cwrappers/SMutexCWrapper.h"
+#include "cwrappers/SMutexStruct.h"
 
-SkyvoMutex_t *createMutex(){
-    return new SkyvoMutex();
+SMutex_t *createMutex(){
+    return new SMutex();
 }
 
-void deleteMutex(SkyvoMutex_t *mutex){
+void deleteMutex(SMutex_t *mutex){
     delete mutex;
 }
 
-void lockMutex(SkyvoMutex_t *mutex){
+void lockMutex(SMutex_t *mutex){
     mutex->m_mutex->lock();
 }
 
-void unlockMutex(SkyvoMutex_t *mutex){
+void unlockMutex(SMutex_t *mutex){
     mutex->m_mutex->unlock();
 }
 
 #endif
-

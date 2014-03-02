@@ -8,7 +8,6 @@
 
 #include <cstddef> //Needed for NULL
 #include <list>
-#include <SkyvoThread.h>
 
 #include "EventExecutor.h"
 #include "EventInterface.h"

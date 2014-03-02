@@ -16,7 +16,7 @@ from SkyvoCommonGlobals import *
 from SConstructGlobals import *
 
 #Make common environment
-projectName = "SkyvoOS"
+projectName = "SethOS"
 targetFlags = CREATE_LIB_TARGET | DEBUG_RELEASE_LIB_TARGET | DOXYGEN_TARGET | CPP_CHECK_TARGET | TESTING_TARGET | PROJECT_TARGET
 envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGUMENTS)
 
@@ -29,7 +29,7 @@ includePaths = [includeDir, getDateVersionPath(baseDir), os.path.join(getCommonC
 testIncludePaths = [os.path.join(testDir, includeDir)]
 
 ###Source Files
-dateVersionFile = (os.path.join(srcDir, 'SkyvoOSDateVersion.cpp'))
+dateVersionFile = (os.path.join(srcDir, 'OSDateVersion.cpp'))
 sourceFiles = filterSourceFiles(glob.glob(os.path.join(srcDir, "*.cpp")) +
                                 glob.glob(os.path.join(srcDir, "*/*.cpp")), [dateVersionFile])
 sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.join(testDir, "*/*.cpp")) + [getTestMain(baseDir)]
@@ -78,8 +78,8 @@ except OSError:
 # Targets
 ###
 
-debugTarget = createStaticLib(debugEnvironment, "SkyvoOS-d", getCompiledObjectsWithDateVersionObject(debugEnvironment, sourceFiles, dateVersionFile, ARGUMENTS))
-releaseTarget = createStaticLib(releaseEnvironment, "SkyvoOS", getCompiledObjectsWithDateVersionObject(releaseEnvironment, sourceFiles, dateVersionFile, ARGUMENTS))
+debugTarget = createStaticLib(debugEnvironment, "SethOS-d", getCompiledObjectsWithDateVersionObject(debugEnvironment, sourceFiles, dateVersionFile, ARGUMENTS))
+releaseTarget = createStaticLib(releaseEnvironment, "SethOS", getCompiledObjectsWithDateVersionObject(releaseEnvironment, sourceFiles, dateVersionFile, ARGUMENTS))
 (unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, getCompiledObjectsWithDateVersionObject(testEnvironment, sourceFiles + sourceTestFiles, dateVersionFile, ARGUMENTS), coverageFiles)
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
 cppCheckTarget = createCppCheckTarget(releaseEnvironment, coverageFiles)

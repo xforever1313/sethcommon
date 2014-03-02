@@ -8,7 +8,7 @@
 
 #include <sstream>
 
-namespace SkyvoOS{
+namespace OS{
 
 const std::string Date::monthString [13] = {"Natecember", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
 

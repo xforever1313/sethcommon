@@ -27,7 +27,7 @@ TEST_GROUP(FileSystem){
         m_file = "File";
         m_stringToWrite = "Writing!";
         m_cstdio = NULL;
-        m_uut = new SkyvoOS::FileSystem();
+        m_uut = new OS::FileSystem();
         if (firstRun){
             firstSetup();
             firstRun = false;
@@ -49,56 +49,56 @@ TEST_GROUP(FileSystem){
     }
     
     void addMock(){
-        m_cstdio = new testing::StrictMock<SkyvoOS::MockcstdioWrapper>();
+        m_cstdio = new testing::StrictMock<OS::MockcstdioWrapper>();
         delete m_uut->m_cstdio;
         m_uut->m_cstdio = m_cstdio;
     }
     std::string m_file;
     std::string m_stringToWrite;
-    testing::StrictMock<SkyvoOS::MockcstdioWrapper> *m_cstdio;
-    SkyvoOS::FileSystem *m_uut;
+    testing::StrictMock<OS::MockcstdioWrapper> *m_cstdio;
+    OS::FileSystem *m_uut;
 };
 
 ///\brief creates a massive directory, with dirs, files, and other things
-void createMassiveDir(SkyvoOS::FileSystem *uut, std::string rootPath){
+void createMassiveDir(OS::FileSystem *uut, std::string rootPath){
 
     CHECK(uut->createDir(rootPath));
     CHECK(uut->dirExists(rootPath));
 
-    CHECK(uut->createDir(SkyvoOS::FileSystem::pathJoin(rootPath, "dir1/dir1Child")));
-    CHECK(uut->dirExists(SkyvoOS::FileSystem::pathJoin(rootPath, "dir1")));
-    CHECK(uut->dirExists(SkyvoOS::FileSystem::pathJoin(rootPath, "dir1/dir1Child")));
-    CHECK(uut->createFile(SkyvoOS::FileSystem::pathJoin(rootPath, "dir1/test1.txt")));
-    CHECK(uut->fileExists(SkyvoOS::FileSystem::pathJoin(rootPath, "dir1/test1.txt")));
+    CHECK(uut->createDir(OS::FileSystem::pathJoin(rootPath, "dir1/dir1Child")));
+    CHECK(uut->dirExists(OS::FileSystem::pathJoin(rootPath, "dir1")));
+    CHECK(uut->dirExists(OS::FileSystem::pathJoin(rootPath, "dir1/dir1Child")));
+    CHECK(uut->createFile(OS::FileSystem::pathJoin(rootPath, "dir1/test1.txt")));
+    CHECK(uut->fileExists(OS::FileSystem::pathJoin(rootPath, "dir1/test1.txt")));
     std::ofstream outFile1;
     outFile1.open("dir1/dir1Child/test1.txt");
     outFile1<<"Test File!\n\nYAY!";
     outFile1.close();
 
-    CHECK(uut->createDir(SkyvoOS::FileSystem::pathJoin(rootPath, "dir2/dir2Child/dir2ChildChild")));
-    CHECK(uut->dirExists(SkyvoOS::FileSystem::pathJoin(rootPath, "dir2")));
-    CHECK(uut->dirExists(SkyvoOS::FileSystem::pathJoin(rootPath, "dir2/dir2Child")));
-    CHECK(uut->dirExists(SkyvoOS::FileSystem::pathJoin(rootPath, "dir2/dir2Child/dir2ChildChild")));
-    CHECK(uut->createFile(SkyvoOS::FileSystem::pathJoin(rootPath, "dir2/dir2Child/test.txt")));
-    CHECK(uut->fileExists(SkyvoOS::FileSystem::pathJoin(rootPath, "dir2/dir2Child/test.txt")));
+    CHECK(uut->createDir(OS::FileSystem::pathJoin(rootPath, "dir2/dir2Child/dir2ChildChild")));
+    CHECK(uut->dirExists(OS::FileSystem::pathJoin(rootPath, "dir2")));
+    CHECK(uut->dirExists(OS::FileSystem::pathJoin(rootPath, "dir2/dir2Child")));
+    CHECK(uut->dirExists(OS::FileSystem::pathJoin(rootPath, "dir2/dir2Child/dir2ChildChild")));
+    CHECK(uut->createFile(OS::FileSystem::pathJoin(rootPath, "dir2/dir2Child/test.txt")));
+    CHECK(uut->fileExists(OS::FileSystem::pathJoin(rootPath, "dir2/dir2Child/test.txt")));
     std::ofstream outFile2;
     outFile2.open("dir2/dir2Child/dir2ChildChild/test1.txt");
     outFile2<<"Test File2!\n\nYAY!";
     outFile2.close();
 
     //Create files
-    CHECK(uut->createFile(SkyvoOS::FileSystem::pathJoin(rootPath, "testFile1.txt")));
-    CHECK(uut->fileExists(SkyvoOS::FileSystem::pathJoin(rootPath, "testFile1.txt")));
+    CHECK(uut->createFile(OS::FileSystem::pathJoin(rootPath, "testFile1.txt")));
+    CHECK(uut->fileExists(OS::FileSystem::pathJoin(rootPath, "testFile1.txt")));
 }
 
 TEST(FileSystem, getInstanceTest){
-    CHECK(SkyvoOS::FileSystem::getInstance() == SkyvoOS::FileSystem::getInstance());
+    CHECK(OS::FileSystem::getInstance() == OS::FileSystem::getInstance());
 }
 
 ///\brief tests the read file method during an open error
 TEST(FileSystem, readFileOpenFailure){
     addMock();
-    SkyvoOS::FILE_t *file = NULL;
+    OS::FILE_t *file = NULL;
     EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("r")))
         .WillOnce(testing::Return(file));
     std::string buffer;
@@ -111,13 +111,13 @@ TEST(FileSystem, readFileReadFailure){
     addMock();
     testing::InSequence dummy;
     std::string fileString("qwerty");
-    SkyvoOS::FILE_t *file = new SkyvoOS::FILE_t;
+    OS::FILE_t *file = new OS::FILE_t;
     EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("r")))
         .WillOnce(testing::Return(file));
     EXPECT_CALL(*m_cstdio, fgetc(file))
         .WillOnce(testing::Return(fileString[0]));
     EXPECT_CALL(*m_cstdio, fgetc(file))
-        .WillOnce(testing::Return(SkyvoOS::cstdioWrapper::END_OF_FILE));
+        .WillOnce(testing::Return(OS::cstdioWrapper::END_OF_FILE));
     EXPECT_CALL(*m_cstdio, ferror(file))
         .WillOnce(testing::Return(13));
     EXPECT_CALL(*m_cstdio, fclose(file))
@@ -133,7 +133,7 @@ TEST(FileSystem, readFileSuccess){
     addMock();
     testing::InSequence dummy;
     std::string expectedString = "Hello world!\n\nThis is a string!\t  cool huh?";
-    SkyvoOS::FILE_t *file = new SkyvoOS::FILE_t;
+    OS::FILE_t *file = new OS::FILE_t;
     EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("r"))).
         WillOnce(testing::Return(file));
     for (size_t i = 0; i < expectedString.size(); ++i){
@@ -141,7 +141,7 @@ TEST(FileSystem, readFileSuccess){
             .WillOnce(testing::Return(expectedString[i]));
     }
     EXPECT_CALL(*m_cstdio, fgetc(file))
-        .WillOnce(testing::Return(SkyvoOS::cstdioWrapper::END_OF_FILE));
+        .WillOnce(testing::Return(OS::cstdioWrapper::END_OF_FILE));
     EXPECT_CALL(*m_cstdio, ferror(file))
         .WillOnce(testing::Return(0));
     EXPECT_CALL(*m_cstdio, fclose(file))
@@ -155,7 +155,7 @@ TEST(FileSystem, readFileSuccess){
 ///\brief tests the write file method during an open error
 TEST(FileSystem, writeFileOpenFailure){
     addMock();
-    SkyvoOS::FILE_t *file = NULL;
+    OS::FILE_t *file = NULL;
     EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("w")))
         .WillOnce(testing::Return(file));
     CHECK(!m_uut->writeFile(m_stringToWrite, m_file));
@@ -165,13 +165,13 @@ TEST(FileSystem, writeFileOpenFailure){
 TEST(FileSystem, writeFileWriteFailure){
     addMock();
     testing::InSequence dummy;
-    SkyvoOS::FILE_t *file = new SkyvoOS::FILE_t;
+    OS::FILE_t *file = new OS::FILE_t;
     EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("w")))
         .WillOnce(testing::Return(file));
     EXPECT_CALL(*m_cstdio, fputc(m_stringToWrite[0], file))
         .WillOnce(testing::Return(m_stringToWrite[0]));
     EXPECT_CALL(*m_cstdio, fputc(m_stringToWrite[1], file))
-        .WillOnce(testing::Return(SkyvoOS::cstdioWrapper::END_OF_FILE));
+        .WillOnce(testing::Return(OS::cstdioWrapper::END_OF_FILE));
     EXPECT_CALL(*m_cstdio, ferror(file))
         .WillOnce(testing::Return(234));
     EXPECT_CALL(*m_cstdio, fclose(file))
@@ -184,7 +184,7 @@ TEST(FileSystem, writeFileWriteFailure){
 TEST(FileSystem, writeFileWriteSuccess){
     addMock();
     testing::InSequence dummy;
-    SkyvoOS::FILE_t *file = new SkyvoOS::FILE_t;
+    OS::FILE_t *file = new OS::FILE_t;
     EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("w")))
         .WillOnce(testing::Return(file));
     for (size_t i = 0; i < m_stringToWrite.size(); ++i){
@@ -202,7 +202,7 @@ TEST(FileSystem, writeFileWriteSuccess){
 ///\brief tests the file creation method for failure
 TEST(FileSystem, createFileTestFaiure){
     addMock();
-    SkyvoOS::FILE_t *fileptr = NULL;
+    OS::FILE_t *fileptr = NULL;
 
     //Check the case where a file is bad
     EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("w")))
@@ -213,7 +213,7 @@ TEST(FileSystem, createFileTestFaiure){
 ///\brief tests the file creation method for success
 TEST(FileSystem, createFileTestSuccess){
     addMock();
-    SkyvoOS::FILE_t *fileptr = new SkyvoOS::FILE_t;
+    OS::FILE_t *fileptr = new OS::FILE_t;
     EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("w")))
         .WillOnce(testing::Return(fileptr));
     EXPECT_CALL(*m_cstdio, fclose(fileptr))
@@ -229,7 +229,7 @@ TEST(FileSystem, createDirTest){
     std::string testDirChild1 = "createdDirChild1";
     std::string testDirChild2 = "createdDirChild2";
 
-    std::string testDirLocation1 = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, testDir1);
+    std::string testDirLocation1 = OS::FileSystem::pathJoin(fileTestOutputPath, testDir1);
 
     CHECK(m_uut->createDir(testDirLocation1));
     CHECK(m_uut->dirExists(testDirLocation1));
@@ -238,19 +238,19 @@ TEST(FileSystem, createDirTest){
     CHECK(!m_uut->createDir(""));
 
     //Test the case where we want to create a directory within a directory
-    std::string testDirLocation2 = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, testDir2);
-    testDirLocation2 = SkyvoOS::FileSystem::pathJoin(testDirLocation2, testDirChild1);
+    std::string testDirLocation2 = OS::FileSystem::pathJoin(fileTestOutputPath, testDir2);
+    testDirLocation2 = OS::FileSystem::pathJoin(testDirLocation2, testDirChild1);
     CHECK(m_uut->createDir(testDirLocation2));
     CHECK(m_uut->dirExists(testDirLocation2));
 
     //Test the case where we want to create a directory within an existing diretory
-    std::string testDirLocation3 = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, testDir2);
-    testDirLocation3 = SkyvoOS::FileSystem::pathJoin(testDirLocation3, testDirChild2);
+    std::string testDirLocation3 = OS::FileSystem::pathJoin(fileTestOutputPath, testDir2);
+    testDirLocation3 = OS::FileSystem::pathJoin(testDirLocation3, testDirChild2);
     CHECK(m_uut->createDir(testDirLocation3));
     CHECK(m_uut->dirExists(testDirLocation3));
 
 	#ifdef WIN32
-    CHECK(!m_uut->createDir(SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, illegalDir)));
+    CHECK(!m_uut->createDir(OS::FileSystem::pathJoin(fileTestOutputPath, illegalDir)));
     #else
     CHECK(!m_uut->createDir(illegalDir));
     #endif
@@ -260,11 +260,11 @@ TEST(FileSystem, createDirTest){
 TEST(FileSystem, createDirFromRootTest){
     std::string testDir = "absDir";
     std::string absPath = m_uut->getCWD();
-    std::string testDirLocation = SkyvoOS::FileSystem::pathJoin(absPath, fileTestOutputPath);
-    testDirLocation = SkyvoOS::FileSystem::pathJoin(testDirLocation, testDir);
+    std::string testDirLocation = OS::FileSystem::pathJoin(absPath, fileTestOutputPath);
+    testDirLocation = OS::FileSystem::pathJoin(testDirLocation, testDir);
     CHECK(m_uut->createDir(testDirLocation));
 
-    std::string relTestDirLocation = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, testDir);
+    std::string relTestDirLocation = OS::FileSystem::pathJoin(fileTestOutputPath, testDir);
     CHECK(m_uut->dirExists(relTestDirLocation));
 }
 
@@ -281,28 +281,28 @@ TEST(FileSystem, createDirInRootTest){
 ///\brief tests the case where the directory has two '//' in it
 TEST(FileSystem, createDirDoubleSlashes){
     std::string testDir = "//twoSlashDir";
-    std::string testDirLocation = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, testDir);
-    testDirLocation = SkyvoOS::FileSystem::pathJoin(testDirLocation, testDir);
+    std::string testDirLocation = OS::FileSystem::pathJoin(fileTestOutputPath, testDir);
+    testDirLocation = OS::FileSystem::pathJoin(testDirLocation, testDir);
     CHECK(m_uut->createDir(testDirLocation));
 
-    std::string realTestDirLocation = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, "twoSlashDir");
+    std::string realTestDirLocation = OS::FileSystem::pathJoin(fileTestOutputPath, "twoSlashDir");
     CHECK(m_uut->dirExists(realTestDirLocation));
 }
 
 ///\brief tests the isFile method
 TEST(FileSystem, isFileTest){
-    CHECK_EQUAL(m_uut->isFile(fileTestOutputPath), SkyvoOS::FileSystem::FILE_NOT_EQUAL);
-    CHECK_EQUAL(m_uut->isFile(unEditableFilePath), SkyvoOS::FileSystem::FILE_EQUAL);
-    CHECK_EQUAL(m_uut->isFile("derp.txt"), SkyvoOS::FileSystem::FILE_ERROR);
-    CHECK_EQUAL(m_uut->isFile(""), SkyvoOS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->isFile(fileTestOutputPath), OS::FileSystem::FILE_NOT_EQUAL);
+    CHECK_EQUAL(m_uut->isFile(unEditableFilePath), OS::FileSystem::FILE_EQUAL);
+    CHECK_EQUAL(m_uut->isFile("derp.txt"), OS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->isFile(""), OS::FileSystem::FILE_ERROR);
 }
 
 ///\brief tests the isDir method
 TEST(FileSystem, isDirTest){
-    CHECK_EQUAL(m_uut->isDir(fileTestOutputPath), SkyvoOS::FileSystem::FILE_EQUAL);
-    CHECK_EQUAL(m_uut->isDir(unEditableFilePath), SkyvoOS::FileSystem::FILE_NOT_EQUAL);
-    CHECK_EQUAL(m_uut->isDir("derp"), SkyvoOS::FileSystem::FILE_ERROR);
-    CHECK_EQUAL(m_uut->isFile(""), SkyvoOS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->isDir(fileTestOutputPath), OS::FileSystem::FILE_EQUAL);
+    CHECK_EQUAL(m_uut->isDir(unEditableFilePath), OS::FileSystem::FILE_NOT_EQUAL);
+    CHECK_EQUAL(m_uut->isDir("derp"), OS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->isFile(""), OS::FileSystem::FILE_ERROR);
 }
 
 ///\brief tests the file exists method
@@ -344,8 +344,8 @@ TEST(FileSystem, copyFileTest){
     CHECK(!m_uut->copyFile("derp.txt", copySS.str()));
 
     //Test two empty files
-    std::string blankFile1 = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, "blankFile1");
-    std::string blankFile2 = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, "blankFile2");
+    std::string blankFile1 = OS::FileSystem::pathJoin(fileTestOutputPath, "blankFile1");
+    std::string blankFile2 = OS::FileSystem::pathJoin(fileTestOutputPath, "blankFile2");
 
     CHECK(m_uut->createFile(blankFile1));
     CHECK(m_uut->fileExists(blankFile1));
@@ -357,11 +357,11 @@ TEST(FileSystem, copyFileTest){
 
 ///\brief tests the copyDir method
 TEST(FileSystem, copyDirTest){
-    std::string testDir = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, "copyDir1");
-    std::string copiedDir = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, "copyDir2");
+    std::string testDir = OS::FileSystem::pathJoin(fileTestOutputPath, "copyDir1");
+    std::string copiedDir = OS::FileSystem::pathJoin(fileTestOutputPath, "copyDir2");
     createMassiveDir(m_uut, testDir);
     CHECK(m_uut->copyDir(testDir, copiedDir));
-    CHECK_EQUAL(m_uut->compareDirs(testDir, copiedDir), SkyvoOS::FileSystem::FILE_EQUAL);
+    CHECK_EQUAL(m_uut->compareDirs(testDir, copiedDir), OS::FileSystem::FILE_EQUAL);
 
     //Test the case where the dirs have the same name
     CHECK(!m_uut->copyDir(testDir, testDir));
@@ -373,14 +373,14 @@ TEST(FileSystem, copyDirTest){
 
     //Tests the case where we are copying to an illegal directory
     #ifdef WIN32
-    CHECK(!m_uut->copyDir(testDir, SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, illegalDir)));
+    CHECK(!m_uut->copyDir(testDir, OS::FileSystem::pathJoin(fileTestOutputPath, illegalDir)));
 	#else
 	CHECK(!m_uut->copyDir(testDir, illegalDir));
 	#endif
 
     //Test the case where listFiles fail
     m_uut->m_failListFilesInDir = true;
-    copiedDir = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, "copyDir3");
+    copiedDir = OS::FileSystem::pathJoin(fileTestOutputPath, "copyDir3");
     CHECK(!m_uut->copyDir(testDir, copiedDir));
 }
 
@@ -542,7 +542,7 @@ TEST(FileSystem, removeDirTest){
     CHECK(!m_uut->deleteDir("derp"));
 
     //Check for a massive dir
-    std::string massiveDir = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath,"massiveToBeDeleted");
+    std::string massiveDir = OS::FileSystem::pathJoin(fileTestOutputPath,"massiveToBeDeleted");
     createMassiveDir(m_uut, massiveDir);
     CHECK(m_uut->deleteDir(massiveDir));
     CHECK(!m_uut->dirExists(massiveDir));
@@ -556,12 +556,12 @@ TEST(FileSystem, listFilesInDirTest){
     std::string testDirFile = "testDir";
     std::string testDir = "listDirTest";
 
-    std::string uutDir = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, testDir);
+    std::string uutDir = OS::FileSystem::pathJoin(fileTestOutputPath, testDir);
     CHECK(m_uut->createDir(uutDir));
-    CHECK(m_uut->createDir(SkyvoOS::FileSystem::pathJoin(uutDir, testDirFile)));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1)));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(uutDir, testFile2)));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(uutDir, testFile3)));
+    CHECK(m_uut->createDir(OS::FileSystem::pathJoin(uutDir, testDirFile)));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(uutDir, testFile1)));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(uutDir, testFile2)));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(uutDir, testFile3)));
 
     std::deque <std::string> files;
     CHECK(m_uut->listFilesInDir(uutDir, files));
@@ -575,11 +575,11 @@ TEST(FileSystem, compareFilesTest){
     std::string testFile3 = "differentFile.txt";
     std::string testDir = "compareFileTest";
 
-    std::string uutDir = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath, testDir);
+    std::string uutDir = OS::FileSystem::pathJoin(fileTestOutputPath, testDir);
     CHECK(m_uut->createDir(uutDir));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1)));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(uutDir, testFile2)));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(uutDir, testFile3)));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(uutDir, testFile1)));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(uutDir, testFile2)));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(uutDir, testFile3)));
 
     std::string sameString = "Hello, this string is between two files\n\ncool huh?";
     std::string differentString = "Different String!";
@@ -587,159 +587,159 @@ TEST(FileSystem, compareFilesTest){
     std::ofstream sameFile1;
     std::ofstream sameFile2;
     std::ofstream differentFile;
-    sameFile1.open(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1).c_str());
+    sameFile1.open(OS::FileSystem::pathJoin(uutDir, testFile1).c_str());
     sameFile1 << sameString;
     sameFile1.close();
 
-    sameFile2.open(SkyvoOS::FileSystem::pathJoin(uutDir, testFile2).c_str());
+    sameFile2.open(OS::FileSystem::pathJoin(uutDir, testFile2).c_str());
     sameFile2 << sameString;
     sameFile2.close();
 
-    differentFile.open(SkyvoOS::FileSystem::pathJoin(uutDir, testFile3).c_str());
+    differentFile.open(OS::FileSystem::pathJoin(uutDir, testFile3).c_str());
     differentFile << differentString;
     differentFile.close();
 
-    CHECK_EQUAL(m_uut->compareFiles(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1), SkyvoOS::FileSystem::pathJoin(uutDir, testFile2)), SkyvoOS::FileSystem::FILE_EQUAL);
+    CHECK_EQUAL(m_uut->compareFiles(OS::FileSystem::pathJoin(uutDir, testFile1), OS::FileSystem::pathJoin(uutDir, testFile2)), OS::FileSystem::FILE_EQUAL);
 
-    CHECK_EQUAL(m_uut->compareFiles(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1), SkyvoOS::FileSystem::pathJoin(uutDir, testFile3)), SkyvoOS::FileSystem::FILE_NOT_EQUAL);
+    CHECK_EQUAL(m_uut->compareFiles(OS::FileSystem::pathJoin(uutDir, testFile1), OS::FileSystem::pathJoin(uutDir, testFile3)), OS::FileSystem::FILE_NOT_EQUAL);
 
-    CHECK_EQUAL(m_uut->compareFiles(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1),SkyvoOS::FileSystem::pathJoin(uutDir, testFile1)), SkyvoOS::FileSystem::FILE_EQUAL);
+    CHECK_EQUAL(m_uut->compareFiles(OS::FileSystem::pathJoin(uutDir, testFile1),OS::FileSystem::pathJoin(uutDir, testFile1)), OS::FileSystem::FILE_EQUAL);
 
     //Test the bad param cases
-    CHECK_EQUAL(m_uut->compareFiles(testFileDirectory, SkyvoOS::FileSystem::pathJoin(uutDir, testFile1)), SkyvoOS::FileSystem::FILE_ERROR);
-    CHECK_EQUAL(m_uut->compareFiles(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1), testFileDirectory), SkyvoOS::FileSystem::FILE_ERROR);
-    CHECK_EQUAL(m_uut->compareFiles(testFileDirectory, testFileDirectory), SkyvoOS::FileSystem::FILE_ERROR);
-    CHECK_EQUAL(m_uut->compareFiles("DERP.txt", SkyvoOS::FileSystem::pathJoin(uutDir, testFile3)), SkyvoOS::FileSystem::FILE_ERROR);
-    CHECK_EQUAL(m_uut->compareFiles(SkyvoOS::FileSystem::pathJoin(uutDir, testFile1), "HERP.txt"), SkyvoOS::FileSystem::FILE_ERROR);
-    CHECK_EQUAL(m_uut->compareFiles("DERP.txt", "HERP.txt"), SkyvoOS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->compareFiles(testFileDirectory, OS::FileSystem::pathJoin(uutDir, testFile1)), OS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->compareFiles(OS::FileSystem::pathJoin(uutDir, testFile1), testFileDirectory), OS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->compareFiles(testFileDirectory, testFileDirectory), OS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->compareFiles("DERP.txt", OS::FileSystem::pathJoin(uutDir, testFile3)), OS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->compareFiles(OS::FileSystem::pathJoin(uutDir, testFile1), "HERP.txt"), OS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->compareFiles("DERP.txt", "HERP.txt"), OS::FileSystem::FILE_ERROR);
 }
 
 ///\brief tests the compare directories method
 TEST(FileSystem, compareDirsTest){
-    std::string testDir = SkyvoOS::FileSystem::pathJoin(fileTestOutputPath,"compareDirTest");
+    std::string testDir = OS::FileSystem::pathJoin(fileTestOutputPath,"compareDirTest");
     //Setup
     CHECK(m_uut->createDir(testDir));
     CHECK(m_uut->dirExists(testDir));
 
     //Test the case where both dirs have the same path
-    CHECK_EQUAL(m_uut->compareDirs(testDir, testDir), SkyvoOS::FileSystem::FILE_EQUAL);
+    CHECK_EQUAL(m_uut->compareDirs(testDir, testDir), OS::FileSystem::FILE_EQUAL);
     CHECK(m_uut->dirExists(testDir));
 
     //Test the case where neither dirs exist
-    CHECK_EQUAL(m_uut->compareDirs("derp", "derp"), SkyvoOS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->compareDirs("derp", "derp"), OS::FileSystem::FILE_ERROR);
     //Test the case where both are files
-    CHECK_EQUAL(m_uut->compareDirs(unEditableFilePath, unEditableFilePath), SkyvoOS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->compareDirs(unEditableFilePath, unEditableFilePath), OS::FileSystem::FILE_ERROR);
     //Test the case where ones a dir and one is not
-    CHECK_EQUAL(m_uut->compareDirs(testDir, unEditableFilePath), SkyvoOS::FileSystem::FILE_ERROR);
-    CHECK_EQUAL(m_uut->compareDirs(unEditableFilePath, testDir), SkyvoOS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->compareDirs(testDir, unEditableFilePath), OS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->compareDirs(unEditableFilePath, testDir), OS::FileSystem::FILE_ERROR);
     //Test the care where ones a dir, and one does not exist
-    CHECK_EQUAL(m_uut->compareDirs(testDir, "derp"), SkyvoOS::FileSystem::FILE_ERROR);
-    CHECK_EQUAL(m_uut->compareDirs("derp", testDir), SkyvoOS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->compareDirs(testDir, "derp"), OS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->compareDirs("derp", testDir), OS::FileSystem::FILE_ERROR);
 
     //Set up two dirs with different number of files in each
-    std::string differentSizeDir = SkyvoOS::FileSystem::pathJoin(testDir, "differentSizeDirTest");
+    std::string differentSizeDir = OS::FileSystem::pathJoin(testDir, "differentSizeDirTest");
     CHECK(m_uut->createDir(differentSizeDir));
     CHECK(m_uut->dirExists(differentSizeDir));
 
-    std::string differentSizeDir1 = SkyvoOS::FileSystem::pathJoin(differentSizeDir, "differentSizeDir1");
+    std::string differentSizeDir1 = OS::FileSystem::pathJoin(differentSizeDir, "differentSizeDir1");
     CHECK(m_uut->createDir(differentSizeDir1));
     CHECK(m_uut->dirExists(differentSizeDir1));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(differentSizeDir1, "test1.txt")));
-    CHECK(m_uut->fileExists(SkyvoOS::FileSystem::pathJoin(differentSizeDir1, "test1.txt")));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(differentSizeDir1, "test2.txt")));
-    CHECK(m_uut->fileExists(SkyvoOS::FileSystem::pathJoin(differentSizeDir1, "test2.txt")));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(differentSizeDir1, "test3.txt")));
-    CHECK(m_uut->fileExists(SkyvoOS::FileSystem::pathJoin(differentSizeDir1, "test3.txt")));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(differentSizeDir1, "test1.txt")));
+    CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(differentSizeDir1, "test1.txt")));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(differentSizeDir1, "test2.txt")));
+    CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(differentSizeDir1, "test2.txt")));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(differentSizeDir1, "test3.txt")));
+    CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(differentSizeDir1, "test3.txt")));
 
-    std::string differentSizeDir2 = SkyvoOS::FileSystem::pathJoin(differentSizeDir, "differentSizeDir2");
+    std::string differentSizeDir2 = OS::FileSystem::pathJoin(differentSizeDir, "differentSizeDir2");
     CHECK(m_uut->createDir(differentSizeDir2));
     CHECK(m_uut->dirExists(differentSizeDir2));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(differentSizeDir2, "test1.txt")));
-    CHECK(m_uut->fileExists(SkyvoOS::FileSystem::pathJoin(differentSizeDir2, "test1.txt")));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(differentSizeDir2, "test2.txt")));
-    CHECK(m_uut->fileExists(SkyvoOS::FileSystem::pathJoin(differentSizeDir2, "test2.txt")));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(differentSizeDir2, "test1.txt")));
+    CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(differentSizeDir2, "test1.txt")));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(differentSizeDir2, "test2.txt")));
+    CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(differentSizeDir2, "test2.txt")));
 
-    CHECK_EQUAL(m_uut->compareDirs(differentSizeDir1, differentSizeDir2), SkyvoOS::FileSystem::FILE_NOT_EQUAL);
+    CHECK_EQUAL(m_uut->compareDirs(differentSizeDir1, differentSizeDir2), OS::FileSystem::FILE_NOT_EQUAL);
 
     //Set up two directories with miss matching names
-    std::string differentFileNameDir = SkyvoOS::FileSystem::pathJoin(testDir, "differentFileNames");
+    std::string differentFileNameDir = OS::FileSystem::pathJoin(testDir, "differentFileNames");
     CHECK(m_uut->createDir(differentFileNameDir));
     CHECK(m_uut->dirExists(differentFileNameDir));
 
-    std::string differentFileNameDir1 = SkyvoOS::FileSystem::pathJoin(differentFileNameDir, "differentFileNameDir1");
+    std::string differentFileNameDir1 = OS::FileSystem::pathJoin(differentFileNameDir, "differentFileNameDir1");
     CHECK(m_uut->createDir(differentFileNameDir1));
     CHECK(m_uut->dirExists(differentFileNameDir1));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(differentFileNameDir1, "test1.txt")));
-    CHECK(m_uut->fileExists(SkyvoOS::FileSystem::pathJoin(differentFileNameDir1, "test1.txt")));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(differentFileNameDir1, "LOL.txt")));
-    CHECK(m_uut->fileExists(SkyvoOS::FileSystem::pathJoin(differentFileNameDir1, "LOL.txt")));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(differentFileNameDir1, "test1.txt")));
+    CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(differentFileNameDir1, "test1.txt")));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(differentFileNameDir1, "LOL.txt")));
+    CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(differentFileNameDir1, "LOL.txt")));
 
-    std::string differentFileNameDir2 = SkyvoOS::FileSystem::pathJoin(differentFileNameDir, "differentFileNameDir2");
+    std::string differentFileNameDir2 = OS::FileSystem::pathJoin(differentFileNameDir, "differentFileNameDir2");
     CHECK(m_uut->createDir(differentFileNameDir2));
     CHECK(m_uut->dirExists(differentFileNameDir2));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(differentFileNameDir2, "test1.txt")));
-    CHECK(m_uut->fileExists(SkyvoOS::FileSystem::pathJoin(differentFileNameDir2, "test1.txt")));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(differentFileNameDir2, "test2.txt")));
-    CHECK(m_uut->fileExists(SkyvoOS::FileSystem::pathJoin(differentFileNameDir2, "test2.txt")));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(differentFileNameDir2, "test1.txt")));
+    CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(differentFileNameDir2, "test1.txt")));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(differentFileNameDir2, "test2.txt")));
+    CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(differentFileNameDir2, "test2.txt")));
 
-    CHECK_EQUAL(m_uut->compareDirs(differentFileNameDir1, differentFileNameDir2), SkyvoOS::FileSystem::FILE_NOT_EQUAL);
+    CHECK_EQUAL(m_uut->compareDirs(differentFileNameDir1, differentFileNameDir2), OS::FileSystem::FILE_NOT_EQUAL);
 
     //Set up two directories with miss matching types, but same names
-    std::string differentFileTypesDir = SkyvoOS::FileSystem::pathJoin(testDir, "differentFileTypesDir");
+    std::string differentFileTypesDir = OS::FileSystem::pathJoin(testDir, "differentFileTypesDir");
     CHECK(m_uut->createDir(differentFileTypesDir));
     CHECK(m_uut->dirExists(differentFileTypesDir));
 
-    std::string differentFileTypesDir1 = SkyvoOS::FileSystem::pathJoin(differentFileTypesDir, "differentFileTypesDir1");
+    std::string differentFileTypesDir1 = OS::FileSystem::pathJoin(differentFileTypesDir, "differentFileTypesDir1");
     CHECK(m_uut->createDir(differentFileTypesDir1));
     CHECK(m_uut->dirExists(differentFileTypesDir1));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir1, "test1.txt")));
-    CHECK(m_uut->fileExists(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir1, "test1.txt")));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir1, "test2")));
-    CHECK(m_uut->fileExists(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir1, "test2")));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(differentFileTypesDir1, "test1.txt")));
+    CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(differentFileTypesDir1, "test1.txt")));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(differentFileTypesDir1, "test2")));
+    CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(differentFileTypesDir1, "test2")));
 
-    std::string differentFileTypesDir2 = SkyvoOS::FileSystem::pathJoin(differentFileTypesDir, "differentFileTypesDir2");
+    std::string differentFileTypesDir2 = OS::FileSystem::pathJoin(differentFileTypesDir, "differentFileTypesDir2");
     CHECK(m_uut->createDir(differentFileTypesDir2));
     CHECK(m_uut->dirExists(differentFileTypesDir2));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir2, "test1.txt")));
-    CHECK(m_uut->fileExists(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir2, "test1.txt")));
-    CHECK(m_uut->createDir(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir2, "test2")));
-    CHECK(m_uut->dirExists(SkyvoOS::FileSystem::pathJoin(differentFileTypesDir2, "test2")));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(differentFileTypesDir2, "test1.txt")));
+    CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(differentFileTypesDir2, "test1.txt")));
+    CHECK(m_uut->createDir(OS::FileSystem::pathJoin(differentFileTypesDir2, "test2")));
+    CHECK(m_uut->dirExists(OS::FileSystem::pathJoin(differentFileTypesDir2, "test2")));
 
-    CHECK_EQUAL(m_uut->compareDirs(differentFileTypesDir1, differentFileTypesDir2), SkyvoOS::FileSystem::FILE_NOT_EQUAL);
+    CHECK_EQUAL(m_uut->compareDirs(differentFileTypesDir1, differentFileTypesDir2), OS::FileSystem::FILE_NOT_EQUAL);
 
     //Set up two directories with just files
-    std::string sameDirWithJustFiles = SkyvoOS::FileSystem::pathJoin(testDir, "sameDirWithJustFiles");
+    std::string sameDirWithJustFiles = OS::FileSystem::pathJoin(testDir, "sameDirWithJustFiles");
     CHECK(m_uut->createDir(sameDirWithJustFiles));
     CHECK(m_uut->dirExists(sameDirWithJustFiles));
 
-    std::string sameDirWithJustFiles1 = SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles, "sameDirWithJustFiles1");
+    std::string sameDirWithJustFiles1 = OS::FileSystem::pathJoin(sameDirWithJustFiles, "sameDirWithJustFiles1");
     CHECK(m_uut->createDir(sameDirWithJustFiles1));
     CHECK(m_uut->dirExists(sameDirWithJustFiles1));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles1, "test1.txt")));
-    CHECK(m_uut->fileExists(SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles1, "test1.txt")));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(sameDirWithJustFiles1, "test1.txt")));
+    CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(sameDirWithJustFiles1, "test1.txt")));
     std::ofstream outFile1;
-    outFile1.open((SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles1, "test2.txt").c_str()));
+    outFile1.open((OS::FileSystem::pathJoin(sameDirWithJustFiles1, "test2.txt").c_str()));
     outFile1 << sameDirWithJustFiles << "\n\n" << sameDirWithJustFiles;
     outFile1.close();
 
-    std::string sameDirWithJustFiles2 = SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles, "sameDirWithJustFiles2");
+    std::string sameDirWithJustFiles2 = OS::FileSystem::pathJoin(sameDirWithJustFiles, "sameDirWithJustFiles2");
     CHECK(m_uut->createDir(sameDirWithJustFiles2));
     CHECK(m_uut->dirExists(sameDirWithJustFiles2));
-    CHECK(m_uut->createFile(SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles2, "test1.txt")));
-    CHECK(m_uut->fileExists(SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles2, "test1.txt")));
+    CHECK(m_uut->createFile(OS::FileSystem::pathJoin(sameDirWithJustFiles2, "test1.txt")));
+    CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(sameDirWithJustFiles2, "test1.txt")));
     std::ofstream outFile2;
-    outFile2.open((SkyvoOS::FileSystem::pathJoin(sameDirWithJustFiles2, "test2.txt").c_str()));
+    outFile2.open((OS::FileSystem::pathJoin(sameDirWithJustFiles2, "test2.txt").c_str()));
     outFile2 << sameDirWithJustFiles << "\n\n" << sameDirWithJustFiles;
     outFile2.close();
 
-    CHECK_EQUAL(m_uut->compareDirs(sameDirWithJustFiles1, sameDirWithJustFiles2), SkyvoOS::FileSystem::FILE_EQUAL);
+    CHECK_EQUAL(m_uut->compareDirs(sameDirWithJustFiles1, sameDirWithJustFiles2), OS::FileSystem::FILE_EQUAL);
 
     //Set up two directories files and dirs
     //Tested in copyDirTest
 
     //Test the case where directory listing fails
     m_uut->m_failListFilesInDir = true;
-    CHECK_EQUAL(m_uut->compareDirs(sameDirWithJustFiles1, sameDirWithJustFiles2), SkyvoOS::FileSystem::FILE_ERROR);
+    CHECK_EQUAL(m_uut->compareDirs(sameDirWithJustFiles1, sameDirWithJustFiles2), OS::FileSystem::FILE_ERROR);
 }
 
 TEST(FileSystem, pathJoinTest){
@@ -748,7 +748,7 @@ TEST(FileSystem, pathJoinTest){
     std::stringstream ss;
     ss << parent << "/" << child;
 
-    CHECK_EQUAL(SkyvoOS::FileSystem::pathJoin(parent, child),ss.str());
+    CHECK_EQUAL(OS::FileSystem::pathJoin(parent, child),ss.str());
 }
 
 #endif

@@ -4,18 +4,18 @@
 //    (See accompanying file ../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYVOMUTEXINTERFACE_H_INCLUDED
-#define SKYVOMUTEXINTERFACE_H_INCLUDED
+#ifndef SMUTEXINTERFACE_H_INCLUDED
+#define SMUTEXINTERFACE_H_INCLUDED
 
-namespace SkyvoOS{
+namespace OS{
 
-class SkyvoMutexInterface{
+class SMutexInterface{
     public:
-        virtual ~SkyvoMutexInterface(){}
+        virtual ~SMutexInterface(){}
         virtual void lock() = 0;
         virtual void unlock() = 0;
 };
 
 }
 
-#endif // SKYVOMUTEXINTERFACE_H_INCLUDED
+#endif 

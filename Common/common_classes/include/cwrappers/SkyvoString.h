@@ -7,7 +7,7 @@
 #ifndef SKYVOSTRING_H
 #define SKYVOSTRING_H
 
-#include "cwrappers/SkyvoBoolean.h"
+#include "cwrappers/CBoolean.h"
 #include <stddef.h>
 
 /**
@@ -41,7 +41,7 @@ size_t getSizeOfString(const SkyvoString &s);
 */
 char getCharAtIndex(const SkyvoString &s, size_t index);
 
-SkyvoBoolean areStringsEqual(const SkyvoString &s1, const SkyvoString &s2);
+CBoolean areStringsEqual(const SkyvoString &s1, const SkyvoString &s2);
 
 /**
 * \brief returns the c string (char array) of the string.

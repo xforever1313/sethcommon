@@ -4,14 +4,14 @@
 //    (See accompanying file ../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYVOSEMAPHOREINTERFACE_H_INCLUDED
-#define SKYVOSEMAPHOREINTERFACE_H_INCLUDED
+#ifndef SSEMAPHOREINTERFACE_H_INCLUDED
+#define SSEMAPHOREINTERFACE_H_INCLUDED
 
-namespace SkyvoOS{
+namespace OS{
 
-class SkyvoSemaphoreInterface{
+class SSemaphoreInterface{
     public:
-        virtual ~SkyvoSemaphoreInterface(){}
+        virtual ~SSemaphoreInterface(){}
         virtual void post() = 0;
         virtual void wait() = 0;
         virtual bool tryWait() = 0;
@@ -22,4 +22,4 @@ class SkyvoSemaphoreInterface{
 
 }
 
-#endif // SKYVOSEMAPHOREINTERFACE_H_INCLUDED
+#endif

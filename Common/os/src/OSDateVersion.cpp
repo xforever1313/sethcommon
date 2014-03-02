@@ -4,13 +4,10 @@
 //    (See accompanying file ../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#include <CppUTest/TestHarness.h>
-#include <iostream>
+#include "OSDateVersion.h"
 
-#include "SkyvoOSDateVersion.h"
+#include <string>
 
-namespace SkyvoOS{
-
-#include "DateVersionTest.cpp"
-
+namespace OS{
+#include "DateVersion.cpp"
 }

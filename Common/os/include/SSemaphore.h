@@ -4,39 +4,39 @@
 //    (See accompanying file ../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYVOSEMAPHORE_H
-#define SKYVOSEMAPHORE_H
+#ifndef SSEMAPHORE_H
+#define SSEMAPHORE_H
 
 #ifdef ASM_JS
     #error "Threading is not supported with Emscripten"
 #endif
 
-#include "SkyvoSemaphoreInterface.h"
+#include "SSemaphoreInterface.h"
 
-namespace SkyvoOS{
+namespace OS{
 
 typedef struct semaphoreImpl semaphoreImpl_t;
 
 /**
-* \class SkyvoSemaphore
+* \class SSemaphore
 * \brief a wrapper around os semaphore calls.
 * \author Seth Hendrick
 */
-class SkyvoSemaphore : public SkyvoSemaphoreInterface{
+class SSemaphore : public SSemaphoreInterface{
     public:
 
         /**
         * \brief default constructor, initial count is at zero
         */
-        SkyvoSemaphore();
+        SSemaphore();
 
         /**
         * \brief constructor
         * \param startCount - the inital count to set the semaphore at
         */
-        SkyvoSemaphore(unsigned int initialCount);
+        SSemaphore(unsigned int initialCount);
 
-        virtual ~SkyvoSemaphore();
+        virtual ~SSemaphore();
 
         /**
         * \brief increments the semaphore count by one
@@ -85,12 +85,12 @@ class SkyvoSemaphore : public SkyvoSemaphoreInterface{
 
     private:
         //Not copyable (Boost does this)
-        SkyvoSemaphore(const SkyvoSemaphore&);
-        SkyvoSemaphore &operator=(const SkyvoSemaphore&);
+        SSemaphore(const SSemaphore&);
+        SSemaphore &operator=(const SSemaphore&);
 
         semaphoreImpl_t *m_impl;
         bool m_isShutDown;
 };
 
 }
-#endif // SKYVOSEMAPHORE_H
+#endif

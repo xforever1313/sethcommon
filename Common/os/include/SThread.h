@@ -4,55 +4,55 @@
 //    (See accompanying file ../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYVOTHREAD_H
-#define SKYVOTHREAD_H
+#ifndef STHREAD_H
+#define STHREAD_H
 
 #ifdef ASM_JS
     #error "Threading is not supported with Emscripten"
     //Undefined references are created
 #endif
 
-#include "SkyvoSemaphore.h"
-#include "SkyvoMutex.h"
+#include "SSemaphore.h"
+#include "SMutex.h"
 
 /**
-* \class SkyvoThread
+* \class SThread
 * \brief This class serves as a wrapper to the os threads
 * \author Seth Hendrick
 *
 * \warning all functions are no-op if the thread is not started (start is not called)
 * \warning This file will not compile with the emscripten compiler.
 */
-namespace SkyvoOS{
+namespace OS{
 
-typedef struct skyvoThreadImpl skyvoThreadImpl_t;
+typedef struct SThreadImpl SThreadImpl_t;
 
-class SkyvoThread
+class SThread
 {
     public:
-        enum SkyvoThreadStatus{
+        enum SThreadStatus{
             NOT_STARTED,
             RUNNING,
             COMPLETED
         };
 
-        SkyvoThread();
+        SThread();
 
 		#ifndef _MSC_VER
         ///\brief forbid copy constructor (the standard does this)
-        SkyvoThread(const SkyvoThread &other) = delete;
+        SThread(const SThread &other) = delete;
         ///\brief forbid copy constructor (the standard does this)
-        SkyvoThread& operator=(const SkyvoThread &other) = delete;
+        SThread& operator=(const SThread &other) = delete;
 		#endif
 
         ///\brief Move Constructor
-        SkyvoThread(SkyvoThread &&other);
+        SThread(SThread &&other);
         ///\brief this may or may not be needed
-        //SkyvoThread &operator=(SkyvoThread &&other) noexcept;
+        //SThread &operator=(SThread &&other) noexcept;
 
         ///\brief JOINS and deletes the thread
         ///\note if the destructor has no way to cause the run method to exit, the thread will never exit, and the program will hang
-        virtual ~SkyvoThread();
+        virtual ~SThread();
 
         ///\brief starts the thread by calling the run method
         ///\note no-op if thread is already started or completed
@@ -76,7 +76,7 @@ class SkyvoThread
         static void sleep(unsigned int millisecs);
 
         ///\brief returns the status of the thread
-        SkyvoThreadStatus getStatus();
+        SThreadStatus getStatus();
 
     protected:
         virtual void run() = 0;
@@ -84,21 +84,21 @@ class SkyvoThread
     private:
         #ifdef _MSC_VER
         ///\brief forbid copy constructor (the standard does this)
-        SkyvoThread(const SkyvoThread &other);
+        SThread(const SThread &other);
         ///\brief forbid copy constructor (the standard does this)
-        SkyvoThread& operator=(const SkyvoThread &other);
+        SThread& operator=(const SThread &other);
 		#endif
 
 		///\brief what the thread executes.
         void work();
 
-        SkyvoSemaphore m_start_semaphore;
-        SkyvoThreadStatus m_status;
+        SSemaphore m_start_semaphore;
+        SThreadStatus m_status;
 
-        SkyvoMutex m_status_mutex;
+        SMutex m_status_mutex;
 
-        skyvoThreadImpl_t *m_impl; ///<NULL if thread is not started
+        SThreadImpl_t *m_impl; ///<NULL if thread is not started
 };
 
 }
-#endif // SKYVOTHREAD_H
+#endif 

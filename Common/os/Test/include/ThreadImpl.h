@@ -7,13 +7,13 @@
 #ifndef THREADIMPL_H
 #define THREADIMPL_H
 
-#include "SkyvoThread.h"
+#include "SThread.h"
 
 /**
 * \class ThreadImpl
-* \brief This class is used in SkyvoThreadTest as a class that implements pure virtual methods to test the SkyvoThread class
+* \brief This class is used in SThreadTest as a class that implements pure virtual methods to test the SThread class
 */
-class ThreadImpl : public SkyvoOS::SkyvoThread{
+class ThreadImpl : public OS::SThread{
     public:
         ThreadImpl();
         virtual ~ThreadImpl();

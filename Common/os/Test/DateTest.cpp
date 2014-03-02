@@ -30,7 +30,7 @@ TEST(Date, BeforeNoonTest){
     unsigned int minute = 27;
     unsigned int second = 30;
 
-    SkyvoOS::Date date(month, day, year, hour, minute, second);
+    OS::Date date(month, day, year, hour, minute, second);
 
     CHECK_EQUAL(date.getMonthNumber(), month);
     CHECK_EQUAL(date.getMonthString(), date.getMonthNames()[month]);
@@ -62,7 +62,7 @@ TEST(Date, AtNoonTest){
     unsigned int minute = 27;
     unsigned int second = 30;
 
-    SkyvoOS::Date date(month, day, year, hour, minute, second);
+    OS::Date date(month, day, year, hour, minute, second);
 
     CHECK_EQUAL(date.getMonthNumber(), month);
     CHECK_EQUAL(date.getMonthString(), date.getMonthNames()[month]);
@@ -95,7 +95,7 @@ TEST(Date, AfterNoonTest){
     unsigned int minute = 27;
     unsigned int second = 30;
 
-    SkyvoOS::Date date(month, day, year, hour, minute, second);
+    OS::Date date(month, day, year, hour, minute, second);
 
     CHECK_EQUAL(date.getMonthNumber(), month);
     CHECK_EQUAL(date.getMonthString(), date.getMonthNames()[month]);
@@ -128,7 +128,7 @@ TEST(Date, AtMidNight){
     unsigned int minute = 27;
     unsigned int second = 30;
 
-    SkyvoOS::Date date(month, day, year, hour, minute, second);
+    OS::Date date(month, day, year, hour, minute, second);
 
     CHECK_EQUAL(date.getMonthNumber(), month);
     CHECK_EQUAL(date.getMonthString(), date.getMonthNames()[month]);
@@ -163,8 +163,8 @@ TEST(Date, BadMonthTest){
     unsigned int minute = 27;
     unsigned int second = 30;
 
-    SkyvoOS::Date date1(month1, day, year, hour, minute, second);
-    SkyvoOS::Date date2(month2, day, year, hour, minute, second);
+    OS::Date date1(month1, day, year, hour, minute, second);
+    OS::Date date2(month2, day, year, hour, minute, second);
 
     CHECK_EQUAL(date1.getMonthNumber(), month1);
     CHECK_EQUAL(date1.getMonthString(), date1.getMonthNames()[month1]);
@@ -173,7 +173,7 @@ TEST(Date, BadMonthTest){
     CHECK_EQUAL(date2.getMonthString(), date2.getMonthNames()[0]);
 }
 
-void lessThanTest(SkyvoOS::Date lesserDate, SkyvoOS::Date greaterDate){
+void lessThanTest(OS::Date lesserDate, OS::Date greaterDate){
     CHECK(!(lesserDate == greaterDate));
     CHECK(lesserDate != greaterDate);
 
@@ -201,81 +201,81 @@ TEST(Date, operatorTest){
     unsigned int second = 30;
 
     //Same Date
-    SkyvoOS::Date date1(month1, day, year, hour, minute, second);
-    SkyvoOS::Date date2(month1, day, year, hour, minute, second);
+    OS::Date date1(month1, day, year, hour, minute, second);
+    OS::Date date2(month1, day, year, hour, minute, second);
     CHECK(date1 == date2);
     CHECK(!(date1 != date2));
 
-    lessThanTest(SkyvoOS::Date(0, 0, 0, 0, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 0, 0, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 0, 0, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 0, 0, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 0, 1, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 0, 1, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 0, 1, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 0, 1, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 1, 0, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 1, 0, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 1, 0, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 1, 0, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 1, 1, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 1, 1, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 1, 1, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 0, 1, 1, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 0, 0, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 0, 0, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 0, 0, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 0, 0, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 0, 1, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 0, 1, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 0, 1, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 0, 1, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 1, 0, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 1, 0, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 1, 0, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 1, 0, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 1, 1, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 1, 1, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 1, 1, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(0, 1, 1, 1, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 0, 0, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 0, 0, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 0, 0, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 0, 0, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 0, 1, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 0, 1, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 0, 1, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 0, 1, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 1, 0, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 1, 0, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 1, 0, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 1, 0, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 1, 1, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 1, 1, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 1, 1, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 0, 1, 1, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 0, 0, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 0, 0, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 0, 0, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 0, 0, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 0, 1, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 0, 1, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 0, 1, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 0, 1, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 1, 0, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 1, 0, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 1, 0, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 1, 0, 1, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 1, 1, 0, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 1, 1, 0, 1), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
-    lessThanTest(SkyvoOS::Date(1, 1, 1, 1, 1, 0), SkyvoOS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 0, 0, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 0, 0, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 0, 0, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 0, 0, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 0, 1, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 0, 1, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 0, 1, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 0, 1, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 1, 0, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 1, 0, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 1, 0, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 1, 0, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 1, 1, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 1, 1, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 1, 1, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 0, 1, 1, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 0, 0, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 0, 0, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 0, 0, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 0, 0, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 0, 1, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 0, 1, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 0, 1, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 0, 1, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 1, 0, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 1, 0, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 1, 0, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 1, 0, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 1, 1, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 1, 1, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 1, 1, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(0, 1, 1, 1, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 0, 0, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 0, 0, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 0, 0, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 0, 0, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 0, 1, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 0, 1, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 0, 1, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 0, 1, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 1, 0, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 1, 0, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 1, 0, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 1, 0, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 1, 1, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 1, 1, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 1, 1, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 0, 1, 1, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 0, 0, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 0, 0, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 0, 0, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 0, 0, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 0, 1, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 0, 1, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 0, 1, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 0, 1, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 1, 0, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 1, 0, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 1, 0, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 1, 0, 1, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 1, 1, 0, 0), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 1, 1, 0, 1), OS::Date(1, 1, 1, 1, 1, 1));
+    lessThanTest(OS::Date(1, 1, 1, 1, 1, 0), OS::Date(1, 1, 1, 1, 1, 1));
 }
 
 /**
  * \brief Tests the default constructor, which handles the current time
  */
 TEST(Date, Default){
-    SkyvoOS::Date date;
+    OS::Date date;
     struct tm *currentTime = date.getTimeStruct();
 
     CHECK_EQUAL(date.getMonthNumber(), static_cast<unsigned int>(currentTime->tm_mon + 1));

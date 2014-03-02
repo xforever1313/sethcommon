@@ -13,22 +13,22 @@
 * \author Seth Hendrick
 */
 
-#include "SkyvoSemaphore.h"
-#include "SkyvoThread.h"
+#include "SSemaphore.h"
+#include "SThread.h"
 
-class SemaphorePoster : public SkyvoOS::SkyvoThread
+class SemaphorePoster : public OS::SThread
 {
     public:
-        SemaphorePoster(SkyvoOS::SkyvoSemaphore *semaphore);
+        SemaphorePoster(OS::SSemaphore *semaphore);
         virtual ~SemaphorePoster();
         void run();
         bool getPosted();
     private:
         SemaphorePoster();
 
-        SkyvoOS::SkyvoSemaphore *m_semaphore;
+        OS::SSemaphore *m_semaphore;
         bool m_posted; ///<Whether or not the thing was posted to
-        SkyvoOS::SkyvoMutex m_posted_mutex;
+        OS::SMutex m_posted_mutex;
 };
 
 #endif // SEMAPHOREPOSTER_H

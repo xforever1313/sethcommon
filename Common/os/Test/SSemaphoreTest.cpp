@@ -12,14 +12,14 @@
 
 #include "SemaphorePoster.h"
 #include "SemaphoreWaiter.h"
-#include "SkyvoSemaphore.h"
+#include "SSemaphore.h"
 
 TEST_GROUP(Semaphore){
 };
 
 ///\brief tests the wait method with an inital count set to zero
 TEST(Semaphore, waitTestDefaultConstructor){
-    SkyvoOS::SkyvoSemaphore *uut = new SkyvoOS::SkyvoSemaphore;
+    OS::SSemaphore *uut = new OS::SSemaphore;
     SemaphorePoster poster(uut);
     CHECK_EQUAL(uut->getSemaphoreCount(), 0); //Zero by default
     poster.start();
@@ -32,7 +32,7 @@ TEST(Semaphore, waitTestDefaultConstructor){
 
 ///\brief tests the wait method with an inital count not set to zero
 TEST(Semaphore, waitTest){
-    SkyvoOS::SkyvoSemaphore uut(1);
+    OS::SSemaphore uut(1);
     CHECK_EQUAL(uut.getSemaphoreCount(), 1);
     uut.wait();
     CHECK_EQUAL(uut.getSemaphoreCount(), 0);
@@ -41,7 +41,7 @@ TEST(Semaphore, waitTest){
 
 ///\brief tests the tryWait method
 TEST(Semaphore, tryWaitTestGreaterThanZero){
-    SkyvoOS::SkyvoSemaphore uut(1);
+    OS::SSemaphore uut(1);
     CHECK_EQUAL(uut.getSemaphoreCount(), 1);
     CHECK(uut.tryWait()); //Should return true, as the count is greater than zero.
     CHECK(!uut.tryWait()); //Should return false, as the count is zero.
@@ -50,7 +50,7 @@ TEST(Semaphore, tryWaitTestGreaterThanZero){
 
 ///\brief tests the tryWait method with initial count at zero
 TEST(Semaphore, tryWaitTestAtZero){
-    SkyvoOS::SkyvoSemaphore uut;
+    OS::SSemaphore uut;
     CHECK_EQUAL(uut.getSemaphoreCount(), 0);
     CHECK(!uut.tryWait()); //Should return false, as the count is zero.
     CHECK(!uut.tryWait()); //Should return false, as the count is zero.
@@ -59,7 +59,7 @@ TEST(Semaphore, tryWaitTestAtZero){
 
 ///\brief tests the timedWait method not At zero
 TEST(Semaphore, timedWaitTestNotAtZero){
-    SkyvoOS::SkyvoSemaphore *uut = new SkyvoOS::SkyvoSemaphore(1);
+    OS::SSemaphore *uut = new OS::SSemaphore(1);
     CHECK_EQUAL(uut->getSemaphoreCount(), 1);
     CHECK(uut->timedWait(10));
     CHECK_EQUAL(uut->getSemaphoreCount(), 0);
@@ -70,7 +70,7 @@ TEST(Semaphore, timedWaitTestNotAtZero){
 
 ///\brief tests the timedWait method
 TEST(Semaphore, timedWaitTest){
-    SkyvoOS::SkyvoSemaphore *uut = new SkyvoOS::SkyvoSemaphore();
+    OS::SSemaphore *uut = new OS::SSemaphore();
     SemaphorePoster poster1(uut);
     poster1.start();
     CHECK(!uut->timedWait(250)); //Timeout before the thing gets posted, should return false
@@ -87,7 +87,7 @@ TEST(Semaphore, timedWaitTest){
 
 ///\brief tests that all wait methods return after a shutdown
 TEST(Semaphore, shutdownTest){
-    SkyvoOS::SkyvoSemaphore *uut1 = new SkyvoOS::SkyvoSemaphore();
+    OS::SSemaphore *uut1 = new OS::SSemaphore();
     CHECK(!uut1->isShutdown());
     uut1->shutdown();
     CHECK(uut1->isShutdown());
@@ -97,7 +97,7 @@ TEST(Semaphore, shutdownTest){
     delete uut1;
 
     //Test the case where the semaphore is waiting,
-    SkyvoOS::SkyvoSemaphore *uut2 = new SkyvoOS::SkyvoSemaphore();
+    OS::SSemaphore *uut2 = new OS::SSemaphore();
     SemaphoreWaiter waiter1 (uut2);
     waiter1.start();
     SemaphoreWaiter waiter2 (uut2);

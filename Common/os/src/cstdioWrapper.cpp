@@ -9,7 +9,7 @@
 
 #include "cstdioWrapper.h"
 
-namespace SkyvoOS{
+namespace OS{
 
 struct FILE_t{
     FILE *file;

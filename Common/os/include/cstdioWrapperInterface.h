@@ -7,7 +7,7 @@
 #ifndef CSTDIOWRAPPERINTERFACE_H_INCLUDED
 #define CSTDIOWRAPPERINTERFACE_H_INCLUDED
 
-namespace SkyvoOS{
+namespace OS{
 
 struct FILE_t;
 

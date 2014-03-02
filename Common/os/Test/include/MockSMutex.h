@@ -4,22 +4,22 @@
 //    (See accompanying file ../../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef MOCKSKYVOMUTEX_H_INCLUDED
-#define MOCKSKYVOMUTEX_H_INCLUDED
+#ifndef MOCKMUTEX_H_INCLUDED
+#define MOCKMUTEX_H_INCLUDED
 
 #include <gmock/gmock.h>
 
-#include "SkyvoMutexInterface.h"
+#include "SMutexInterface.h"
 
-namespace SkyvoOS{
+namespace OS{
 
-class MockSkyvoMutex : public SkyvoMutexInterface{
+class MockSMutex : public SMutexInterface{
     public:
-        virtual ~MockSkyvoMutex(){}
+        virtual ~MockSMutex(){}
         MOCK_METHOD0(lock, void());
         MOCK_METHOD0(unlock, void());
 };
 
 }
 
-#endif // MOCKSKYVOMUTEX_H_INCLUDED
+#endif 

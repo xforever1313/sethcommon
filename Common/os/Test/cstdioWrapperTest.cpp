@@ -18,8 +18,8 @@ TEST_GROUP(cstdioWrapper){
     bool firstRun = true;
 
     TEST_SETUP(){
-        m_uut = (new SkyvoOS::cstdioWrapper());
-        m_fs = (SkyvoOS::FileSystem::getInstance());
+        m_uut = (new OS::cstdioWrapper());
+        m_fs = (OS::FileSystem::getInstance());
         m_testFile = ( "../../../Test/testFile.txt");
         m_testFileContents = ("test!");
         //Date constructed automatically
@@ -34,22 +34,22 @@ TEST_GROUP(cstdioWrapper){
         delete m_uut;
     }
 
-    SkyvoOS::cstdioWrapper *m_uut;
-    SkyvoOS::FileSystemInterface *m_fs;
+    OS::cstdioWrapper *m_uut;
+    OS::FileSystemInterface *m_fs;
     std::string m_testFile;
     std::string m_testFileContents;
-    SkyvoOS::Date m_date;
+    OS::Date m_date;
     std::string m_testOutput;
 };
 
 TEST(cstdioWrapper, readFilePass){
-    SkyvoOS::FILE_t *file = m_uut->fopen(m_testFile, std::string("r"));
+    OS::FILE_t *file = m_uut->fopen(m_testFile, std::string("r"));
     CHECK(file != NULL);
     std::string input;
     size_t i = 0;
     do{
         int rc = m_uut->fgetc(file);
-        if (rc != SkyvoOS::cstdioWrapper::END_OF_FILE){
+        if (rc != OS::cstdioWrapper::END_OF_FILE){
             CHECK_EQUAL(rc, m_testFileContents[i]);
         }
         CHECK_EQUAL(m_uut->ferror(file), 0);
@@ -60,7 +60,7 @@ TEST(cstdioWrapper, readFilePass){
 
 TEST(cstdioWrapper, writeFilePass){
     std::string outputFile = m_testOutput + std::string("fputcTest.txt");
-    SkyvoOS::FILE_t *file = m_uut->fopen(outputFile, std::string("w"));
+    OS::FILE_t *file = m_uut->fopen(outputFile, std::string("w"));
     CHECK(file != NULL);
     for(size_t i = 0; i < m_testFileContents.size(); ++i){
         CHECK_EQUAL(m_uut->fputc(m_testFileContents[i], file), m_testFileContents[i]);
@@ -78,12 +78,12 @@ TEST(cstdioWrapper, writeFilePass){
 }
 
 TEST(cstdioWrapper, fopenFail){
-    SkyvoOS::FILE_t *file = m_uut->fopen(std::string("DERP"), std::string("r"));
+    OS::FILE_t *file = m_uut->fopen(std::string("DERP"), std::string("r"));
     CHECK(file == NULL);
 }
 
 TEST(cstdioWrapper, fopenEmptyString){
-    SkyvoOS::FILE_t *file = m_uut->fopen(std::string(""), std::string("r"));
+    OS::FILE_t *file = m_uut->fopen(std::string(""), std::string("r"));
     CHECK(file == NULL);
 }
 

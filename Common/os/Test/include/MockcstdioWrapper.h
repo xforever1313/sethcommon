@@ -11,7 +11,7 @@
 
 #include "cstdioWrapperInterface.h"
 
-namespace SkyvoOS{
+namespace OS{
 
 struct FILE_t{
 };
@@ -31,4 +31,4 @@ class MockcstdioWrapper : public cstdioWrapperInterface{
 
 }
 
-#endif // MOCKCSTDIOWRAPPER_H_INCLUDED
+#endif

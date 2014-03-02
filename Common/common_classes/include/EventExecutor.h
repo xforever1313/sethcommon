@@ -11,17 +11,17 @@
     #error "Emscripten does not support threading."
 #endif
 
-#include <SkyvoMutex.h>
-#include <SkyvoSemaphore.h>
-#include <SkyvoThread.h>
 #include <list>
 
 #include "EventInterface.h"
 #include "EventExecutorInterface.h"
+#include "SMutex.h"
+#include "SSemaphore.h"
+#include "SThread.h"
 
 namespace Common{
 
-class EventExecutor : public SkyvoOS::SkyvoThread, public EventExecutorInterface{
+class EventExecutor : public OS::SThread, public EventExecutorInterface{
     public:
         EventExecutor();
         virtual ~EventExecutor();
@@ -42,12 +42,12 @@ class EventExecutor : public SkyvoOS::SkyvoThread, public EventExecutorInterface
         bool isRunning();
 
         std::list<EventInterface*> m_eventList;
-        SkyvoOS::SkyvoMutex m_eventListMutex;
-        SkyvoOS::SkyvoSemaphore m_eventSemaphore;
-        SkyvoOS::SkyvoSemaphore m_exitRunLoopSemaphore;
+        OS::SMutex m_eventListMutex;
+        OS::SSemaphore m_eventSemaphore;
+        OS::SSemaphore m_exitRunLoopSemaphore;
 
         bool m_isRunning;
-        SkyvoOS::SkyvoMutex m_isRunningMutex;
+        OS::SMutex m_isRunningMutex;
 };
 
 }

@@ -7,9 +7,9 @@
 #ifndef ASM_JS //Not compatible with emscripten
 
 #include "SemaphoreWaiter.h"
-#include "SkyvoSemaphore.h"
+#include "SSemaphore.h"
 
-SemaphoreWaiter::SemaphoreWaiter(SkyvoOS::SkyvoSemaphore *semaphore) :
+SemaphoreWaiter::SemaphoreWaiter(OS::SSemaphore *semaphore) :
     m_semaphore(semaphore)
 {
 }
@@ -22,4 +22,3 @@ void SemaphoreWaiter::run(){
 }
 
 #endif
-

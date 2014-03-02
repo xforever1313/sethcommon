@@ -10,53 +10,53 @@
 #include <iostream>
 #include <thread>
 
-#include "SkyvoThread.h"
+#include "SThread.h"
 
-namespace SkyvoOS{
+namespace OS{
 
-typedef struct skyvoThreadImpl{
+typedef struct SThreadImpl{
 
-    skyvoThreadImpl(std::function<void(void)> runner) :
+    SThreadImpl(std::function<void(void)> runner) :
         m_thread(std::thread(runner))
     {
     }
 
-    skyvoThreadImpl(skyvoThreadImpl &&other) :
+    SThreadImpl(SThreadImpl &&other) :
         m_thread(std::move(other.m_thread))
     {
     }
-    virtual ~skyvoThreadImpl(){
+    virtual ~SThreadImpl(){
     }
 
     std::thread m_thread;
 
-}skyvoThreadImpl_t;
+}SThreadImpl_t;
 
-SkyvoThread::SkyvoThread() :
+SThread::SThread() :
     m_status(NOT_STARTED),
     m_impl(NULL)
 {
 }
 
-SkyvoThread::SkyvoThread(SkyvoThread &&other) :
+SThread::SThread(SThread &&other) :
     m_status(other.m_status),
     m_impl(other.m_impl)
 {
 }
 
-SkyvoThread::~SkyvoThread(){
+SThread::~SThread(){
     delete m_impl;
 }
 
-void SkyvoThread::start(){
+void SThread::start(){
     if (m_impl == NULL){
-        auto runFunct = std::bind(&SkyvoThread::work, this);
-        m_impl = new skyvoThreadImpl(runFunct);
+        auto runFunct = std::bind(&SThread::work, this);
+        m_impl = new SThreadImpl(runFunct);
         m_start_semaphore.wait(); //Wait for the thread to start
     }
 }
 
-bool SkyvoThread::joinable() const{
+bool SThread::joinable() const{
     bool ret = false;
     if (m_impl != NULL){
         ret = m_impl->m_thread.joinable();
@@ -64,32 +64,32 @@ bool SkyvoThread::joinable() const{
     return ret;
 }
 
-void SkyvoThread::join(){
+void SThread::join(){
     if ((m_impl != NULL) && joinable()){
         m_impl->m_thread.join();
     }
 }
 
-void SkyvoThread::detach(){
+void SThread::detach(){
     if (m_impl != NULL){
         m_impl->m_thread.detach();
     }
 }
 
-unsigned SkyvoThread::hardware_concurrency(){
+unsigned SThread::hardware_concurrency(){
     return std::thread::hardware_concurrency();
 }
 
-void SkyvoThread::yield(){
+void SThread::yield(){
     std::this_thread::yield();
 }
 
-void SkyvoThread::sleep(unsigned int millisecs){
+void SThread::sleep(unsigned int millisecs){
     std::chrono::milliseconds duration(millisecs);
     std::this_thread::sleep_for(duration);
 }
 
-void SkyvoThread::work(){
+void SThread::work(){
     m_start_semaphore.post(); //Thread created, start may return
     m_status_mutex.lock();
     m_status = RUNNING;
@@ -102,9 +102,9 @@ void SkyvoThread::work(){
     m_status_mutex.unlock();
 }
 
-SkyvoThread::SkyvoThreadStatus SkyvoThread::getStatus(){
+SThread::SThreadStatus SThread::getStatus(){
     m_status_mutex.lock();
-    SkyvoThread::SkyvoThreadStatus status = m_status;
+    SThread::SThreadStatus status = m_status;
     m_status_mutex.unlock();
     return status;
 }
@@ -112,4 +112,3 @@ SkyvoThread::SkyvoThreadStatus SkyvoThread::getStatus(){
 }
 
 #endif
-

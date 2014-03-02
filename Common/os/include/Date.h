@@ -18,7 +18,7 @@
 #include <ctime>
 
 
-namespace SkyvoOS{
+namespace OS{
 
 /**
  * \class Date

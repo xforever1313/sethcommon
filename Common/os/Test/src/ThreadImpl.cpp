@@ -18,9 +18,8 @@ ThreadImpl::~ThreadImpl()
 }
 
 void ThreadImpl::run(){
-    SkyvoThread::sleep(1500);
+    SThread::sleep(1500);
     ++m_numberOfRuns;
 }
 
 #endif
-

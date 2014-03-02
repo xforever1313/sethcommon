@@ -27,7 +27,7 @@
 #include "cstdioWrapperInterface.h"
 #include "FileSystem.h"
 
-namespace SkyvoOS{
+namespace OS{
 const std::string FileSystem::THIS_DIR = ".";
 const std::string FileSystem::UP_DIR = "..";
 

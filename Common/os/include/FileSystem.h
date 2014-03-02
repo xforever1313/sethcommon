@@ -17,7 +17,7 @@
 #include "cstdioWrapperInterface.h"
 #include "FileSystemInterface.h"
 
-namespace SkyvoOS{
+namespace OS{
 
 /**
 * \class FileSystem

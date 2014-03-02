@@ -8,7 +8,7 @@
 
 #include "SemaphorePoster.h"
 
-SemaphorePoster::SemaphorePoster(SkyvoOS::SkyvoSemaphore *semaphore) :
+SemaphorePoster::SemaphorePoster(OS::SSemaphore *semaphore) :
     m_semaphore(semaphore),
     m_posted(false)
 {
@@ -18,7 +18,7 @@ SemaphorePoster::~SemaphorePoster(){
 }
 
 void SemaphorePoster::run(){
-    SkyvoOS::SkyvoThread::sleep(500);
+    OS::SThread::sleep(500);
     m_posted_mutex.lock();
     m_semaphore->post();
     m_posted = true;
@@ -33,4 +33,3 @@ bool SemaphorePoster::getPosted(){
 }
 
 #endif
-
