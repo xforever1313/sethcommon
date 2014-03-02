@@ -7,7 +7,7 @@
 #include <CppUTest/TestHarness.h>
 #include <iostream>
 
-#include "SkyvoMathDateVersion.h"
+#include "MathDateVersion.h"
 
 namespace Math{
 #include "DateVersionTest.cpp"

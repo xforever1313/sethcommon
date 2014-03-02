@@ -16,7 +16,7 @@ from SkyvoCommonGlobals import *
 from SConstructGlobals import *
 
 #Make common environment
-projectName = "Skyvo Math"
+projectName = "SMath"
 targetFlags = CREATE_LIB_TARGET | DEBUG_RELEASE_LIB_TARGET | DOXYGEN_TARGET | CPP_CHECK_TARGET | TESTING_TARGET | PROJECT_TARGET
 envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGUMENTS)
 
@@ -33,7 +33,7 @@ includePaths = [includeDir, os.path.join(osPath, includeDir), getDateVersionPath
 testIncludePaths = [os.path.join(testDir, includeDir)]
 
 ###Source Files
-dateVersionFile = (os.path.join(srcDir, 'SkyvoMathDateVersion.cpp'))
+dateVersionFile = (os.path.join(srcDir, 'MathDateVersion.cpp'))
 sourceFiles = filterSourceFiles(glob.glob(os.path.join(srcDir, "*.cpp")) +
                                 glob.glob(os.path.join(srcDir, "*/*.cpp")), [dateVersionFile])
 sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.join(testDir, "*/*.cpp")) + [getTestMain(baseDir)]
@@ -70,11 +70,11 @@ doxygenFiles = [dateVersionFile] + sourceFiles + sourceTestFiles + glob.glob(os.
 # Targets
 ###
 
-debugTarget = createStaticLib(debugEnvironment, "SkyvoMath-d", getCompiledObjectsWithDateVersionObject(debugEnvironment,
+debugTarget = createStaticLib(debugEnvironment, "SMath-d", getCompiledObjectsWithDateVersionObject(debugEnvironment,
                                                                                                          sourceFiles,
                                                                                                          dateVersionFile,
                                                                                                          ARGUMENTS))
-releaseTarget = createStaticLib(releaseEnvironment, "SkyvoMath", getCompiledObjectsWithDateVersionObject(releaseEnvironment,
+releaseTarget = createStaticLib(releaseEnvironment, "SMath", getCompiledObjectsWithDateVersionObject(releaseEnvironment,
                                                                                                            sourceFiles,
                                                                                                            dateVersionFile,
                                                                                                            ARGUMENTS))
@@ -104,4 +104,3 @@ Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, ru
 Alias ("delta", [debugTarget, releaseTarget, cppCheckTarget, runTestTarget])
 
 Default([debugTarget])
-
