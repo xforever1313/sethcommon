@@ -31,7 +31,7 @@ includePaths = [includeDir, os.path.join(osPath, includeDir), getDateVersionPath
 testIncludePaths = [os.path.join(testDir, includeDir)]
 
 ###Source Files
-dateVersionFile = (os.path.join(srcDir, 'SkyvoCommonDateVersion.cpp'))
+dateVersionFile = (os.path.join(srcDir, 'CommonClassesDateVersion.cpp'))
 sourceFiles = filterSourceFiles(glob.glob(os.path.join(srcDir, "*.cpp")) +
                                 glob.glob(os.path.join(srcDir, "*/*.cpp")), [dateVersionFile])
 sourceTestFiles = glob.glob(os.path.join(testDir, "*.cpp")) + glob.glob(os.path.join(testDir, "*/*.cpp")) + [getTestMain(baseDir)]
@@ -75,14 +75,14 @@ createTestOutputFolder(envBase)
 # Targets
 ###
 
-debugTarget = createStaticLib(debugEnvironment, "SkyvoCommon-d", getCompiledObjectsWithDateVersionObject(debugEnvironment,
-                                                                                                         sourceFiles,
-                                                                                                         dateVersionFile,
-                                                                                                         ARGUMENTS))
-releaseTarget = createStaticLib(releaseEnvironment, "SkyvoCommon", getCompiledObjectsWithDateVersionObject(releaseEnvironment,
+debugTarget = createStaticLib(debugEnvironment, "CommonClasses-d", getCompiledObjectsWithDateVersionObject(debugEnvironment,
                                                                                                            sourceFiles,
                                                                                                            dateVersionFile,
                                                                                                            ARGUMENTS))
+releaseTarget = createStaticLib(releaseEnvironment, "CommonClasses", getCompiledObjectsWithDateVersionObject(releaseEnvironment,
+                                                                                                             sourceFiles,
+                                                                                                             dateVersionFile,
+                                                                                                             ARGUMENTS))
 (unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment,
                                                     getCompiledObjectsWithDateVersionObject(testEnvironment,
                                                                                             sourceFiles + sourceTestFiles,

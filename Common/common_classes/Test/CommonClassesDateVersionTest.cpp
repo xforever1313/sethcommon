@@ -7,7 +7,7 @@
 #include <CppUTest/TestHarness.h>
 #include <iostream>
 
-#include "SkyvoCommonDateVersion.h"
+#include "CommonClassesDateVersion.h"
 
 namespace Common{
 #include "DateVersionTest.cpp"

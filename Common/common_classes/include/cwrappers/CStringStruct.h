@@ -4,32 +4,32 @@
 //    (See accompanying file ../../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#ifndef SKYVOSTRINGSTRUCT_H_INCLUDED
-#define SKYVOSTRINGSTRUCT_H_INCLUDED
+#ifndef CSTRINGSTRUCT_H_INCLUDED
+#define CSTRINGSTRUCT_H_INCLUDED
 
 /**
 * \file SkvyoStringStruct
-* \brief this file is to only be included for the cpp file of SkyvoString, and the SkyvoString Test.
+* \brief this file is to only be included for the cpp file of CString, and the CString Test.
 * DO NOT INCLUDE IT ELSEWHERE
 */
 
 #include <string>
 
-typedef struct SkyvoString{
-    SkyvoString(const char *s) :
+typedef struct CString{
+    CString(const char *s) :
         m_string(std::string(s))
     {
 
     }
 
-    virtual ~SkyvoString(){
+    virtual ~CString(){
     }
 
-    bool operator==(const SkyvoString &other){
+    bool operator==(const CString &other){
         return m_string == other.m_string;
     }
 
     std::string m_string;
-}SkyvoString_t;
+}CString_t;
 
-#endif // SKYVOSTRINGSTRUCT_H_INCLUDED
+#endif 

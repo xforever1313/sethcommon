@@ -4,11 +4,11 @@
 //    (See accompanying file ../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#include <string>
-
-#include "SkyvoCommonDateVersion.h"
+#ifndef COMMON_CLASSES_DATE_VERSION_H
+#define COMMON_CLASSES_DATE_VERSION_H
 
 namespace Common{
-#include "DateVersion.cpp"
+#include "DateVersion.h"
 }
 
+#endif
