@@ -60,7 +60,7 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
 
     def getBaseEnvironment(self, armBuild, serverBuild):
         if (sys.platform == "win32"):
-            print "Building for mingw32"
+            print "Building for mingw"
             env = Environment(            
                 tools = ["mingw"],
                 SERVER_BUILD = False,
@@ -68,13 +68,13 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
                 CLANG_BUILD = False,
                 ASM_JS_BUILD = False,
                 MSVC_BUILD = False,
-                SYSTEM = "mingw32"
+                SYSTEM = "mingw"
             )
 
             self.globalDefines += ['MINGW']
 
         elif (serverBuild):
-            print "Building for gcc x86 on Skyvo's Sever"
+            print "Building for gcc x86 on the build sever"
             env = Environment(
                 CC = "gcc-4.8",
                 CXX = "g++-4.8",
