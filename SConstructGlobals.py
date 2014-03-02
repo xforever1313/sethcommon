@@ -219,7 +219,7 @@ def createUnitTestExe(env, sourceFiles, coverageFiles):
     testExeTarget = createExe(env, "unit_test", sourceFiles)
     runTestTarget = env.Test(target = profilingDataFile, source = coverageFiles)
     AlwaysBuild(runTestTarget)
-    Execute(Delete(Glob(os.path.join(testOutputDir, '*')))) #Remove old test outputs
+    Execute(Delete(Glob(os.path.join(testOutputDir, '*')))) #Remove old test outputs    
     Depends(runTestTarget, testExeTarget)
     return (testExeTarget, runTestTarget)
 
@@ -403,6 +403,8 @@ def cppCheckBuilder(target, source, env):
    
 #Runs the test, and coverage while we are at it :P
 def testRunner(target, source, env):
+    Execute(Delete(Glob(os.path.join(env['OBJPREFIX'], '*.gcda')))) #remove old .gcna files.
+
     thisDir = os.getcwd()
     cwdDir = env['BINDIR']
     if (env['ASM_JS_BUILD']):
