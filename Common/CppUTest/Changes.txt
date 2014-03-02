@@ -5,7 +5,7 @@ with this repo.
 our build system.
 
 2.  The build, builds, cmake, examples, lib, project, scripts folders were all
-scrapped, as they are not needed for Skyvo.
+scrapped, as they are not needed for this repo.
 
 3. Modified include/CppUTest/Extensions/SimpleStringExtensions.h and
 src/CppUTest/Extensions/SimpleStringExtensions so it could support unsigned
@@ -18,7 +18,7 @@ Did something similar with src/CppUTest/Extensions/SimpleStringFromStdint.cpp
 5.  Removed several files we deemed unneeded.  Including, but not limited to
 INSTALL, ChangeLog, CMakeLists.txt, configure, etc.
 
-6.  Added skyvoTestMain.cpp.  This is not part of CppUTest.  It is used as the
+6.  Added sethTestMain.cpp.  This is not part of CppUTest.  It is used as the
 main for all unit tests, and it was determined this was the most convient
 folder to put it in.
 
