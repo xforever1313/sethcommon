@@ -16,8 +16,8 @@ class GnuCompilerGlobals(GlobalCompilerGlobals):
 
         self.globalCXXFlags += ['-std=gnu++11']
 
-        self.globalCCDebugFlags += ["-g", "-Wswitch-enum"]
-        self.globalCCReleaseFlags += ["-O3", "-Wswitch-enum", "-fdata-sections", "-ffunction-sections"]
+        self.globalCCDebugFlags += ["-g", "-Wswitch"]
+        self.globalCCReleaseFlags += ["-O3", "-Wswitch", "-fdata-sections", "-ffunction-sections"]
         self.globalCCUnitTestFlags += ["-g"]
 
         self.globalCXXFlags += ['-Wold-style-cast']
