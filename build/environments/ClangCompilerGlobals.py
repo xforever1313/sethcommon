@@ -28,9 +28,9 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
             self.globalCCFlags += ['-isystem', '/usr/include/c++/4.8']  
             self.globalCCFlags += ['-stdlib=libc++']
         
-        self.globalCCDebugFlags += []
-        self.globalCCReleaseFlags += []
-        self.globalCCUnitTestFlags += []
+        self.globalCCDebugFlags += ['-O0']
+        self.globalCCReleaseFlags += ['-O3']
+        self.globalCCUnitTestFlags += ['-O0']
         
         self.globalCCFlags += ['-Wno-return-type-c-linkage']
         

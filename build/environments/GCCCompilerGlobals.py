@@ -24,9 +24,9 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
         #Compile Flags
         self.globalCCFlags += ['-Wclobbered', '-Wdouble-promotion']
 
-        self.globalCCDebugFlags += []
-        self.globalCCReleaseFlags += []
-        self.globalCCUnitTestFlags += ['-fprofile-arcs', '-ftest-coverage']
+        self.globalCCDebugFlags += ['-O0']
+        self.globalCCReleaseFlags += ['-O3']
+        self.globalCCUnitTestFlags += ['-O0', '-fprofile-arcs', '-ftest-coverage']
 
         self.globalCXXFlags += []
 

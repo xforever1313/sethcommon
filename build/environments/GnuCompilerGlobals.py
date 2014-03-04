@@ -16,8 +16,9 @@ class GnuCompilerGlobals(GlobalCompilerGlobals):
 
         self.globalCXXFlags += ['-std=gnu++11']
 
+        #optimization flags go in child classes.
         self.globalCCDebugFlags += ["-g", "-Wswitch"]
-        self.globalCCReleaseFlags += ["-O3", "-Wswitch", "-fdata-sections", "-ffunction-sections"]
+        self.globalCCReleaseFlags += ["-Wswitch", "-fdata-sections", "-ffunction-sections"]
         self.globalCCUnitTestFlags += ["-g"]
 
         self.globalCXXFlags += ['-Wold-style-cast']

@@ -30,7 +30,7 @@ class EmscriptenCompilerGlobals(GnuCompilerGlobals):
         self.globalCXXFlags += ['-stdlib=libc++']
         
         self.globalCCDebugFlags += []
-        self.globalCCReleaseFlags += ['-O2']
+        self.globalCCReleaseFlags += []
         self.globalCCUnitTestFlags += []
         
         #Linker Flags
