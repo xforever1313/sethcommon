@@ -251,6 +251,11 @@ SimpleString StringFrom (unsigned long value)
     return StringFromFormat("%lu", value);
 }
 
+SimpleString StringFrom (unsigned long long value)
+{
+    return StringFromFormat("%llu", value);
+}
+
 SimpleString StringFrom (bool value)
 {
   return SimpleString(StringFromFormat("%s", value ? "true" : "false"));

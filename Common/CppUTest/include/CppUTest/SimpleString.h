@@ -97,6 +97,7 @@ private:
 };
 
 SimpleString StringFrom (unsigned long value);
+SimpleString StringFrom (unsigned long long value);
 SimpleString StringFrom (bool value);
 SimpleString StringFrom (void* value);
 SimpleString StringFrom (char value);
