@@ -96,7 +96,7 @@ private:
    SimpleStringCollection(SimpleStringCollection&);
 };
 
-SimpleString StringFrom (size_t value);
+SimpleString StringFrom (unsigned long value);
 SimpleString StringFrom (bool value);
 SimpleString StringFrom (void* value);
 SimpleString StringFrom (char value);

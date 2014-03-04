@@ -20,8 +20,6 @@ projectName = "SMath"
 targetFlags = CREATE_LIB_TARGET | DEBUG_RELEASE_LIB_TARGET | DOXYGEN_TARGET | CPP_CHECK_TARGET | TESTING_TARGET | PROJECT_TARGET
 envBase = createBaseEnvironment(baseDir, baseDir, projectName, targetFlags, ARGUMENTS)
 
-testDir = "test"
-
 ###
 # Files to compile
 ###

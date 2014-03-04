@@ -246,9 +246,9 @@ SimpleString& SimpleString::operator+=(const char* rhs)
   return *this;
 }
 
-SimpleString StringFrom (size_t value)
+SimpleString StringFrom (unsigned long value)
 {
-    return StringFromFormat("%zu", value);
+    return StringFromFormat("%lu", value);
 }
 
 SimpleString StringFrom (bool value)

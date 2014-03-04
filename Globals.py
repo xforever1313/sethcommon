@@ -18,7 +18,7 @@ includeDir = "include"
 libDir = "lib"
 objectDir = "obj"
 srcDir = "src"
-testDir = "Test"
+testDir = "test"
 testOutputDir = "testOutput"
 armPrefix = "-arm"
 
