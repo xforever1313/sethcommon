@@ -133,6 +133,7 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
     addPossibleTargets(baseEnvironment, targetFlags)
     baseEnvironment['TARGET_FLAGS'] = targetFlags
     baseEnvironment['ENV']['PATH'] = os.environ['PATH'] #Look in path for tools
+    baseEnvironment['ENV']['GLIBCXX_FORCE_NEW'] = 1
 
     baseEnvironment['BASE_DIR'] = os.path.abspath(rootDir)
     baseEnvironment['COMMON_DIR'] = os.path.abspath(sethCommonPath)

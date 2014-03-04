@@ -38,8 +38,6 @@ coverageFiles = deepcopy(sourceFiles + [dateVersionFile])
 ###Libs
 libs = []
 testLibs = [] + libs
-if (sys.platform != "win32" and sys.platform != "darwin"):
-    testLibs += ["rt", 'c']
 
 ###libPath
 libPath = []

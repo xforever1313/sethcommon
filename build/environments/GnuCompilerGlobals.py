@@ -23,7 +23,7 @@ class GnuCompilerGlobals(GlobalCompilerGlobals):
 
         self.globalCXXFlags += ['-Wold-style-cast']
 
-        self.globalCXXDebugFlags += ['-fno-rtti']
+        self.globalCXXDebugFlags += []
         self.globalCXXReleaseFlags += ['-fno-rtti']
         self.globalCXXUnitTestFlags += []
 

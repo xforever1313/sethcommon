@@ -49,14 +49,9 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
         self.globalUnitTestLibs += ['gcov']
 
         if (sys.platform == "win32"):
-            self.globalDebugLibs += ["ssp"] #Lib SSP is still needed in mingw, but not linux
+            self.globalDebugLibs += ["ssp", "debug_new"] #Lib SSP is still needed in mingw, but not linux
             self.globalReleaseLibs += ["ssp"]
-            self.globalUnitTestLibs += ["ssp"]
-
-        #debug_new must come last
-        self.globalDebugLibs += ['debug_new']
-        self.globalReleaseLibs += []
-        self.globalUnitTestLibs += ['debug_new']
+            self.globalUnitTestLibs += ["ssp", "debug_new"] #debug_new must come last]
 
     def getBaseEnvironment(self, armBuild, serverBuild):
         if (sys.platform == "win32"):
