@@ -14,7 +14,7 @@
 
 namespace OS{
 
-typedef struct SThreadImpl{
+struct SThread::SThreadImpl{
 
     SThreadImpl(std::function<void(void)> runner) :
         m_thread(std::thread(runner))
@@ -30,7 +30,7 @@ typedef struct SThreadImpl{
 
     std::thread m_thread;
 
-}SThreadImpl_t;
+};
 
 SThread::SThread() :
     m_status(NOT_STARTED),

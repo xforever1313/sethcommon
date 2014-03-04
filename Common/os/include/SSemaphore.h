@@ -15,8 +15,6 @@
 
 namespace OS{
 
-typedef struct semaphoreImpl semaphoreImpl_t;
-
 /**
 * \class SSemaphore
 * \brief a wrapper around os semaphore calls.
@@ -25,6 +23,8 @@ typedef struct semaphoreImpl semaphoreImpl_t;
 class SSemaphore : public SSemaphoreInterface{
     public:
 
+		struct SemaphoreImpl;
+	
         /**
         * \brief default constructor, initial count is at zero
         */
@@ -88,7 +88,7 @@ class SSemaphore : public SSemaphoreInterface{
         SSemaphore(const SSemaphore&);
         SSemaphore &operator=(const SSemaphore&);
 
-        semaphoreImpl_t *m_impl;
+        SemaphoreImpl *m_impl;
         bool m_isShutDown;
 };
 

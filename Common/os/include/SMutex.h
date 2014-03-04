@@ -15,10 +15,9 @@
 
 namespace OS{
 
-typedef struct mutexImpl mutexImpl_t;
-
 class SMutex : public SMutexInterface{
     public:
+	    struct MutexImpl;
         SMutex();
         virtual ~SMutex();
         void lock();
@@ -26,7 +25,7 @@ class SMutex : public SMutexInterface{
     private:
         SMutex(const SMutex&);
         SMutex &operator=(const SMutex&);
-        mutexImpl_t *m_impl;
+        MutexImpl *m_impl;
 };
 
 }

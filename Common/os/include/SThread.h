@@ -25,8 +25,6 @@
 */
 namespace OS{
 
-typedef struct SThreadImpl SThreadImpl_t;
-
 class SThread
 {
     public:
@@ -36,6 +34,8 @@ class SThread
             COMPLETED
         };
 
+		struct SThreadImpl;
+		
         SThread();
 
 		#ifndef _MSC_VER
@@ -97,7 +97,7 @@ class SThread
 
         SMutex m_status_mutex;
 
-        SThreadImpl_t *m_impl; ///<NULL if thread is not started
+        SThreadImpl *m_impl; ///<NULL if thread is not started
 };
 
 }

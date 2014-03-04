@@ -13,23 +13,23 @@
 
 namespace OS{
 
-typedef struct mutexImpl{
-    mutexImpl() :
+struct SMutex::MutexImpl{
+    MutexImpl() :
         m_mutex(new std::mutex())
     {
     }
 
-    virtual ~mutexImpl(){
+    virtual ~MutexImpl(){
         delete m_mutex;
     }
 
     std::mutex *m_mutex;
     private:
-        mutexImpl(const mutexImpl&);
-}mutexImpl_t;
+        MutexImpl(const MutexImpl&);
+};
 
 SMutex::SMutex() :
-    m_impl(new mutexImpl_t())
+    m_impl(new MutexImpl())
 {
 }
 

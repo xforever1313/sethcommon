@@ -15,8 +15,8 @@
 
 namespace OS{
 
-typedef struct semaphoreImpl{
-    semaphoreImpl(unsigned int count) :
+struct SSemaphore::SemaphoreImpl{
+    SemaphoreImpl(unsigned int count) :
         m_conditionVariable(new std::condition_variable),
         m_semaphoreCount(count)
     {
@@ -26,18 +26,19 @@ typedef struct semaphoreImpl{
     unsigned int m_semaphoreCount;
     std::mutex m_semaphoreCountMutex;
     std::mutex m_shutdownMutex;
+	
     private:
-        semaphoreImpl(const semaphoreImpl&);
-}semaphoreImpl_t;
+        SemaphoreImpl(const SemaphoreImpl&);
+};
 
 SSemaphore::SSemaphore() :
-    m_impl(new semaphoreImpl_t(0)),
+    m_impl(new SemaphoreImpl(0)),
     m_isShutDown(false)
 {
 }
 
 SSemaphore::SSemaphore(unsigned int initialCount) :
-    m_impl(new semaphoreImpl_t(initialCount)),
+    m_impl(new SemaphoreImpl(initialCount)),
     m_isShutDown(false)
 {
 }
