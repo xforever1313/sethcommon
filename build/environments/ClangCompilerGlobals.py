@@ -24,8 +24,6 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
             self.globalCCFlags += ['-isystem', '/Applications/Xcode.app/Contents/Developer/Toolchains/XcodeDefault.xctoolchain/usr/lib/c++/v1']
             self.globalCCFlags += ['stdlib=libc++']
         elif (sys.platform != "win32"):
-            self.globalCCFlags += ['-isystem', '/usr/include/i386-linux-gnu/c++/4.8']
-            self.globalCCFlags += ['-isystem', '/usr/include/c++/4.8']  
             self.globalCCFlags += ['-stdlib=libc++']
         
         self.globalCCDebugFlags += ['-O0']
@@ -47,6 +45,13 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
         
         self.globalArmLinkFlags = ['-arch', 'armv7s', '-miphoneos-version-min=7.0', '-isysroot', \
                                    '/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk']
+
+        #Libs
+        self.globalLibs += ['c++abi', 'c++']
+
+        self.globalDebugLibs += []
+        self.globalReleaseLibs += []
+        self.globalUnitTestLibs += []
             
     def getBaseEnvironment(self, armBuild, serverBuild):
         if (armBuild):
@@ -84,7 +89,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
         envBase.Append(CXXFLAGS = self.globalCXXFlags)
         envBase.Append(CCFLAGS = self.globalCCFlags + self.globalCCDebugFlags)
         envBase.Append(LINKFLAGS = self.globalLinkerFlags + self.globalDebugLinkerFlags)
-        envBase.Append(LIBS = libs + self.globalLibs + self.globalDebugLibs)
+        envBase.Append(LIBS = libs + self.globalDebugLibs + self.globalLibs)
         envBase.Append(LIBPATH = libPath)
     
         if (envBase['ARM_BUILD']):
@@ -96,7 +101,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
         envBase.Append(CXXFLAGS = self.globalCXXFlags)
         envBase.Append(CCFLAGS = self.globalCCFlags + self.globalCCReleaseFlags)
         envBase.Append(LINKFLAGS = self.globalLinkerFlags + self.globalReleaseLinkerFlags)
-        envBase.Append(LIBS = libs + self.globalLibs + self.globalReleaseLibs)
+        envBase.Append(LIBS = libs + self.globalReleaseLibs + self.globalLibs)
         envBase.Append(LIBPATH = libPath)
     
         if (envBase['ARM_BUILD']):
@@ -108,7 +113,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
         envBase.Append(CXXFLAGS = self.globalCXXFlags)
         envBase.Append(CCFLAGS = self.globalCCFlags + self.globalCCUnitTestFlags)
         envBase.Append(LINKFLAGS = self.globalLinkerFlags + self.globalUnitTestLinkerFlags)
-        envBase.Append(LIBS = libs + self.globalLibs + self.globalUnitTestLibs)
+        envBase.Append(LIBS = libs + self.globalUnitTestLibs + self.globalLibs)
         envBase.Append(LIBPATH = libPath)
     
         if (envBase['ARM_BUILD']):
