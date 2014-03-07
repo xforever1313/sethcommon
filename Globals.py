@@ -71,7 +71,7 @@ def getDirectoryStructure(directory):
 def getRevisionNumber():
     revProc = subprocess.Popen("git rev-list --count HEAD", shell=True, stdout=subprocess.PIPE)
     rawString = revProc.communicate()[0]
-    return str(rawString.strip())
+    return rawString.strip().decode("utf-8")
 
 def getUserName():
     return getpass.getuser()
