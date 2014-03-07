@@ -71,7 +71,7 @@ def getDirectoryStructure(directory):
 def getRevisionNumber():
     revProc = subprocess.Popen("git rev-list --count HEAD", shell=True, stdout=subprocess.PIPE)
     rawString = revProc.communicate()[0]
-    return rawString.strip()
+    return str(rawString.strip())
 
 def getUserName():
     return getpass.getuser()
@@ -83,7 +83,7 @@ def getVersion(baseDir):
     return versionString.strip()
 
 def getReleaseVersionNumber(baseDir):
-    return getVersion(baseDir) + '+' + getRevisionNumber()
+    return getVersion(baseDir) + "+" + getRevisionNumber()
 
 def getRedirectString(file):
     if(sys.platform == "win32"):
@@ -93,7 +93,7 @@ def getRedirectString(file):
     return redirectString
 
 def printEndTime(startTime):
-    print "Time ran: " + str(time.time() - startTime) + " seconds."
+    print ("Time ran: " + str(time.time() - startTime) + " seconds.")
 
 def timeProgram():
     startTime = time.time()

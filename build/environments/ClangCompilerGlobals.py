@@ -55,7 +55,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
             
     def getBaseEnvironment(self, armBuild, serverBuild):
         if (armBuild):
-            print "Building for clang arm"
+            print ("Building for clang arm")
             env = Environment(
                 CC = "clang",
                 CXX = "clang++",
@@ -68,7 +68,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
                 SYSTEM = "clangArm"    
             )
         else:
-            print "Building for clang x86"
+            print ("Building for clang x86")
             env = Environment(
                 CC = "clang",
                 CXX = "clang++",

@@ -42,7 +42,7 @@ class EmscriptenCompilerGlobals(GnuCompilerGlobals):
         self.globalUnitTestLinkerFlags += []
     
     def getBaseEnvironment(self, armBuild, serverBuild):
-        print "Building for ASM.js"
+        print ("Building for ASM.js")
         env = Environment(
             tools = ["mingw"],
             CC = "emcc",

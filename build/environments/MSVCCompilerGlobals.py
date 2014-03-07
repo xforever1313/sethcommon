@@ -63,7 +63,7 @@ class MSVCCompilerGlobals(GlobalCompilerGlobals):
 
     def getBaseEnvironment(self, armBuild, serverBuild):
 
-        print "Building for MSVC-12 Win32"
+        print ("Building for MSVC-12 Win32")
 
         #Ensure this is the right path for your system:
         compilerPath = '"C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\bin"'

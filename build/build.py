@@ -38,7 +38,7 @@ for target in sorted(targets.keys()):
     process = subprocess.Popen([sconsCommand] + sys.argv[1:], stdout=subprocess.PIPE, stderr=subprocess.STDOUT, cwd=location)
     log = process.communicate()[0]
     f = open(logFile, 'w')
-    f.write(log)
+    f.write(log.decode('utf-8'))
     f.close()
     status = process.wait()
     if (status != 0):
