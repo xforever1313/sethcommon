@@ -51,11 +51,15 @@ DEFAULT = ""
 CLANG_BUILD_ARG = "clang_build"
 ARM_BUILD_ARG = "arm_build"
 ASM_JS_ARG = "asmjs"
+GDB_RUN_ARG = "gdb"
+VALGRIND_RUN_ARG = "valgrind"
 
 POSSIBLE_ARGS = {}
 POSSIBLE_ARGS[CLANG_BUILD_ARG] = "Build with clang"
 POSSIBLE_ARGS[ARM_BUILD_ARG] = "Target for arm platform.  Only good with ipads right now"
 POSSIBLE_ARGS[ASM_JS_ARG] = "\tBuild with emscripten"
+POSSIBLE_ARGS[GDB_RUN_ARG] = "\tRuns gdb with an executable (run_xxx targets only)"
+POSSIBLE_ARGS[VALGRIND_RUN_ARG] = "Runs valgrind with an executable (run_xxx and linux only)"
 
 compilerTypeArgs = {}
 compilerTypeArgs[DEFAULT] = ""
@@ -112,6 +116,13 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
     armBuild = (args.get(ARM_BUILD_ARG, '0') == '1')
     asmJSBuild = (args.get(ASM_JS_ARG, '0') == '1')
     msvcTarget = (args.get('msvc_target', None))
+    valgrindRun = (args.get(VALGRIND_RUN_ARG, '0') == '1')
+    gdbRun = (args.get(GDB_RUN_ARG, '0') == '1')
+   
+    if (gdbRun and valgrindRun):
+        raise Exception("You can not have both gdb and valgrind set to 1")
+    elif ((gdbRun or valgrindRun) and asmJSBuild):
+        raise Exception("Can not run gdb or valgrind with emscripten builds")
 
     sys.path.append(os.path.join(sethCommonPath, "build/environments"))
 
@@ -135,7 +146,9 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
     baseEnvironment = env.Clone(
         PROJECT_ROOT = os.path.abspath("."),
         POSSIBLE_TARGETS = {},
-        PROJECT_NAME = projectName
+        PROJECT_NAME = projectName,
+        VALGRIND_RUN = valgrindRun,
+        GDB_RUN = gdbRun
     )
     addPossibleTargets(baseEnvironment, targetFlags)
     baseEnvironment['TARGET_FLAGS'] = targetFlags
@@ -221,7 +234,12 @@ def createRunTarget(target, source, env):
     if (env['ASM_JS_BUILD']):
         ret = subprocess.call("emrun " + env['EXE'] + ".html --port=9003", shell=True, cwd = env['BINDIR'])
     else:
-        ret = subprocess.call(env['EXE'], cwd = env['BINDIR'])
+        commandStr = env['EXE']
+        if (env['GDB_RUN']):
+            commandStr = "gdb " + commandStr
+        elif (env ['VALGRIND_RUN']):
+            commandStr = "valgrind --leak-check=full " + commandStr
+        ret = subprocess.call(commandStr, cwd = env['BINDIR'], shell=True)
     
     return ret
     
