@@ -38,6 +38,8 @@ UNIT_TEST_ALIAS = "unit_test"
 RUN_TEST_ALIAS = "run_test"
 DEBUG_ALIAS = "debug"
 RELEASE_ALIAS = "release"
+RUN_DEBUG_ALIAS = "run_debug"
+RUN_RELEASE_ALIAS = "run_release"
 NET_BEANS_ALIAS = "net_beans"
 VS_ALIAS = "vs_project"
 
@@ -81,6 +83,8 @@ def addPossibleTargets(env, targetFlags):
     if ((EXE_TARGET & targetFlags) == EXE_TARGET):
         env['POSSIBLE_TARGETS'][DEBUG_ALIAS] = "\tBuilds debug executable"
         env['POSSIBLE_TARGETS'][RELEASE_ALIAS] = "\tBuilds release executable"
+        env['POSSIBLE_TARGETS'][RUN_DEBUG_ALIAS] = "Runs the debug executable"
+        env['POSSIBLE_TARGETS'][RUN_RELEASE_ALIAS] = "Runs the release executable"
 
     if ((PROJECT_TARGET & targetFlags) == PROJECT_TARGET):
         env['POSSIBLE_TARGETS'][NET_BEANS_ALIAS] = "Builds a netbeans project"
@@ -212,14 +216,35 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
 ###
 # Create targets
 ###
+def createRunTarget(target, source, env):
+    ret = None
+    if (env['ASM_JS_BUILD']):
+        ret = subprocess.call("emrun " + env['EXE'] + ".html --port=9003", shell=True, cwd = env['BINDIR'])
+    else:
+        ret = subprocess.call(env['EXE'], cwd = env['BINDIR'])
+    
+    return ret
+    
 
 def createExe(env, exeName, sourceFiles):
-    exeTarget = env.Program(target = os.path.join(env['BINDIR'], exeName), source = sourceFiles)
+    exe = os.path.join(env['BINDIR'], exeName)
+    exeTarget = env.Program(target = exe, source = sourceFiles)
+
+    runEnvironment = env.Clone(EXE = exe)
+    run = Builder(action = createRunTarget)
+    runEnvironment.Append(BUILDERS = {"Run" : run})
+    
+    #Funky phony name so there's no multiple targets
+    runTarget = runEnvironment.Run(target = os.path.join(env['BINDIR'], "phonyRunTarget.target"),
+                                   source = [])
+
+    Depends(runTarget, exeTarget)
+
     Clean(exeTarget, [os.path.join(env['BINDIR'])])
-    return exeTarget
+    return (exeTarget, runTarget)
     
 def createUnitTestExe(env, sourceFiles, coverageFiles):
-    testExeTarget = createExe(env, "unit_test", sourceFiles)
+    (testExeTarget, ignoreThis) = createExe(env, "unit_test", sourceFiles)
     runTestTarget = env.Test(target = profilingDataFile, source = coverageFiles)
     AlwaysBuild(runTestTarget)
     Execute(Delete(Glob(os.path.join(testOutputDir, '*')))) #Remove old test outputs    
