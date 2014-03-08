@@ -41,6 +41,9 @@ RELEASE_ALIAS = "release"
 NET_BEANS_ALIAS = "net_beans"
 VS_ALIAS = "vs_project"
 
+DELTA_ALIAS = "delta"
+NIGHTLY_ALIAS = "nightly"
+
 #Possible Args
 DEFAULT = ""
 CLANG_BUILD_ARG = "clang_build"
