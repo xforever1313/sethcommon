@@ -229,17 +229,20 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
 ###
 # Create targets
 ###
+def addGDBAndValgrindCommand(command, env):
+    commandStr = command
+    if (env['GDB_RUN']):
+        commandStr = "gdb " + commandStr
+    elif(env['VALGRIND_RUN']):
+        commandStr = "valgrind --leak-check=full " + commandStr
+    return commandStr
+
 def createRunTarget(target, source, env):
     ret = None
     if (env['ASM_JS_BUILD']):
         ret = subprocess.call("emrun " + env['EXE'] + ".html --port=9003", shell=True, cwd = env['BINDIR'])
     else:
-        commandStr = env['EXE']
-        if (env['GDB_RUN']):
-            commandStr = "gdb " + commandStr
-        elif (env ['VALGRIND_RUN']):
-            commandStr = "valgrind --leak-check=full " + commandStr
-        ret = subprocess.call(commandStr, cwd = env['BINDIR'], shell=True)
+        ret = subprocess.call(addGDBAndValgrindCommand(env['EXE'], env), cwd = env['BINDIR'], shell=True)
     
     return ret
     
@@ -456,9 +459,9 @@ def testRunner(target, source, env):
     if (env['ASM_JS_BUILD']):
         status = subprocess.call("node unit_test.js", cwd=cwdDir, shell=True)
     elif (sys.platform == "win32"):
-        status = subprocess.call("unit_test.exe", cwd=cwdDir, shell=True)
+        status = subprocess.call(addGDBAndValgrindCommand("unit_test.exe", env), cwd=cwdDir, shell=True)
     else:
-        status = subprocess.call("./unit_test", cwd=cwdDir, shell=True)
+        status = subprocess.call(addGDBAndValgrindCommand("./unit_test", env), cwd=cwdDir, shell=True)
 
     if ((status == 0) and not env['CLANG_BUILD'] and not env['MSVC_BUILD']):
         print("Running Coverage")
