@@ -248,6 +248,8 @@ def createRunTarget(target, source, env):
     ret = None
     if (env['ASM_JS_BUILD']):
         ret = subprocess.call("emrun " + env['EXE'] + ".html --port=9003", shell=True, cwd = env['BINDIR'])
+    elif (env['MINGW_CROSS_BUILD']):
+        ret = subprocess.call("wine " + env['EXE'], cwd = env['BINDIR'], shell=True)
     else:
         ret = subprocess.call(addGDBAndValgrindCommand(env['EXE'], env), cwd = env['BINDIR'], shell=True)
     
