@@ -49,11 +49,20 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
         self.globalUnitTestLibs += ['gcov']
 
         if (sys.platform == "win32"):
-            self.globalDebugLibs += ["ssp", "debug_new"] #Lib SSP is still needed in mingw, but not linux
-            self.globalReleaseLibs += ["ssp"]
-            self.globalUnitTestLibs += ["ssp", "debug_new"] #debug_new must come last]
+            self.addMingwFlags()
 
-    def getBaseEnvironment(self, armBuild, serverBuild):
+
+    def addMingwFlags(self):
+        self.globalDebugLibs += ["ssp"] #Lib SSP is still needed in mingw, but not linux
+        self.globalReleaseLibs += ["ssp"]
+        self.globalUnitTestLibs += ["ssp"] #debug_new must come last]
+
+        if (sys.platform == "win32"):
+            self.globalDebugLibs += ["debug_new"]
+            self.globalUnitTestLibs += ["debug_new"]
+
+
+    def getBaseEnvironment(self, armBuild, serverBuild, mingwBuild):
         if (sys.platform == "win32"):
             print ("Building for mingw")
             env = Environment(            
@@ -63,10 +72,36 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
                 CLANG_BUILD = False,
                 ASM_JS_BUILD = False,
                 MSVC_BUILD = False,
+                MINGW_CROSS_BUILD = False,
                 SYSTEM = "mingw"
             )
 
             self.globalDefines += ['MINGW']
+
+        elif(mingwBuild):
+            print ("Building for mingw on linux")
+            env = Environment(
+                CC = "x86_64-w64-mingw32-gcc",
+                CXX = "x86_64-w64-mingw32-g++",
+                LINK = "x86_64-w64-mingw32-g++",
+                AR = "x86_64-w64-mingw32-ar",
+                AS = "x86_64-w64-mingw32-as",
+                RANLIB = "x86_64-w64-mingw32-ranlib",
+                CPP = "x86_64-w64-mingw32-cpp",
+
+                SERVER_BUILD = False,
+                ARM_BUILD = False,
+                CLANG_BUILD = False,
+                ASM_JS_BUILD = False,
+                MSVC_BUILD = False,
+                MINGW_CROSS_BUILD = True,
+                SYSTEM = "mingw"
+            )
+
+            self.globalDefines += ["MINGW", "WIN32"]
+
+            self.globalDefines.remove("LINUX")
+            self.addMingwFlags()
 
         elif (serverBuild):
             print ("Building for gcc x86 on the build sever")
@@ -79,6 +114,7 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
                 CLANG_BUILD = False,
                 ASM_JS_BUILD = False,
                 MSVC_BUILD = False,
+                MINGW_CROSS_BUILD = False,
                 SYSTEM = "gccx86"
             )
             self.globalDefines += ['GCC']
@@ -92,6 +128,7 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
                 CLANG_BUILD = False,
                 ASM_JS_BUILD = False,
                 MSVC_BUILD = False,
+                MINGW_CROSS_BUILD = False,
                 SYSTEM = "gccx86"
             )
             self.globalDefines += ['GCC']

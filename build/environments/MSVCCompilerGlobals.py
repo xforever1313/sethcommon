@@ -61,7 +61,7 @@ class MSVCCompilerGlobals(GlobalCompilerGlobals):
         self.globalLibPaths = ['C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x86',
                               'C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\VC\\lib']
 
-    def getBaseEnvironment(self, armBuild, serverBuild):
+    def getBaseEnvironment(self, armBuild, serverBuild, mingwBuild):
 
         print ("Building for MSVC-12 Win32")
 
@@ -77,6 +77,7 @@ class MSVCCompilerGlobals(GlobalCompilerGlobals):
             CLANG_BUILD = False,
             ASM_JS_BUILD = False,
             MSVC_BUILD = True,
+            MINGW_CROSS_BUILD = False,
             SYSTEM = "msvc_12_win32"
         )
         self.globalDefines += ['MSVC']

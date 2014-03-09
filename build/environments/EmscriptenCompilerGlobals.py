@@ -41,7 +41,7 @@ class EmscriptenCompilerGlobals(GnuCompilerGlobals):
         self.globalReleaseLinkerFlags += []
         self.globalUnitTestLinkerFlags += []
     
-    def getBaseEnvironment(self, armBuild, serverBuild):
+    def getBaseEnvironment(self, armBuild, serverBuild, mingwBuild):
         print ("Building for ASM.js")
         env = Environment(
             tools = ["mingw"],
@@ -55,6 +55,7 @@ class EmscriptenCompilerGlobals(GnuCompilerGlobals):
             CLANG_BUILD = True,
             ASM_JS_BUILD = True,
             MSVC_BUILD = False,
+            MINGW_CROSS_BUILD = False,
             SYSTEM = "asmjs"
         )
         env['ENV']['emscripten'] = os.environ['emscripten']

@@ -53,7 +53,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
         self.globalReleaseLibs += []
         self.globalUnitTestLibs += []
             
-    def getBaseEnvironment(self, armBuild, serverBuild):
+    def getBaseEnvironment(self, armBuild, serverBuild, mingwBuild):
         if (armBuild):
             print ("Building for clang arm")
             env = Environment(
@@ -65,6 +65,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
                 CLANG_BUILD = True,
                 ASM_JS_BUILD = False,
                 MSVC_BUILD = False,
+                MINGW_CROSS_BUILD = False,
                 SYSTEM = "clangArm"    
             )
         else:
@@ -78,6 +79,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
                 CLANG_BUILD = True,
                 ASM_JS_BUILD = False,
                 MSVC_BUILD = False,
+                MINGW_CROSS_BUILD = False,
                 SYSTEM = "clangx86"
             )
         self.globalDefines += ['CLANG']

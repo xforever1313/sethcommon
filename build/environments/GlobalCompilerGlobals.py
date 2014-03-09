@@ -9,7 +9,7 @@ class GlobalCompilerGlobals():
     globalDefines = []
 
     if (sys.platform == "win32"):
-        globalDefines += ["WIN_32"]
+        globalDefines += ["WIN32"]
     elif (sys.platform == "darwin"):
         globalDefines += ["DARWIN"]
     else:

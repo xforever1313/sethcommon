@@ -53,13 +53,15 @@ ARM_BUILD_ARG = "arm_build"
 ASM_JS_ARG = "asmjs"
 GDB_RUN_ARG = "gdb"
 VALGRIND_RUN_ARG = "valgrind"
+MINGW_BUILD_ARG = "mingw"
 
 POSSIBLE_ARGS = {}
 POSSIBLE_ARGS[CLANG_BUILD_ARG] = "Build with clang"
 POSSIBLE_ARGS[ARM_BUILD_ARG] = "Target for arm platform.  Only good with ipads right now"
 POSSIBLE_ARGS[ASM_JS_ARG] = "\tBuild with emscripten"
 POSSIBLE_ARGS[GDB_RUN_ARG] = "\tRuns gdb with an executable (run_xxx targets only)"
-POSSIBLE_ARGS[VALGRIND_RUN_ARG] = "Runs valgrind with an executable (run_xxx and linux only)"
+POSSIBLE_ARGS[VALGRIND_RUN_ARG] = "Runs valgrind with an executable (run_xxx and Linux only)"
+POSSIBLE_ARGS[MINGW_BUILD_ARG] = "Builds using x86_64-w64-mingw32 (Linux only)"
 
 compilerTypeArgs = {}
 compilerTypeArgs[DEFAULT] = ""
@@ -118,6 +120,11 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
     msvcTarget = (args.get('msvc_target', None))
     valgrindRun = (args.get(VALGRIND_RUN_ARG, '0') == '1')
     gdbRun = (args.get(GDB_RUN_ARG, '0') == '1')
+    
+    if (sys.platform == "win32"):
+        mingwBuild = False
+    else:
+        mingwBuild = (args.get(MINGW_BUILD_ARG, '0') == '1')
    
     if (gdbRun and valgrindRun):
         raise Exception("You can not have both gdb and valgrind set to 1")
@@ -141,7 +148,7 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
         from GCCCompilerGlobals import GCCCompilerGlobals
         envClass = GCCCompilerGlobals()
 
-    env = envClass.getBaseEnvironment(armBuild, serverBuild)
+    env = envClass.getBaseEnvironment(armBuild, serverBuild, mingwBuild)
 
     baseEnvironment = env.Clone(
         PROJECT_ROOT = os.path.abspath("."),
@@ -409,43 +416,25 @@ def createTestOutputFolder(env):
 # Builders
 ###    
 
-#Copies the API include files (given as source) to project_root/api
-def apiBuilder(target, source, env):
-    readmeText='''
-    DO NOT EDIT THESE FILES.  
-    These files are only to make a convient place to host the api for this project.
-    If you wish to edit these files, please go into include/api and rebuild.  
-    When you rebuild, these files get updated
-    '''
-    readme = open(os.path.join(env['OBJPREFIX'], 'apireadme.txt'), 'w')
-    readme.write(readmeText)
-    readme.close()
-    
-    for file in source:
-        Execute(Copy(os.path.join(env['PROJECT_ROOT'], apiDir), file))
-        
-    Execute(Copy(os.path.join(env['PROJECT_ROOT'], apiDir, 'readme.txt'), 'apireadme.txt'))
-    Execute(Delete('apireadme.txt'))
-
-#Source is only passed in so we know if we need to rebuild if any sources change
-def doxgyenBuilder(target, source, env):
+#Source is only passed in so we know if we need to rebuild if any sources change 
+def doxgyenBuilder(target, source, env): 
     print "Running Doxygen..."
     return subprocess.call("doxygen Doxyfile " + getRedirectString(str(target[0])), shell=True)
 
-def cppCheckBuilder(target, source, env):
-    sources = ""
-    includeCommandString = ""
-    for src in source:
-        sources += (" " + str(src))
-    for include in env['CPPPATH']:
-        includeCommandString += (" -I" + include)
+def cppCheckBuilder(target, source, env): 
+    sources = "" 
+    includeCommandString = "" 
+    for src in source: 
+        sources += (" " + str(src)) 
+    for include in env['CPPPATH']: 
+        includeCommandString += (" -I" + include) 
     commandStr = 'cppcheck  --error-exitcode=13 --enable=warning --enable=style --enable=information -q -j ' + str(cpu_count()) + \
-	' ' + includeCommandString + sources + ' ' + getRedirectString(str(target[0]))
-    print commandStr
+                 ' ' + includeCommandString + sources + ' ' + getRedirectString(str(target[0])) 
+    print commandStr 
     status = subprocess.call(commandStr, shell=True)
     
-    if (status == 0):
-        print "\ncppcheck ran and no errors were found!"
+    if (status == 0): 
+        print "\ncppcheck ran and no errors were found!" 
     else:
         sys.stderr.write("** CPP Check detected errors.  Please refer to " + str(target[0]) + " for more details\n")
     return status
@@ -458,12 +447,14 @@ def testRunner(target, source, env):
     cwdDir = env['BINDIR']
     if (env['ASM_JS_BUILD']):
         status = subprocess.call("node unit_test.js", cwd=cwdDir, shell=True)
+    elif (env['MINGW_CROSS_BUILD']):
+        status = subprocess.call("wine ./unit_test", cwd=cwdDir, shell=True)
     elif (sys.platform == "win32"):
         status = subprocess.call(addGDBAndValgrindCommand("unit_test.exe", env), cwd=cwdDir, shell=True)
     else:
         status = subprocess.call(addGDBAndValgrindCommand("./unit_test", env), cwd=cwdDir, shell=True)
 
-    if ((status == 0) and not env['CLANG_BUILD'] and not env['MSVC_BUILD']):
+    if ((status == 0) and not env['CLANG_BUILD'] and not env['MSVC_BUILD'] and not env['MINGW_CROSS_BUILD']):
         print("Running Coverage")
         try:
             Execute(Delete(codeCoverageDir)) #Remove old code coverage
