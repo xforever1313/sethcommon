@@ -538,12 +538,11 @@ def generateVSFilters(includeFiles, sourceFiles, testIncludeFiles, testSourceFil
     for d in filePaths:
         ret += '<Filter Include="' + d + '">\n'
         ret += '</Filter>\n'
-    ret += '<Filter Include="test">\n'
-    ret += '</Filter>\n'
-    ret += '<Filter Include="test\\include">\n'
-    ret += '</Filter>\n'
-    ret += '<Filter Include="test\\src">\n'
-    ret += '</Filter>\n'
+        
+    filePaths = getDirectoryStructure(testDir)
+    for d in filePaths:
+        ret += '<Filter Include="' + d + '">\n'
+        ret += '</Filter>\n'
     ret += '</ItemGroup>\n'
     
     ret += '<ItemGroup>\n'
