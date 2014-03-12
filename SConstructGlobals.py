@@ -567,22 +567,31 @@ def generateVSFilters(includeFiles, sourceFiles, testIncludeFiles, testSourceFil
 
     ret += '<ItemGroup>\n'
     for f in testIncludeFiles:
+        filePath = os.path.abspath(f)
+        beginning = filePath.find(os.sep + 'fathom' + os.sep + 'platform' + os.sep) + 17
+        last = filePath.rfind(os.sep)
         ret += '<ClInclude Include="' + os.path.abspath(f) + '">\n'
-        ret += '<Filter>test\\include</Filter>\n'
+        ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
         ret += '</ClInclude>\n'
     ret += '</ItemGroup>\n'
 
     ret += '<ItemGroup>\n'
     for f in testSourceFiles:
+        filePath = os.path.abspath(f)
+        beginning = filePath.find(os.sep + 'fathom' + os.sep + 'platform' + os.sep) + 17
+        last = filePath.rfind(os.sep)
         ret += '<ClCompile Include="' + os.path.abspath(f) + '">\n'
-        ret += '<Filter>test\\src</Filter>\n'
+        ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
         ret += '</ClCompile>\n'
     ret += '</ItemGroup>\n'
 
     ret += '<ItemGroup>\n'
     for f in testFiles:
+        filePath = os.path.abspath(f)
+        beginning = filePath.find(os.sep + 'fathom' + os.sep + 'platform' + os.sep) + 17
+        last = filePath.rfind(os.sep)
         ret += '<ClCompile Include="' + os.path.abspath(f) + '">\n'
-        ret += '<Filter>test</Filter>\n'
+        ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
         ret += '</ClCompile>\n'
     ret += '</ItemGroup>\n'
 
