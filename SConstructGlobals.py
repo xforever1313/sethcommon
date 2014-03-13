@@ -552,52 +552,36 @@ def generateVSFilters(includeFiles, sourceFiles, testIncludeFiles, testSourceFil
     
     ret += '<ItemGroup>\n'
     for f in includeFiles:
-        
-        filePath = os.path.abspath(f)
-        last = filePath.rfind(os.sep)
-        beginning = len(os.sep + project + os.sep) + len(project) + 1
         ret += '<ClInclude Include="' + os.path.abspath(f) + '">\n'
-        ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
+        ret += '<Filter>' + os.path.dirname(f) + '</Filter>\n'
         ret += '</ClInclude>\n'
     ret += '</ItemGroup>\n'
 
     ret += '<ItemGroup>\n'
     for f in sourceFiles:
-        filePath = os.path.abspath(f)
-        beginning = len(os.sep + project + os.sep) + len(project) + 1
-        last = filePath.rfind(os.sep)
         ret += '<ClCompile Include="' + os.path.abspath(f) + '">\n'
-        ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
+        ret += '<Filter>' + os.path.dirname(f) + '</Filter>\n'
         ret += '</ClCompile>\n'
     ret += '</ItemGroup>\n'
 
     ret += '<ItemGroup>\n'
     for f in testIncludeFiles:
-        filePath = os.path.abspath(f)
-        beginning = len(os.sep + project + os.sep) + len(project) + 1
-        last = filePath.rfind(os.sep)
         ret += '<ClInclude Include="' + os.path.abspath(f) + '">\n'
-        ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
+        ret += '<Filter>' + os.path.dirname(f) + '</Filter>\n'
         ret += '</ClInclude>\n'
     ret += '</ItemGroup>\n'
 
     ret += '<ItemGroup>\n'
     for f in testSourceFiles:
-        filePath = os.path.abspath(f)
-        beginning = len(os.sep + project + os.sep) + len(project) + 1
-        last = filePath.rfind(os.sep)
         ret += '<ClCompile Include="' + os.path.abspath(f) + '">\n'
-        ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
+        ret += '<Filter>' + os.path.dirname(f) + '</Filter>\n'
         ret += '</ClCompile>\n'
     ret += '</ItemGroup>\n'
 
     ret += '<ItemGroup>\n'
     for f in testFiles:
-        filePath = os.path.abspath(f)
-        beginning = len(os.sep + project + os.sep) + len(project) + 1
-        last = filePath.rfind(os.sep)
         ret += '<ClCompile Include="' + os.path.abspath(f) + '">\n'
-        ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
+        ret += '<Filter>' + os.path.dirname(f) + '</Filter>\n'
         ret += '</ClCompile>\n'
     ret += '</ItemGroup>\n'
 
