@@ -13,6 +13,7 @@ import string
 import subprocess
 import sys
 import time
+import re
 
 if (sys.platform == "win32"):
     SCons.Defaults.DefaultEnvironment(tools = ['mingw'])
@@ -548,8 +549,9 @@ def generateVSFilters(includeFiles, sourceFiles, testIncludeFiles, testSourceFil
     ret += '<ItemGroup>\n'
     for f in includeFiles:
         filePath = os.path.abspath(f)
-        beginning = filePath.find(os.sep + 'fathom' + os.sep + 'platform' + os.sep) + 17
+        module = filePath.split(os.sep)[0:-1][2]
         last = filePath.rfind(os.sep)
+        beginning = len(os.sep + module + os.sep) + 2
         ret += '<ClInclude Include="' + os.path.abspath(f) + '">\n'
         ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
         ret += '</ClInclude>\n'
@@ -558,7 +560,7 @@ def generateVSFilters(includeFiles, sourceFiles, testIncludeFiles, testSourceFil
     ret += '<ItemGroup>\n'
     for f in sourceFiles:
         filePath = os.path.abspath(f)
-        beginning = filePath.find(os.sep + 'fathom' + os.sep + 'platform' + os.sep) + 17
+        beginning = len(os.sep + module + os.sep) + 2
         last = filePath.rfind(os.sep)
         ret += '<ClCompile Include="' + os.path.abspath(f) + '">\n'
         ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
@@ -568,7 +570,7 @@ def generateVSFilters(includeFiles, sourceFiles, testIncludeFiles, testSourceFil
     ret += '<ItemGroup>\n'
     for f in testIncludeFiles:
         filePath = os.path.abspath(f)
-        beginning = filePath.find(os.sep + 'fathom' + os.sep + 'platform' + os.sep) + 17
+        beginning = len(os.sep + module + os.sep) + 2
         last = filePath.rfind(os.sep)
         ret += '<ClInclude Include="' + os.path.abspath(f) + '">\n'
         ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
@@ -578,7 +580,7 @@ def generateVSFilters(includeFiles, sourceFiles, testIncludeFiles, testSourceFil
     ret += '<ItemGroup>\n'
     for f in testSourceFiles:
         filePath = os.path.abspath(f)
-        beginning = filePath.find(os.sep + 'fathom' + os.sep + 'platform' + os.sep) + 17
+        beginning = len(os.sep + module + os.sep) + 2
         last = filePath.rfind(os.sep)
         ret += '<ClCompile Include="' + os.path.abspath(f) + '">\n'
         ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
@@ -588,7 +590,7 @@ def generateVSFilters(includeFiles, sourceFiles, testIncludeFiles, testSourceFil
     ret += '<ItemGroup>\n'
     for f in testFiles:
         filePath = os.path.abspath(f)
-        beginning = filePath.find(os.sep + 'fathom' + os.sep + 'platform' + os.sep) + 17
+        beginning = len(os.sep + 'fathom' + os.sep + module + os.sep) + 2
         last = filePath.rfind(os.sep)
         ret += '<ClCompile Include="' + os.path.abspath(f) + '">\n'
         ret += '<Filter>' + filePath[beginning:last] + '</Filter>\n'
