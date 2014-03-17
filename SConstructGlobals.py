@@ -294,7 +294,7 @@ def createDoxygenTarget(env, doxygenFiles):
     Doxygen = Builder(action = doxgyenBuilder)
     env.Append(BUILDERS = {"Doxygen" : Doxygen})
     createDir(docDir)
-    target = env.Doxygen(target = doxygenData, source = doxygenFiles)
+    target = env.Doxygen(target = doxygenData, source = doxygenFiles + ["./Doxyfile"])
     Clean(target, os.path.join(env['PROJECT_ROOT'], doxygenDir))
     return target
 
@@ -422,7 +422,10 @@ def createTestOutputFolder(env):
 #Source is only passed in so we know if we need to rebuild if any sources change 
 def doxgyenBuilder(target, source, env): 
     print "Running Doxygen..."
-    return subprocess.call("doxygen Doxyfile " + getRedirectString(str(target[0])), shell=True)
+    status = subprocess.call("doxygen Doxyfile " + getRedirectString(str(target[0])), shell=True)
+    if (status != 0):
+        sys.stderr.write("** Error with doxygen! Please refer to " + os.path.abspath(str(target[0])) + " for more information **\n")
+    return status
 
 def cppCheckBuilder(target, source, env): 
     sources = "" 
@@ -439,7 +442,7 @@ def cppCheckBuilder(target, source, env):
     if (status == 0): 
         print "\ncppcheck ran and no errors were found!" 
     else:
-        sys.stderr.write("** CPP Check detected errors.  Please refer to " + str(target[0]) + " for more details\n")
+        sys.stderr.write("** CPP Check detected errors.  Please refer to " + os.path.abspath(str(target[0])) + " for more details **\n")
     return status
    
 #Runs the test, and coverage while we are at it :P

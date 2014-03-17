@@ -42,5 +42,6 @@ for target in sorted(targets.keys()):
     f.close()
     status = process.wait()
     if (status != 0):
-        raise Exception('A compile error occured!')
+        sys.stderr.write('** A compile error occured for target: ' + target[1:] + ".  Please refer to: " + logFile + " for more information **\n")
+        exit(5)
     
