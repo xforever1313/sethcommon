@@ -274,19 +274,15 @@ def createRunTarget(target, source, env):
 def addSharedLibPaths(env):
     if ((sys.platform == "win32") or env['MINGW_CROSS_BUILD']):
         for libPath in env['LIBPATH']:
-            env.AppendENVPath('PATH', libPath)
+            os.environ['PATH'] += ';' + libPath
     else:
-        #If LD_LIBRARY_PATH does not exist, make it so.
         try:
-            dummy = env['ENV']['LD_LIBRARY_PATH']
+            dummy = os.environ['LD_LIBRARY_PATH']
         except KeyError:
-            env['ENV']['LD_LIBRARY_PATH'] = ""
+            os.environ['LD_LIBRARY_PATH'] = ""
 
         for libPath in env['LIBPATH']:
-            env['ENV']['LD_LIBRARY_PATH'] += ":" + libPath
-
-        print (env['ENV']['LD_LIBRARY_PATH'])
-
+            os.environ['LD_LIBRARY_PATH'] += ":" + libPath
 
 def createExe(env, exeName, sourceFiles):
     exe = os.path.join(env['BINDIR'], exeName)
@@ -354,7 +350,7 @@ def getCompiledObjectsWithDateVersionObject(env, sources, dateVersionFile, args)
     dateVersionEnvironment.Append(CPPDEFINES = getDateVersionDefine(env['BASE_DIR'], args))
 
     if (env['SHARED_BUILD'] and not env['MINGW_CROSS_BUILD']):
-        dateVersionObject = env.SharedObject(dateVersionFile)
+        dateVersionObject = dateVersionEnvironment.SharedObject(dateVersionFile)
     else:
         dateVersionObject = dateVersionEnvironment.Object(dateVersionFile)
     Depends(dateVersionObject, compiledObjects)
@@ -494,7 +490,7 @@ def testRunner(target, source, env):
     elif (env['MINGW_CROSS_BUILD']):
         status = subprocess.call(["wine", "./unit_test"], cwd=cwdDir)
     elif (sys.platform == "win32"):
-        status = subprocess.call(addGDBAndValgrindCommand("unit_test.exe", env), cwd=cwdDir)
+        status = subprocess.call(addGDBAndValgrindCommand(os.path.join(cwdDir, "unit_test.exe"), env), cwd=cwdDir)
     else:
         status = subprocess.call(addGDBAndValgrindCommand("./unit_test", env), cwd=cwdDir)
 

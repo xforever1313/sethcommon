@@ -25,11 +25,11 @@ else:
     CXXEnvironment['CCFLAGS'].remove('-Werror')
     CXXEnvironment['CCFLAGS'].remove('-pedantic-errors')
 
-CXXEnvironment['LIBDIR'] = os.path.join(libDir, CXXEnvironment['SYSTEM'])
+CXXEnvironment['LIBDIR'] = os.path.join(libDir, CXXEnvironment['SYSTEM'], CXXEnvironment['LIB_TYPE'])
 
 debugNewObject = CXXEnvironment.Object(glob.glob("*.cpp"))
 
-buildDebugNew = createStaticLib(CXXEnvironment, "debug_new", debugNewObject)
+buildDebugNew = createLib(CXXEnvironment, "debug_new", debugNewObject)
 
 Alias("create_lib", buildDebugNew)
 Alias("doxygen", [])

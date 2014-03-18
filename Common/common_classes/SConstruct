@@ -46,7 +46,7 @@ if (not envBase['ASM_JS_BUILD'] and not envBase['MSVC_BUILD']):
 if ((sys.platform != "win32") and (sys.platform != "darwin") and not envBase['MINGW_CROSS_BUILD']):
     testLibs += ["rt", 'c']
 ###libPath
-libPath = [os.path.join(osPath, libDir, envBase['SYSTEM'], debugDir)]
+libPath = [os.path.join(osPath, libDir, envBase['SYSTEM'], debugDir, envBase['LIB_TYPE'])]
 
 Help(getHelpMessage(envBase))
 
