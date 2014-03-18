@@ -33,7 +33,7 @@ class GnuCompilerGlobals(GlobalCompilerGlobals):
         #Link Flags
         self.globalLinkerFlags += ["-Wall", "-Werror", "-std=gnu++11"]
         if(sys.platform == "win32"):
-            self.globalLinkerFlags += ["-static", "-pthread"]
+            self.globalLinkerFlags += ["-pthread"]
         elif (sys.platform == "darwin"):
             self.globalLinkerFlags += []
         else:

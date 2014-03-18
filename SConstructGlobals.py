@@ -317,6 +317,14 @@ def createStaticLib(env, libName, sourceFiles):
     return staticLibTarget
 
 def createSharedLib(env, libName, sourceFiles):
+    if (((sys.platform == "win32") or env['MINGW_CROSS_BUILD']) and not env['MSVC_BUILD']):
+        env['LIBSUFFIX'] = ".dll.a"
+
+    try:
+        env['LIBS'].remove("debug_new") #Do not want debug new getting linked in to .dll
+    except:
+        pass #May not be in all environments, so this may throw a "not found" exception
+
     sharedLibTarget = env.SharedLibrary(target = os.path.join(env['LIBDIR'], libName), source = sourceFiles)
     return sharedLibTarget
 

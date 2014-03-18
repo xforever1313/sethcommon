@@ -55,12 +55,11 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
     def addMingwFlags(self):
         self.globalDebugLibs += ["ssp"] #Lib SSP is still needed in mingw, but not linux
         self.globalReleaseLibs += ["ssp"]
-        self.globalUnitTestLibs += ["ssp"] #debug_new must come last]
+        self.globalUnitTestLibs += ["ssp"]
 
         if (sys.platform == "win32"):
-            self.globalDebugLibs += ["debug_new"]
+            self.globalDebugLibs += ["debug_new"] #debug_new must come last
             self.globalUnitTestLibs += ["debug_new"]
-
 
     def getBaseEnvironment(self, armBuild, serverBuild, mingwBuild):
         if (sys.platform == "win32"):
@@ -73,6 +72,8 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
                 ASM_JS_BUILD = False,
                 MSVC_BUILD = False,
                 MINGW_CROSS_BUILD = False,
+                STATIC_LINK_FLAGS = ['-static'],
+                DYNAMIC_LIBS = ['gcc_eh'],
                 SYSTEM = "mingw"
             )
 
@@ -97,6 +98,8 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
                 MSVC_BUILD = False,
                 MINGW_CROSS_BUILD = True,
                 SYSTEM = "mingw",
+                STATIC_LINK_FLAGS = ['-static'],
+                DYNAMIC_LIBS = ['gcc_eh'],
                 SHLIBSUFFIX= ".dll"
             )
 
@@ -117,6 +120,8 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
                 ASM_JS_BUILD = False,
                 MSVC_BUILD = False,
                 MINGW_CROSS_BUILD = False,
+                STATIC_LINK_FLAGS = [],
+                DYNAMIC_LIBS = [],
                 SYSTEM = "gccx86"
             )
             self.globalDefines += ['GCC']
@@ -131,6 +136,8 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
                 ASM_JS_BUILD = False,
                 MSVC_BUILD = False,
                 MINGW_CROSS_BUILD = False,
+                STATIC_LINK_FLAGS = [],
+                DYNAMIC_LIBS = [],
                 SYSTEM = "gccx86"
             )
             self.globalDefines += ['GCC']
@@ -142,6 +149,12 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
             os.makedirs(env['BINDIR']) #This is here so during shared lib builds, the map file is still made
         env.Append(LINKFLAGS = ['-Wl,-Map,' + os.path.join(env['BINDIR'], mapName)])
 
+    def addStaticDynamicLibFlags(self, env):
+        if (env['SHARED_BUILD']):
+            env.Append(LIBS = env['DYNAMIC_LIBS'])
+        else:
+            env.Append(LINKFLAGS = env['STATIC_LINK_FLAGS'])
+        
     def extendDebugEnvironment(self, envBase, libs, libPath):
         envBase.Append(CPPDEFINES = self.globalDefines + self.globalDebugDefines)
         envBase.Append(CXXFLAGS = self.globalCXXFlags + self.globalCXXDebugFlags)
@@ -150,6 +163,7 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
         envBase.Append(LIBS = libs + self.globalLibs + self.globalDebugLibs)
         envBase.Append(LIBPATH = libPath)
         self.addMapFlag(envBase, envBase['PROJECT_NAME'] + '.map')
+        self.addStaticDynamicLibFlags(envBase)
 
     def extendReleaseEnvironment(self, envBase, libs, libPath):
         envBase.Append(CPPDEFINES = self.globalDefines + self.globalReleaseDefines)
@@ -159,6 +173,7 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
         envBase.Append(LIBS = libs + self.globalLibs + self.globalReleaseLibs)
         envBase.Append(LIBPATH = libPath)
         self.addMapFlag(envBase, envBase['PROJECT_NAME'] + '.map')
+        self.addStaticDynamicLibFlags(envBase)
 
     def extendUnitTestEnvironment(self, envBase, libs, libPath):
         envBase.Append(CPPDEFINES = self.globalDefines + self.globalUnitTestDefines)
@@ -168,4 +183,4 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
         envBase.Append(LIBS = libs + self.globalLibs + self.globalUnitTestLibs)
         envBase.Append(LIBPATH = libPath)
         self.addMapFlag(envBase, 'unit_test.map')
-
+        self.addStaticDynamicLibFlags(envBase)
