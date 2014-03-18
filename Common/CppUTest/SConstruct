@@ -66,7 +66,7 @@ else:
     libEnvironment['CCFLAGS'].remove('-Werror')
     libEnvironment['CCFLAGS'].remove('-pedantic-errors')
 
-libEnvironment['LIBDIR'] = os.path.join(libDir, envBase['SYSTEM'])
+libEnvironment['LIBDIR'] = os.path.join(libDir, envBase['SYSTEM'], envBase['LIB_TYPE'])
 
 testEnvironment = createUnitTestEnvironment(envBase, includePaths, testLibs, testLibPath)
 #Override flags
@@ -88,7 +88,7 @@ Help(getHelpMessage(envBase))
 ###
 # Targets
 ###
-libBuild  = createStaticLib(libEnvironment, "CppUTest", sourceFiles)
+libBuild  = createLib(libEnvironment, "CppUTest", sourceFiles)
 (unitTestBuild, runUnitTests) = createUnitTestExe(testEnvironment, testSourceFiles + sourceFiles, coverageFiles)
 
 doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)

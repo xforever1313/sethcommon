@@ -14,6 +14,9 @@ class GnuCompilerGlobals(GlobalCompilerGlobals):
                   "-Wempty-body", "-Wcast-qual", "-Wmissing-field-initializers", "-Wtype-limits", \
                   "-fstack-protector-all", "-pthread"]
 
+        if (sys.platform != "win32"):
+            self.globalCCFlags += []
+
         self.globalCXXFlags += ['-std=gnu++11']
 
         #optimization flags go in child classes.
@@ -30,7 +33,7 @@ class GnuCompilerGlobals(GlobalCompilerGlobals):
         #Link Flags
         self.globalLinkerFlags += ["-Wall", "-Werror", "-std=gnu++11"]
         if(sys.platform == "win32"):
-            self.globalLinkerFlags += ["-static", "-pthread"]
+            self.globalLinkerFlags += ["-pthread"]
         elif (sys.platform == "darwin"):
             self.globalLinkerFlags += []
         else:

@@ -64,11 +64,11 @@ doxygenFiles = [dateVersionFile] + sourceFiles + sourceTestFiles + glob.glob(os.
 # Targets
 ###
 
-debugTarget = createStaticLib(debugEnvironment, "SMath-d", getCompiledObjectsWithDateVersionObject(debugEnvironment,
+debugTarget = createLib(debugEnvironment, "SMath-d", getCompiledObjectsWithDateVersionObject(debugEnvironment,
                                                                                                          sourceFiles,
                                                                                                          dateVersionFile,
                                                                                                          ARGUMENTS))
-releaseTarget = createStaticLib(releaseEnvironment, "SMath", getCompiledObjectsWithDateVersionObject(releaseEnvironment,
+releaseTarget = createLib(releaseEnvironment, "SMath", getCompiledObjectsWithDateVersionObject(releaseEnvironment,
                                                                                                            sourceFiles,
                                                                                                            dateVersionFile,
                                                                                                            ARGUMENTS))

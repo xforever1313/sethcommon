@@ -51,7 +51,7 @@ else:
     libEnvironment['CCFLAGS'].remove('-Werror')
     libEnvironment['CCFLAGS'].remove('-pedantic-errors')
 
-libEnvironment['LIBDIR'] = os.path.join(libDir, envBase['SYSTEM'])
+libEnvironment['LIBDIR'] = os.path.join(libDir, envBase['SYSTEM'], envBase['LIB_TYPE'])
 
 #Doxygen 
 doxygenFiles = sourceFiles + testSourceFiles + glob.glob(os.path.join(includeDir, "*h")) +  glob.glob(os.path.join(includeDir, "*", "*h"))
@@ -59,7 +59,7 @@ doxygenFiles = sourceFiles + testSourceFiles + glob.glob(os.path.join(includeDir
 ###
 # Targets
 ###
-libBuild  = createStaticLib(libEnvironment, "gmock", sourceFiles)
+libBuild  = createLib(libEnvironment, "gmock", sourceFiles)
 
 Alias("create_lib", libBuild)
 Alias("doxygen", [])

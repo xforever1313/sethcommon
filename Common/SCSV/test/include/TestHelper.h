@@ -13,6 +13,6 @@
 * \author Seth Hendrick
 */
 
-const std::string csvFileDirectory = "../../../test/SCSVTestfiles";
+const std::string csvFileDirectory = "../../../../test/SCSVTestfiles";
 
 #endif // TESTHELPER_H_INCLUDED

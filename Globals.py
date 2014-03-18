@@ -29,6 +29,9 @@ unitTestDir = "unit_test"
 buildDir = "build"
 fitNesseDir = "fitnesse"
 
+staticLibType = "static"
+sharedLibType = "shared"
+
 reportDir = "reports"
 profilingDataFile = os.path.join(reportDir, "profiling_data.txt")
 cppCheckData = os.path.join(reportDir, 'cppcheck_data.txt')

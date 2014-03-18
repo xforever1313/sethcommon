@@ -20,10 +20,10 @@ TEST_GROUP(cstdioWrapper){
     TEST_SETUP(){
         m_uut = (new OS::cstdioWrapper());
         m_fs = (OS::FileSystem::getInstance());
-        m_testFile = ( "../../../test/testFile.txt");
+        m_testFile = ( "../../../../test/testFile.txt");
         m_testFileContents = ("test!");
         //Date constructed automatically
-        m_testOutput = "../../../testOutput/cstdioWrapperTest/cstdioWrapperTest/" + m_date.getFullDateUnderscores();
+        m_testOutput = "../../../../testOutput/cstdioWrapperTest/cstdioWrapperTest/" + m_date.getFullDateUnderscores();
         if (firstRun){
             CHECK(m_fs->createDir(m_testOutput));
             firstRun = false;

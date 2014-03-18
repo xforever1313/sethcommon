@@ -55,6 +55,7 @@ ASM_JS_ARG = "asmjs"
 GDB_RUN_ARG = "gdb"
 VALGRIND_RUN_ARG = "valgrind"
 MINGW_BUILD_ARG = "mingw"
+SHARED_ARG = "shared"
 
 POSSIBLE_ARGS = {}
 POSSIBLE_ARGS[CLANG_BUILD_ARG] = "Build with clang"
@@ -63,6 +64,7 @@ POSSIBLE_ARGS[ASM_JS_ARG] = "\tBuild with emscripten"
 POSSIBLE_ARGS[GDB_RUN_ARG] = "\tRuns gdb with an executable (run_xxx targets only)"
 POSSIBLE_ARGS[VALGRIND_RUN_ARG] = "Runs valgrind with an executable (run_xxx and Linux only)"
 POSSIBLE_ARGS[MINGW_BUILD_ARG] = "Builds using x86_64-w64-mingw32 (Linux only)"
+POSSIBLE_ARGS[SHARED_ARG] = "Builds using shared libs instead of static"
 
 compilerTypeArgs = {}
 compilerTypeArgs[DEFAULT] = ""
@@ -110,7 +112,7 @@ def serverBuildAdd(env):
 
 def addDebugNewLibPath(env):
     if (not env['ASM_JS_BUILD']):
-        env.Append(LIBPATH = os.path.join(getDebugNewPath(env['COMMON_DIR']), libDir, env['SYSTEM']))
+        env.Append(LIBPATH = os.path.join(getDebugNewPath(env['COMMON_DIR']), libDir, env['SYSTEM'], env['LIB_TYPE']))
         env['ENV']['GLIBCXX_FORCE_NEW'] = '1'
 
 def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, args):
@@ -121,6 +123,7 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
     msvcTarget = (args.get('msvc_target', None))
     valgrindRun = (args.get(VALGRIND_RUN_ARG, '0') == '1')
     gdbRun = (args.get(GDB_RUN_ARG, '0') == '1')
+    sharedBuild = (args.get(SHARED_ARG, '0') == '1')
     
     if (sys.platform == "win32"):
         mingwBuild = False
@@ -156,8 +159,15 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
         POSSIBLE_TARGETS = {},
         PROJECT_NAME = projectName,
         VALGRIND_RUN = valgrindRun,
-        GDB_RUN = gdbRun
+        GDB_RUN = gdbRun,
+        SHARED_BUILD = sharedBuild
     )
+
+    if (sharedBuild):
+        baseEnvironment['LIB_TYPE'] = sharedLibType
+    else:
+        baseEnvironment['LIB_TYPE'] = staticLibType
+
     addPossibleTargets(baseEnvironment, targetFlags)
     baseEnvironment['TARGET_FLAGS'] = targetFlags
     baseEnvironment['ENV']['PATH'] = os.environ['PATH'] #Look in path for tools
@@ -171,9 +181,10 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
 def createDebugEnvironment(envBase, includePaths, libs, libPath):
     debugEnvironment = envBase.Clone(
         CPPPATH = includePaths,
-        OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, envBase['SYSTEM'], debugDir)) + '/',
-        LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], debugDir)),
-        BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], debugDir))
+        OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, envBase['SYSTEM'], debugDir, envBase['LIB_TYPE'])) + '/',
+        LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], debugDir, envBase['LIB_TYPE'])),
+        BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], debugDir, envBase['LIB_TYPE'])),
+        BUILD_TARGET = debugDir
     )
 
     envClass.extendDebugEnvironment(debugEnvironment, libs, libPath)
@@ -188,9 +199,10 @@ def createDebugEnvironment(envBase, includePaths, libs, libPath):
 def createReleaseEnvironment(envBase, includePaths, libs, libPath):
     releaseEnvironment = envBase.Clone(
         CPPPATH = includePaths,
-        OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, envBase['SYSTEM'], releaseDir)) + '/',
-        LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], releaseDir)),
-        BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], releaseDir))
+        OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, envBase['SYSTEM'], releaseDir, envBase['LIB_TYPE'])) + '/',
+        LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], releaseDir, envBase['LIB_TYPE'])),
+        BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], releaseDir, envBase['LIB_TYPE'])),
+        BUILD_TARGET = releaseDir
     )
 
     envClass.extendReleaseEnvironment(releaseEnvironment, libs, libPath)
@@ -203,9 +215,10 @@ def createReleaseEnvironment(envBase, includePaths, libs, libPath):
 def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
     testEnvironment = envBase.Clone(
         CPPPATH = includePaths,
-        OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, envBase['SYSTEM'], unitTestDir)) + '/',
-        LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], unitTestDir)),
-        BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], unitTestDir))
+        OBJPREFIX = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], objectDir, envBase['SYSTEM'], unitTestDir, envBase['LIB_TYPE'])) + '/',
+        LIBDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], libDir, envBase['SYSTEM'], unitTestDir, envBase['LIB_TYPE'])),
+        BINDIR = os.path.abspath(os.path.join(envBase['PROJECT_ROOT'], binDir, envBase['SYSTEM'], unitTestDir, envBase['LIB_TYPE'])),
+        BUILD_TARGET = unitTestDir
     )
 
     envClass.extendUnitTestEnvironment(testEnvironment, libs, libPath)
@@ -219,8 +232,8 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
         for p in unitTestIncludePaths:
             testEnvironment.Append(CCFLAGS = ['-isystem', p])
 
-    unitTestLibPaths = [os.path.join(getCppUTestPath(envBase['COMMON_DIR']), libDir, testEnvironment['SYSTEM']), \
-                        os.path.join(getGMockPath(envBase['COMMON_DIR']), libDir, testEnvironment['SYSTEM'])]
+    unitTestLibPaths = [os.path.join(getCppUTestPath(envBase['COMMON_DIR']), libDir, testEnvironment['SYSTEM'], testEnvironment['LIB_TYPE']), \
+                        os.path.join(getGMockPath(envBase['COMMON_DIR']), libDir, testEnvironment['SYSTEM'], testEnvironment['LIB_TYPE'])]
 
     testEnvironment.Append(LIBPATH = unitTestLibPaths)
 
@@ -238,24 +251,42 @@ def createUnitTestEnvironment(envBase, includePaths, libs, libPath):
 # Create targets
 ###
 def addGDBAndValgrindCommand(command, env):
-    commandStr = command
     if (env['GDB_RUN']):
-        commandStr = "gdb " + commandStr
+        commandList = ["gdb", command]
     elif(env['VALGRIND_RUN']):
-        commandStr = "valgrind --leak-check=full " + commandStr
-    return commandStr
+        commandList = ["valgrind", "--leak-check=full", command]
+    else:
+        commandList = [command]
+    return commandList
 
 def createRunTarget(target, source, env):
     ret = None
     if (env['ASM_JS_BUILD']):
-        ret = subprocess.call("emrun " + env['EXE'] + ".html --port=9003", shell=True, cwd = env['BINDIR'])
+        ret = subprocess.call(["emrun", env['EXE'] + ".html", "--port=9003"], cwd = env['BINDIR'])
     elif (env['MINGW_CROSS_BUILD']):
-        ret = subprocess.call("wine " + env['EXE'], cwd = env['BINDIR'], shell=True)
+        ret = subprocess.call(["wine",  env['EXE']], cwd = env['BINDIR'])
     else:
-        ret = subprocess.call(addGDBAndValgrindCommand(env['EXE'], env), cwd = env['BINDIR'], shell=True)
+        ret = subprocess.call(addGDBAndValgrindCommand(env['EXE'], env), cwd = env['BINDIR'])
     
     return ret
     
+
+def addSharedLibPaths(env):
+    if ((sys.platform == "win32") or env['MINGW_CROSS_BUILD']):
+        for libPath in env['LIBPATH']:
+            env.AppendENVPath('PATH', libPath)
+    else:
+        #If LD_LIBRARY_PATH does not exist, make it so.
+        try:
+            dummy = env['ENV']['LD_LIBRARY_PATH']
+        except KeyError:
+            env['ENV']['LD_LIBRARY_PATH'] = ""
+
+        for libPath in env['LIBPATH']:
+            env['ENV']['LD_LIBRARY_PATH'] += ":" + libPath
+
+        print (env['ENV']['LD_LIBRARY_PATH'])
+
 
 def createExe(env, exeName, sourceFiles):
     exe = os.path.join(env['BINDIR'], exeName)
@@ -270,6 +301,9 @@ def createExe(env, exeName, sourceFiles):
                                    source = [])
 
     Depends(runTarget, exeTarget)
+
+    if (env['SHARED_BUILD']):
+        addSharedLibPaths(env)
 
     Clean(exeTarget, [os.path.join(env['BINDIR'])])
     return (exeTarget, runTarget)
@@ -286,9 +320,15 @@ def createStaticLib(env, libName, sourceFiles):
     staticLibTarget = env.StaticLibrary(target = os.path.join(env['LIBDIR'], libName), source = sourceFiles)
     return staticLibTarget
 
-def createSharedLib(env, sourceFiles, libName):
+def createSharedLib(env, libName, sourceFiles):
     sharedLibTarget = env.SharedLibrary(target = os.path.join(env['LIBDIR'], libName), source = sourceFiles)
     return sharedLibTarget
+
+def createLib(env, sourceFiles, libName):
+    if (env['SHARED_BUILD']):
+        return createSharedLib(env, sourceFiles, libName)
+    else:
+        return createStaticLib(env, sourceFiles, libName)
 
 def createDoxygenTarget(env, doxygenFiles):
     Doxygen = Builder(action = doxgyenBuilder)
@@ -304,21 +344,19 @@ def createCppCheckTarget(env, sources):
     target = env.cppCheck(target = cppCheckData, source = sources)
     return target
 
-def createApiMoveTarget(env, apiFiles):
-    readMe = os.path.join(env['PROJECT_ROOT'], apiDir, 'readme.txt')
-    apiMove = Builder(action = apiBuilder)
-    env.Append(BUILDERS = {"Api" : apiMove})
-    target = env.Api(target = readMe, source = apiFiles)
-    Depends(target, apiFiles)
-    Clean(target, os.path.join(env['PROJECT_ROOT'], apiDir))
-    return target
-
 def getCompiledObjectsWithDateVersionObject(env, sources, dateVersionFile, args):
-    compiledObjects = env.Object(sources)
+    if (env['SHARED_BUILD'] and not env['MINGW_CROSS_BUILD']):
+        compiledObjects = env.SharedObject(sources)
+    else:
+        compiledObjects = env.Object(sources)
     
     dateVersionEnvironment = env.Clone()
     dateVersionEnvironment.Append(CPPDEFINES = getDateVersionDefine(env['BASE_DIR'], args))
-    dateVersionObject = dateVersionEnvironment.Object(dateVersionFile)
+
+    if (env['SHARED_BUILD'] and not env['MINGW_CROSS_BUILD']):
+        dateVersionObject = env.SharedObject(dateVersionFile)
+    else:
+        dateVersionObject = dateVersionEnvironment.Object(dateVersionFile)
     Depends(dateVersionObject, compiledObjects)
     Depends(dateVersionObject, getVersionFile(env, args))
     return compiledObjects + dateVersionObject
@@ -452,13 +490,13 @@ def testRunner(target, source, env):
     thisDir = os.getcwd()
     cwdDir = env['BINDIR']
     if (env['ASM_JS_BUILD']):
-        status = subprocess.call("node unit_test.js", cwd=cwdDir, shell=True)
+        status = subprocess.call(["node" , "unit_test.js"], cwd=cwdDir)
     elif (env['MINGW_CROSS_BUILD']):
-        status = subprocess.call("wine ./unit_test", cwd=cwdDir, shell=True)
+        status = subprocess.call(["wine", "./unit_test"], cwd=cwdDir)
     elif (sys.platform == "win32"):
-        status = subprocess.call(addGDBAndValgrindCommand("unit_test.exe", env), cwd=cwdDir, shell=True)
+        status = subprocess.call(addGDBAndValgrindCommand("unit_test.exe", env), cwd=cwdDir)
     else:
-        status = subprocess.call(addGDBAndValgrindCommand("./unit_test", env), cwd=cwdDir, shell=True)
+        status = subprocess.call(addGDBAndValgrindCommand("./unit_test", env), cwd=cwdDir)
 
     if ((status == 0) and not env['CLANG_BUILD'] and not env['MSVC_BUILD'] and not env['MINGW_CROSS_BUILD']):
         print("Running Coverage")
@@ -473,7 +511,8 @@ def testRunner(target, source, env):
             gcovCommand = 'gcov-4.8'
         else:
             gcovCommand = 'gcov'
-        gcovString = gcovCommand + " -r -s \"" + thisDir + "\" -o \"" + os.path.join(thisDir, objectDir, env['SYSTEM'], unitTestDir) + "\" "
+        gcovString = gcovCommand + " -r -s \"" + thisDir + "\" -o \"" + \
+                     os.path.join(thisDir, objectDir, env['SYSTEM'], unitTestDir, env['LIB_TYPE']) + "\" "
         for file in source:
             gcovString += (os.path.join(thisDir, str(file)) + " ")
         print (gcovString)

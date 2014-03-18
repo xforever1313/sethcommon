@@ -11,7 +11,7 @@
 
 OS::Date testTimeStamp;
 
-std::string fileTestOutputPath = "../../../testOutput/fileSystemTest/fileTest-" + testTimeStamp.getFullDateUnderscores();
+std::string fileTestOutputPath = "../../../../testOutput/fileSystemTest/fileTest-" + testTimeStamp.getFullDateUnderscores();
 
 std::string path_join(std::string fileName){
     std::stringstream ss;

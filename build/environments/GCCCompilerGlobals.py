@@ -81,6 +81,7 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
         elif(mingwBuild):
             print ("Building for mingw on linux")
             env = Environment(
+                tools = ['mingw'],
                 CC = "x86_64-w64-mingw32-gcc",
                 CXX = "x86_64-w64-mingw32-g++",
                 LINK = "x86_64-w64-mingw32-g++",
@@ -95,7 +96,8 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
                 ASM_JS_BUILD = False,
                 MSVC_BUILD = False,
                 MINGW_CROSS_BUILD = True,
-                SYSTEM = "mingw"
+                SYSTEM = "mingw",
+                SHLIBSUFFIX= ".dll"
             )
 
             self.globalDefines += ["MINGW", "WIN32"]
@@ -136,6 +138,8 @@ class GCCCompilerGlobals(GnuCompilerGlobals):
         return env
 
     def addMapFlag(self, env, mapName):
+        if (not os.path.exists(env['BINDIR'])):
+            os.makedirs(env['BINDIR']) #This is here so during shared lib builds, the map file is still made
         env.Append(LINKFLAGS = ['-Wl,-Map,' + os.path.join(env['BINDIR'], mapName)])
 
     def extendDebugEnvironment(self, envBase, libs, libPath):
