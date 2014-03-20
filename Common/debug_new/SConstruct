@@ -27,7 +27,10 @@ else:
 
 CXXEnvironment['LIBDIR'] = os.path.join(libDir, CXXEnvironment['SYSTEM'], CXXEnvironment['LIB_TYPE'])
 
-debugNewObject = CXXEnvironment.Object(glob.glob("*.cpp"))
+if (envBase['SHARED_BUILD']):
+    debugNewObject = CXXEnvironment.SharedObject(glob.glob('*.cpp'))
+else:
+    debugNewObject = CXXEnvironment.Object(glob.glob("*.cpp"))
 
 buildDebugNew = createLib(CXXEnvironment, "debug_new", debugNewObject)
 
