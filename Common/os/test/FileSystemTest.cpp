@@ -26,7 +26,7 @@ TEST_GROUP(FileSystem){
     TEST_SETUP(){
         m_file = "File";
         m_stringToWrite = "Writing!";
-        m_cstdio = NULL;
+        m_cstdio = nullptr;
         m_uut = new OS::FileSystem();
         if (firstRun){
             firstSetup();
@@ -98,7 +98,7 @@ TEST(FileSystem, getInstanceTest){
 ///\brief tests the read file method during an open error
 TEST(FileSystem, readFileOpenFailure){
     addMock();
-    OS::FILE_t *file = NULL;
+    OS::FILE_t *file = nullptr;
     EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("r")))
         .WillOnce(testing::Return(file));
     std::string buffer;
@@ -155,7 +155,7 @@ TEST(FileSystem, readFileSuccess){
 ///\brief tests the write file method during an open error
 TEST(FileSystem, writeFileOpenFailure){
     addMock();
-    OS::FILE_t *file = NULL;
+    OS::FILE_t *file = nullptr;
     EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("w")))
         .WillOnce(testing::Return(file));
     CHECK(!m_uut->writeFile(m_stringToWrite, m_file));
@@ -202,7 +202,7 @@ TEST(FileSystem, writeFileWriteSuccess){
 ///\brief tests the file creation method for failure
 TEST(FileSystem, createFileTestFaiure){
     addMock();
-    OS::FILE_t *fileptr = NULL;
+    OS::FILE_t *fileptr = nullptr;
 
     //Check the case where a file is bad
     EXPECT_CALL(*m_cstdio, fopen(m_file, std::string("w")))
@@ -307,7 +307,7 @@ TEST(FileSystem, isDirTest){
 
 ///\brief tests the file exists method
 TEST(FileSystem, fileExistsTest){
-    CHECK(m_uut->fileExists(unEditableFilePath.c_str()));
+    CHECK(m_uut->fileExists(unEditableFilePath));
     CHECK(!m_uut->fileExists("derp.txt"));
 }
 
@@ -327,7 +327,7 @@ TEST(FileSystem, copyFileTest){
     copySS << fileTestOutputPath << "/" << newFile;
 
     //Make arbitrary original file
-    std::ofstream outFile(originalSS.str().c_str());
+    std::ofstream outFile(originalSS.str());
     outFile << "Hello, this is a file that needs to be copied\n\n\nPretty cool right?";
     outFile.close();
 
@@ -395,53 +395,53 @@ TEST(FileSystem, renameFileTest){
     newSS << fileTestOutputPath << "/" << newFile;
 
     //Ensure the orginal file was created
-    CHECK(m_uut->createFile(orginalSS.str().c_str()));
-    CHECK(m_uut->fileExists(orginalSS.str().c_str()));
-    CHECK(!m_uut->fileExists(newSS.str().c_str()));
+    CHECK(m_uut->createFile(orginalSS.str()));
+    CHECK(m_uut->fileExists(orginalSS.str()));
+    CHECK(!m_uut->fileExists(newSS.str()));
 
     //Ensure when a file does not exist is send in, it is not created
-    CHECK(!m_uut->renameFile("derp.txt", newSS.str().c_str()));
-    CHECK(!m_uut->fileExists(newSS.str().c_str()));
+    CHECK(!m_uut->renameFile("derp.txt", newSS.str()));
+    CHECK(!m_uut->fileExists(newSS.str()));
 
     //Ensure the no op situation
-    CHECK(m_uut->renameFile(orginalSS.str().c_str(), orginalSS.str().c_str()));
-    CHECK(m_uut->fileExists(orginalSS.str().c_str()));
-    CHECK(!m_uut->fileExists(newSS.str().c_str()));
+    CHECK(m_uut->renameFile(orginalSS.str(), orginalSS.str()));
+    CHECK(m_uut->fileExists(orginalSS.str()));
+    CHECK(!m_uut->fileExists(newSS.str()));
 
     //Ensure rename is successful by the old file not existing, and the new one existing
-    CHECK(m_uut->renameFile(orginalSS.str().c_str(), newSS.str().c_str()));
-    CHECK(!m_uut->fileExists(orginalSS.str().c_str()));
-    CHECK(m_uut->fileExists(newSS.str().c_str()));
+    CHECK(m_uut->renameFile(orginalSS.str(), newSS.str()));
+    CHECK(!m_uut->fileExists(orginalSS.str()));
+    CHECK(m_uut->fileExists(newSS.str()));
 }
 
 ///\brief tests the renameDir method
 TEST(FileSystem, renameDirTest){
     std::string orginalDir = "dirToBeRenamed";
-    std::stringstream orginalSS;
-    orginalSS << fileTestOutputPath << "/" << orginalDir;
+    std::string orginalPath;
+    orginalPath = fileTestOutputPath + "/" + orginalDir;
 
     std::string newDir = "renamedDir";
-    std::stringstream newSS;
-    newSS << fileTestOutputPath << "/" << newDir;
+    std::string newPath;
+    newPath = fileTestOutputPath + "/" + newDir;
 
     //Ensure the orginal file was created
-    CHECK(m_uut->createDir(orginalSS.str().c_str()));
-    CHECK(m_uut->dirExists(orginalSS.str().c_str()));
-    CHECK(!m_uut->dirExists(newSS.str().c_str()));
+    CHECK(m_uut->createDir(orginalPath));
+    CHECK(m_uut->dirExists(orginalPath));
+    CHECK(!m_uut->dirExists(newPath));
 
     //Ensure when a file does not exist is send in, it is not created
-    CHECK(!m_uut->renameDir("derp", newSS.str().c_str()));
-    CHECK(!m_uut->dirExists(newSS.str().c_str()));
+    CHECK(!m_uut->renameDir("derp", newPath));
+    CHECK(!m_uut->dirExists(newPath));
 
     //Ensure the no op situation
-    CHECK(m_uut->renameDir(orginalSS.str().c_str(), orginalSS.str().c_str()));
-    CHECK(m_uut->dirExists(orginalSS.str().c_str()));
-    CHECK(!m_uut->dirExists(newSS.str().c_str()));
+    CHECK(m_uut->renameDir(orginalPath, orginalPath));
+    CHECK(m_uut->dirExists(orginalPath));
+    CHECK(!m_uut->dirExists(newPath));
 
     //Ensure rename is successful by the old file not existing, and the new one existing
-    CHECK(m_uut->renameDir(orginalSS.str().c_str(), newSS.str().c_str()));
-    CHECK(!m_uut->dirExists(orginalSS.str().c_str()));
-    CHECK(m_uut->dirExists(newSS.str().c_str()));
+    CHECK(m_uut->renameDir(orginalPath, newPath));
+    CHECK(!m_uut->dirExists(orginalPath));
+    CHECK(m_uut->dirExists(newPath));
 }
 
 ///\brief tests the movefile ability of renameFile
@@ -532,12 +532,12 @@ TEST(FileSystem, removeFileTestSuccess){
 ///\brief tests the delete dir method
 TEST(FileSystem, removeDirTest){
     std::string testDir = "toBeDeletedDir";
-    std::stringstream ss;
-    ss << fileTestOutputPath << "/" << testDir;
-    CHECK(m_uut->createDir(ss.str().c_str()));
-    CHECK(m_uut->dirExists(ss.str().c_str()));
-    CHECK(m_uut->deleteDir(ss.str().c_str()));
-    CHECK(!m_uut->dirExists(ss.str().c_str()));
+    std::string dir;
+    dir = fileTestOutputPath + "/" + testDir;
+    CHECK(m_uut->createDir(dir));
+    CHECK(m_uut->dirExists(dir));
+    CHECK(m_uut->deleteDir(dir));
+    CHECK(!m_uut->dirExists(dir));
 
     CHECK(!m_uut->deleteDir("derp"));
 
@@ -587,15 +587,15 @@ TEST(FileSystem, compareFilesTest){
     std::ofstream sameFile1;
     std::ofstream sameFile2;
     std::ofstream differentFile;
-    sameFile1.open(OS::FileSystem::pathJoin(uutDir, testFile1).c_str());
+    sameFile1.open(OS::FileSystem::pathJoin(uutDir, testFile1));
     sameFile1 << sameString;
     sameFile1.close();
 
-    sameFile2.open(OS::FileSystem::pathJoin(uutDir, testFile2).c_str());
+    sameFile2.open(OS::FileSystem::pathJoin(uutDir, testFile2));
     sameFile2 << sameString;
     sameFile2.close();
 
-    differentFile.open(OS::FileSystem::pathJoin(uutDir, testFile3).c_str());
+    differentFile.open(OS::FileSystem::pathJoin(uutDir, testFile3));
     differentFile << differentString;
     differentFile.close();
 
@@ -718,7 +718,7 @@ TEST(FileSystem, compareDirsTest){
     CHECK(m_uut->createFile(OS::FileSystem::pathJoin(sameDirWithJustFiles1, "test1.txt")));
     CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(sameDirWithJustFiles1, "test1.txt")));
     std::ofstream outFile1;
-    outFile1.open((OS::FileSystem::pathJoin(sameDirWithJustFiles1, "test2.txt").c_str()));
+    outFile1.open((OS::FileSystem::pathJoin(sameDirWithJustFiles1, "test2.txt")));
     outFile1 << sameDirWithJustFiles << "\n\n" << sameDirWithJustFiles;
     outFile1.close();
 
@@ -728,7 +728,7 @@ TEST(FileSystem, compareDirsTest){
     CHECK(m_uut->createFile(OS::FileSystem::pathJoin(sameDirWithJustFiles2, "test1.txt")));
     CHECK(m_uut->fileExists(OS::FileSystem::pathJoin(sameDirWithJustFiles2, "test1.txt")));
     std::ofstream outFile2;
-    outFile2.open((OS::FileSystem::pathJoin(sameDirWithJustFiles2, "test2.txt").c_str()));
+    outFile2.open((OS::FileSystem::pathJoin(sameDirWithJustFiles2, "test2.txt")));
     outFile2 << sameDirWithJustFiles << "\n\n" << sameDirWithJustFiles;
     outFile2.close();
 

@@ -59,6 +59,13 @@ releaseEnvironment = createReleaseEnvironment(envBase, includePaths, libs, libPa
 #Unit test environment
 testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, testLibs, libPath)
 
+#Remove debug_new from shared builds.  On windows this causes stuff
+#to crash for some reason.  To check for memory leaks, use static
+#Builds.
+if (envBase['SHARED_BUILD']):
+    if ('debug_new') in testEnvironment['LIBS']:
+        testEnvironment['LIBS'].remove('debug_new')
+
 #Doxygen
 doxygenFiles = [dateVersionFile] + sourceFiles + sourceTestFiles + glob.glob(os.path.join(includeDir, "*h")) + glob.glob(os.path.join(testDir, includeDir, "*h"))
 
