@@ -700,11 +700,11 @@ def getVSProjectXML(env, includeFiles, sourceFiles, testIncludeFiles, testSource
             ret += '<NMakeReBuildCommandLine>' + command + '--clean; &amp; ' + command + '</NMakeReBuildCommandLine>\n'
 
             if (target == DEBUG_ALIAS):
-                ret += '<NMakeOutput>' + os.path.join('..', binDir, env['SYSTEM'], DEBUG_ALIAS, env['EXE_NAME'] + '-d') + '</NMakeOutput>\n'
+                ret += '<NMakeOutput>' + os.path.join('..', binDir, env['SYSTEM'], DEBUG_ALIAS, env['LIB_TYPE'], env['EXE_NAME'] + '-d') + '</NMakeOutput>\n'
             elif(target == RELEASE_ALIAS):
-                ret += '<NMakeOutput>' + os.path.join('..', binDir, env['SYSTEM'], RELEASE_ALIAS, env['EXE_NAME']) + '</NMakeOutput>\n'
+                ret += '<NMakeOutput>' + os.path.join('..', binDir, env['SYSTEM'], RELEASE_ALIAS, env['LIB_TYPE'], env['EXE_NAME']) + '</NMakeOutput>\n'
             elif(target == UNIT_TEST_ALIAS):
-                ret += '<NMakeOutput>' + os.path.join('..', binDir, env['SYSTEM'], UNIT_TEST_ALIAS, 'unit_test') + '</NMakeOutput>\n'
+                ret += '<NMakeOutput>' + os.path.join('..', binDir, env['SYSTEM'], UNIT_TEST_ALIAS, env['LIB_TYPE'], 'unit_test') + '</NMakeOutput>\n'
             else:
                 ret += '<NMakeOutput></NMakeOutput>\n'
 
