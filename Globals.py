@@ -80,7 +80,10 @@ def getUserName():
     return getpass.getuser()
     
 def getVersion(baseDir):
-    versionFile = open(os.path.join(baseDir, buildDir, "version.txt"))
+    return getVersionWithCustomPath(os.path.join(baseDir, buildDir, "version.txt"))
+
+def getVersionWithCustomPath(versionFile):
+    versionFile = open(versionFile)
     versionString = versionFile.readline()
     versionFile.close()
     return versionString.strip()
