@@ -61,14 +61,9 @@ def getFilesInDirectory(directory):
     return ret
 
 def getDirectoryStructure(directory):
-    r = []                                                                                                            
-    subdirs = [x[0] for x in os.walk(directory)]                                                                            
-    for subdir in subdirs:                                                                                            
-        files = os.walk(subdir).next()[2]                                                                             
-        if (len(files) > 0):                                                                                          
-            for file in files:   
-                if (subdir not in r):                                                                              
-                    r.append(subdir)                                                                         
+    r = []
+    for path, dirs, files in os.walk(directory):
+        r.append(path)                                                                      
     return r  
 
 def getRevisionNumber():
