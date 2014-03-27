@@ -34,11 +34,11 @@ else:
 
 buildDebugNew = createLib(CXXEnvironment, "debug_new", debugNewObject)
 
-Alias("create_lib", buildDebugNew)
-Alias("doxygen", [])
+Alias(CREATE_LIB_ALIAS, buildDebugNew)
+Alias(DOXYGEN_ALIAS, [])
 
-Alias("delta", buildDebugNew)
-Alias("nightly", buildDebugNew)
+Alias(DELTA_ALIAS, buildDebugNew)
+Alias(NIGHTLY_ALIAS, buildDebugNew)
 
-Default("create_lib")
+Default(CREATE_LIB_ALIAS)
 

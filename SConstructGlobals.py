@@ -2,6 +2,7 @@
 from SCons.Script import *
 from SCons.Environment import *
 from SCons.Builder import *
+from DoxygenGlobals import *
 from Globals import *
 from SethCommonGlobals import *
 from multiprocessing import cpu_count
@@ -334,11 +335,22 @@ def createLib(env, sourceFiles, libName):
     else:
         return createStaticLib(env, sourceFiles, libName)
 
-def createDoxygenTarget(env, doxygenFiles):
+def createDoxygenTarget(env, includePaths, projectBrief):
+    doxygenEnvironment = env.Clone(
+        CPPPATH = includePaths, 
+        PROJECT_DESCRIPTION = projectBrief
+    )
+
+    doxygenFiles =  getFilesInPathRecursivelyWithExtension(includeDir, '.h')
+    doxygenFiles += getFilesInPathRecursivelyWithExtension(srcDir, '.cpp')
+    doxygenFiles += getFilesInPathRecursivelyWithExtension(testDir, '.h') #Get mocks, and only mocks
+    doxygenFiles += [os.path.join(env['COMMON_DIR'], 'DoxygenGlobals.py'),
+                     os.path.join(env['COMMON_DIR'], 'SConstructGlobals.py')]
+
     Doxygen = Builder(action = doxgyenBuilder)
-    env.Append(BUILDERS = {"Doxygen" : Doxygen})
+    doxygenEnvironment.Append(BUILDERS = {"Doxygen" : Doxygen})
     createDir(docDir)
-    target = env.Doxygen(target = doxygenData, source = doxygenFiles + ["./Doxyfile"])
+    target = doxygenEnvironment.Doxygen(target = [doxyFile, doxygenData], source = doxygenFiles)
     Clean(target, os.path.join(env['PROJECT_ROOT'], doxygenDir))
     return target
 
@@ -463,8 +475,10 @@ def createTestOutputFolder(env):
 
 #Source is only passed in so we know if we need to rebuild if any sources change 
 def doxgyenBuilder(target, source, env): 
+    print "Generating Doxyfile..."
+    generateDoxyFile(env['PROJECT_NAME'], env['PROJECT_DESCRIPTION'], env['CPPPATH'], str(target[0]))
     print "Running Doxygen..."
-    status = subprocess.call("doxygen Doxyfile " + getRedirectString(str(target[0])), shell=True)
+    status = subprocess.call("doxygen Doxyfile " + getRedirectString(str(target[1])), shell=True)
     if (status != 0):
         sys.stderr.write("** Error with doxygen! Please refer to " + os.path.abspath(str(target[0])) + " for more information **\n")
     return status

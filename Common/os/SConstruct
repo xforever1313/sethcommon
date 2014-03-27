@@ -66,9 +66,6 @@ if (envBase['SHARED_BUILD']):
     if ('debug_new') in testEnvironment['LIBS']:
         testEnvironment['LIBS'].remove('debug_new')
 
-#Doxygen
-doxygenFiles = [dateVersionFile] + sourceFiles + sourceTestFiles + glob.glob(os.path.join(includeDir, "*h")) + glob.glob(os.path.join(testDir, includeDir, "*h"))
-
 ###
 # Test outputs
 ###
@@ -88,22 +85,22 @@ except OSError:
 debugTarget = createStaticLib(debugEnvironment, "SethOS-d", getCompiledObjectsWithDateVersionObject(debugEnvironment, sourceFiles, dateVersionFile, ARGUMENTS))
 releaseTarget = createStaticLib(releaseEnvironment, "SethOS", getCompiledObjectsWithDateVersionObject(releaseEnvironment, sourceFiles, dateVersionFile, ARGUMENTS))
 (unitTestTarget, runTestTarget) = createUnitTestExe(testEnvironment, getCompiledObjectsWithDateVersionObject(testEnvironment, sourceFiles + sourceTestFiles, dateVersionFile, ARGUMENTS), coverageFiles)
-doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
 cppCheckTarget = createCppCheckTarget(releaseEnvironment, coverageFiles)
 
 otherIncludeFiles = [os.path.join(getCppUTestPath(baseDir), includeDir), os.path.join(getGMockPath(baseDir), includeDir)]
 (netBeansTarget, vsTarget) = createProjectTargets(envBase, testEnvironment['CPPPATH'] + otherIncludeFiles, "")
 
-Alias("debug_lib", debugTarget)
-Alias("release_lib", releaseTarget)
-Alias ("create_lib", [debugTarget, releaseTarget])
-Alias("doxygen", doxygenTarget)
-Alias("cpp_check", cppCheckTarget)
-Alias("unit_test", unitTestTarget)
-Alias("run_unit_test", runTestTarget)
-Alias("run_test", [unitTestTarget, cppCheckTarget, runTestTarget])
+doxygenTarget = createDoxygenTarget(envBase, otherIncludeFiles + testEnvironment['CPPPATH'], 'Abstracted out OS calls')
 
-Alias ("nightly", [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, runTestTarget, netBeansTarget, vsTarget])
-Alias ("delta", [debugTarget, releaseTarget, cppCheckTarget, runTestTarget])
+Alias(DEBUG_LIB_ALIAS, debugTarget)
+Alias(RELEASE_LIB_ALIAS, releaseTarget)
+Alias(CREATE_LIB_ALIAS, [debugTarget, releaseTarget])
+Alias(DOXYGEN_ALIAS, doxygenTarget)
+Alias(CPP_CHECK_ALIAS, cppCheckTarget)
+Alias(UNIT_TEST_ALIAS, unitTestTarget)
+Alias(RUN_TEST_ALIAS, [unitTestTarget, cppCheckTarget, runTestTarget])
 
-Default([debugTarget])
+Alias (NIGHTLY_ALIAS, [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, runTestTarget, netBeansTarget, vsTarget])
+Alias (DELTA_ALIAS, [debugTarget, releaseTarget, cppCheckTarget, runTestTarget])
+
+Default([RUN_TEST_ALIAS])

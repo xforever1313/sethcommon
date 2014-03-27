@@ -14,6 +14,7 @@ apiDir = "api"
 binDir = "bin"
 docDir = "doc"
 doxygenDir = os.path.join(docDir, "doxygen")
+doxyFile = "Doxyfile"
 includeDir = "include"
 libDir = "lib"
 objectDir = "obj"
@@ -95,6 +96,16 @@ def getRedirectString(file):
 
 def printEndTime(startTime):
     print ("Time ran: " + str(time.time() - startTime) + " seconds.")
+
+def getFilesInPathRecursivelyWithExtension(rootDir, extension):
+    fileList = []
+    for root, subFolders, files in os.walk(rootDir):
+        for file in files:
+            (fileName, fileExtension) = os.path.splitext(file)
+            if (fileExtension == extension):
+                fileList += [os.path.join(root, file)]
+
+    return fileList
 
 def timeProgram():
     startTime = time.time()

@@ -65,10 +65,10 @@ doxygenFiles = sourceFiles + testSourceFiles + glob.glob(os.path.join(includeDir
 ###
 libBuild  = createLib(libEnvironment, "gmock", sourceFiles)
 
-Alias("create_lib", libBuild)
-Alias("doxygen", [])
+Alias(CREATE_LIB_ALIAS, libBuild)
+Alias(DOXYGEN_ALIAS, [])
 
-Alias ("nightly", ["create_lib"])
-Alias ("delta", ["create_lib"])
+Alias (NIGHTLY_ALIAS, [CREATE_LIB_ALIAS])
+Alias (DELTA_ALIAS, [CREATE_LIB_ALIAS])
 
-Default("create_lib")
+Default(CREATE_LIB_ALIAS)

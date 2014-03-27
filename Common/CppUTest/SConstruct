@@ -80,9 +80,6 @@ else:
 if (not testEnvironment['CLANG_BUILD'] and not testEnvironment['MSVC_BUILD']):
     testEnvironment.Append(CCFLAGS = ["-fprofile-arcs", "-ftest-coverage"])
 
-#Doxygen 
-doxygenFiles = sourceFiles + testSourceFiles + glob.glob(os.path.join(includeDir, "*h")) +  glob.glob(os.path.join(includeDir, "*", "*h"))
-
 Help(getHelpMessage(envBase))
 
 ###
@@ -91,15 +88,14 @@ Help(getHelpMessage(envBase))
 libBuild  = createLib(libEnvironment, "CppUTest", sourceFiles)
 (unitTestBuild, runUnitTests) = createUnitTestExe(testEnvironment, testSourceFiles + sourceFiles, coverageFiles)
 
-doxygenTarget = createDoxygenTarget(envBase, doxygenFiles)
+doxygenTarget = createDoxygenTarget(envBase, libEnvironment['CPPPATH'], 'CppUTest Documentation')
 
-Alias("create_lib", libBuild)
-Alias("doxygen", doxygenTarget)
-Alias("unit_test", unitTestBuild)
-Alias("run_unit_test", runUnitTests)
-Alias("run_test", runUnitTests)
+Alias(CREATE_LIB_ALIAS, libBuild)
+Alias(DOXYGEN_ALIAS, doxygenTarget)
+Alias(UNIT_TEST_ALIAS, unitTestBuild)
+Alias(RUN_TEST_ALIAS, runUnitTests)
 
-Alias ("nightly", ["doxygen", "create_lib"])
-Alias ("delta", ["create_lib"])
+Alias (NIGHTLY_ALIAS, [DOXYGEN_ALIAS, CREATE_LIB_ALIAS])
+Alias (DELTA_ALIAS, [CREATE_LIB_ALIAS])
 
-Default("create_lib")
+Default(CREATE_LIB_ALIAS)
