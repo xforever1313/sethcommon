@@ -9,9 +9,14 @@ baseDir = "../"
 sys.path.append(baseDir) #Get globals
 from Globals import thisDir, getRevisionNumber
 
-arm = False
-
 versionFile = os.path.abspath('version.txt')
+
+#See if doxygen exists
+try:
+    doxygenCheck = subprocess.Popen(['doxygen', '--version'], stdout=subprocess.PIPE, stderr=subprocess.PIPE)
+    doxygenStatus = doxygenCheck.wait()
+except:
+    doxygenStatus = 1
 
 def getVersionString():
     versionFile = open('version.txt', 'r')
@@ -28,6 +33,10 @@ def getVersionString():
 versionString = getVersionString() 
 
 args = ['create_lib', 'doxygen', 'version="' + versionString + '"', 'version_file=' + versionFile]
+if (doxygenStatus != 0):
+    print ("**Warning** Doxygen not detected.  Documentation will not be built, but everything else will")
+    args.remove('doxygen')
+
 for arg in sys.argv[1:]:
     if ((arg != 'delta') and (arg != 'nightly')):
         args += [arg]
