@@ -51,6 +51,7 @@ NIGHTLY_ALIAS = "nightly"
 #Possible Args
 DEFAULT = ""
 CLANG_BUILD_ARG = "clang_build"
+PI_BUILD_ARG = "pi_build"
 ARM_BUILD_ARG = "arm_build"
 ASM_JS_ARG = "asmjs"
 GDB_RUN_ARG = "gdb"
@@ -66,6 +67,7 @@ POSSIBLE_ARGS[GDB_RUN_ARG] = "\tRuns gdb with an executable (run_xxx targets onl
 POSSIBLE_ARGS[VALGRIND_RUN_ARG] = "Runs valgrind with an executable (run_xxx and Linux only)"
 POSSIBLE_ARGS[MINGW_BUILD_ARG] = "Builds using x86_64-w64-mingw32 (Linux only)"
 POSSIBLE_ARGS[SHARED_ARG] = "Builds using shared libs instead of static"
+POSSIBLE_ARGS[PI_BUILD_ARG] = "Builds using the Raspberry Pi Compiler (Linux only)"
 
 compilerTypeArgs = {}
 compilerTypeArgs[DEFAULT] = ""
@@ -128,9 +130,11 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
     
     if (sys.platform == "win32"):
         mingwBuild = False
+        piBuild = False
     else:
         mingwBuild = (args.get(MINGW_BUILD_ARG, '0') == '1')
-   
+        piBuild = (args.get(PI_BUILD_ARG, '0') == '1')
+ 
     if (gdbRun and valgrindRun):
         raise Exception("You can not have both gdb and valgrind set to 1")
     elif ((gdbRun or valgrindRun) and asmJSBuild):
@@ -149,6 +153,9 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
     elif (msvcTarget != None):
         from MSVCCompilerGlobals import MSVCCompilerGlobals
         envClass = MSVCCompilerGlobals()
+    elif(piBuild):
+        from ArmLinuxGnueabihfGlobals import ArmLinuxGnueabihfGlobals 
+        envClass = ArmLinuxGnueabihfGlobals()
     else:
         from GCCCompilerGlobals import GCCCompilerGlobals
         envClass = GCCCompilerGlobals()
