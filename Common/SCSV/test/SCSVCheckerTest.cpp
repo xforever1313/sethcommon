@@ -21,7 +21,7 @@ TEST(SCSVChecker, checkTest){
 
     std::string testString = "& , &,";
     std::stringstream ss;
-    ss << SCSV_AMP_REPLACE << " " << SCSV_SEPARATOR_REPLACE << " " << SCSV_AMP_REPLACE << SCSV_SEPARATOR_REPLACE;
+    ss << SCSV::SCSVConstants::SCSV_AMP_REPLACE << " " << SCSV::SCSVConstants::SCSV_SEPARATOR_REPLACE << " " << SCSV::SCSVConstants::SCSV_AMP_REPLACE << SCSV::SCSVConstants::SCSV_SEPARATOR_REPLACE;
 
     CHECK_EQUAL(SCSV::SCSVChecker::checkText(testString), ss.str());
 }

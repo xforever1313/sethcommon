@@ -15,18 +15,27 @@
 #include "TestHelper.h"
 
 TEST_GROUP(SCSVParser){
+    TEST_SETUP() {
+        m_uut = new SCSV::SCSVParser(SCSV::SCSVConstants::SCSV_DEFAULT_STRING);
+    }
+    
+    TEST_TEARDOWN() {
+        delete m_uut;
+    }
+    
+    SCSV::SCSVParser *m_uut;
+
 };
 
 ///\brief tests default construction
 TEST(SCSVParser, defaultConstructionTest){
     SCSV::SCSVParser uut;
-    CHECK_EQUAL(uut.m_space_filler, SCSV_DEFAULT_STRING);
+    CHECK_EQUAL(uut.m_space_filler, SCSV::SCSVConstants::SCSV_DEFAULT_STRING);
 }
 
 ///\brief tests the case where there are no missing values.
 TEST(SCSVParser, goodIntFileTest){
-    SCSV::SCSVParser uut(SCSV_DEFAULT_STRING);
-    SCSV::SCSVParser::SCSVFileStatus_t status = uut.parseCsvFile(csvFileDirectory + "/goodIntFile.scsv");
+    SCSV::SCSVParser::SCSVFileStatus_t status = m_uut->parseCsvFile(csvFileDirectory + "/goodIntFile.scsv");
 
     CHECK_EQUAL(status.errorNumber, SCSV::SCSV_OKAY);
 
@@ -42,8 +51,7 @@ TEST(SCSVParser, goodIntFileTest){
 
 ///\brief tests the case where there are spaces between values
 TEST(SCSVParser, goodIntFileSpacesTest){
-    SCSV::SCSVParser uut(SCSV_DEFAULT_STRING);
-    SCSV::SCSVParser::SCSVFileStatus_t status = uut.parseCsvFile(csvFileDirectory + "/goodStringWithSpace.scsv");
+    SCSV::SCSVParser::SCSVFileStatus_t status = m_uut->parseCsvFile(csvFileDirectory + "/goodStringWithSpace.scsv");
 
     CHECK_EQUAL(status.errorNumber, SCSV::SCSV_OKAY);
 
@@ -112,8 +120,7 @@ TEST(SCSVParser, goodIntFileBlanklineTest){
 
 ///\brief tests the case where the rows do not match up
 TEST(SCSVParser, misMatchingRows){
-    SCSV::SCSVParser uut(SCSV_DEFAULT_STRING);
-    SCSV::SCSVParser::SCSVFileStatus_t status = uut.parseCsvFile(csvFileDirectory + "/goodMisMatchedRows.scsv");
+    SCSV::SCSVParser::SCSVFileStatus_t status = m_uut->parseCsvFile(csvFileDirectory + "/goodMisMatchedRows.scsv");
 
     CHECK_EQUAL(status.errorNumber, SCSV::SCSV_OKAY);
 
@@ -167,43 +174,38 @@ TEST(SCSVParser, goodStringFileMissingValuesTest){
 
 ///\brief blank file test
 TEST(SCSVParser, blankFileTest){
-    SCSV::SCSVParser uut(SCSV_DEFAULT_STRING);
-    SCSV::SCSVParser::SCSVFileStatus_t status = uut.parseCsvFile(csvFileDirectory + "/blankFile.scsv");
+    SCSV::SCSVParser::SCSVFileStatus_t status = m_uut->parseCsvFile(csvFileDirectory + "/blankFile.scsv");
 
     CHECK_EQUAL(status.errorNumber, SCSV::SCSV_OKAY);
 
-    CHECK_EQUAL(status.CSVValues.size(), static_cast<unsigned int>(0));
+    CHECK_EQUAL(status.CSVValues.size(), static_cast<size_t>(0));
 }
 
 ///\brief tests the case where there is no blank line at the end of the file
 TEST(SCSVParser, missingNewLineTest){
-    SCSV::SCSVParser uut(SCSV_DEFAULT_STRING);
-    SCSV::SCSVParser::SCSVFileStatus_t status = uut.parseCsvFile(csvFileDirectory + "/noNewLine.scsv");
+    SCSV::SCSVParser::SCSVFileStatus_t status = m_uut->parseCsvFile(csvFileDirectory + "/noNewLine.scsv");
 
     CHECK_EQUAL(status.errorNumber, SCSV::SCSV_ROW_MISSING_NEW_LINE);
 }
 
 ///\brief tests the case where there is no blank line at the end of the file, and the file is just commas
 TEST(SCSVParser, justCommasFileMissingNewLineTest){
-    SCSV::SCSVParser uut(SCSV_DEFAULT_STRING);
-    SCSV::SCSVParser::SCSVFileStatus_t status = uut.parseCsvFile(csvFileDirectory + "/justCommasNoNewLine.scsv");
+    SCSV::SCSVParser::SCSVFileStatus_t status = m_uut->parseCsvFile(csvFileDirectory + "/justCommasNoNewLine.scsv");
 
     CHECK_EQUAL(status.errorNumber, SCSV::SCSV_ROW_MISSING_NEW_LINE);
 }
 
 ///\brief tests the case where the file does not exist
 TEST(SCSVParser, fileDNETest){
-    SCSV::SCSVParser uut(SCSV_DEFAULT_STRING);
-    SCSV::SCSVParser::SCSVFileStatus_t status = uut.parseCsvFile("DERP.txt");
+    SCSV::SCSVParser::SCSVFileStatus_t status = m_uut->parseCsvFile("DERP.txt");
 
     CHECK_EQUAL(status.errorNumber, SCSV::SCSV_OPEN_ERR);
 }
 
 ///\brief tests the case where the file gets corrupted
 TEST(SCSVParser, fileCorruptionTest){
-    SCSV::SCSVParser uut(SCSV_DEFAULT_STRING);
-    uut.m_corrupt_file = true;
-    SCSV::SCSVParser::SCSVFileStatus_t status = uut.parseCsvFile(csvFileDirectory + "/goodIntFile.scsv");
+    m_uut->m_corrupt_file = true;
+    SCSV::SCSVParser::SCSVFileStatus_t status = m_uut->parseCsvFile(csvFileDirectory + "/goodIntFile.scsv");
     CHECK_EQUAL(status.errorNumber, SCSV::SCSV_CORRUPTED_FILE);
 }
 
@@ -255,4 +257,3 @@ TEST(SCSVParser, convertEscapeCodesTest){
     //Invaid escape code
     testConvertEscapeCodesException("&derp; hello", SCSV::SCSV_INVALID_ESCAPE_CODE);
 }
-

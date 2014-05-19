@@ -12,7 +12,7 @@
 namespace SCSV{
 
 SCSVParser::SCSVParser() :
-    SCSVParser(SCSV_DEFAULT_STRING)
+    SCSVParser(SCSVConstants::SCSV_DEFAULT_STRING)
 {
 }
 
@@ -65,7 +65,7 @@ SCSVParser::SCSVFileStatus_t SCSVParser::parseCsvFile(const std::string &csvFile
         }
         inFile.close();
         status.errorNumber = SCSV_OKAY;
-	status.errorMessage = "";
+        status.errorMessage = "";
         status.CSVValues = cells;
     }
     catch (const SCSVException &e){
@@ -106,9 +106,9 @@ std::vector<std::string> SCSVParser::parseCSVLine(const std::string &csvLine) co
         throw SCSVException(SCSV_ROW_MISSING_NEW_LINE);
     }
 
-    for (unsigned int i = 0; i < csvLine.size(); ++i){
+    for (size_t i = 0; i < csvLine.size(); ++i){
         ///Walk the string for comma or new line, or the end of string
-        if((csvLine[i] == SCSV_SEPARATOR) || (csvLine[i] == '\n')){
+        if ((csvLine[i] == SCSVConstants::SCSV_SEPARATOR) || (csvLine[i] == '\n')){
             secondIndex = i + 1;  //Skip the comma or whitespace
             std::string column = csvLine.substr(firstIndex, i-firstIndex);
             if (column == ""){
@@ -128,18 +128,18 @@ std::string SCSVParser::convertEscapeCodes(const std::string &s) const{
 
     std::stringstream ss;
 
-    for (unsigned int i = 0; i < s.size(); ++i){
+    for (size_t i = 0; i < s.size(); ++i){
         //If an escape cahracter, convert to regular char
-        if (s[i] == SCSV_ESCAPE_CHAR){
-            unsigned int escapeBegin = i;
-            unsigned int escapeEnd = 0;
+		if (s[i] == SCSVConstants::SCSV_ESCAPE_CHAR){
+            size_t escapeBegin = i;
+            size_t escapeEnd = 0;
 
             //Move on to the next character
             ++i;
             ++escapeEnd;
 
             //iterate through the string until a ',', ';', '\n', or the end of string is reached
-            while ((i < s.size()) && (s[i] != SCSV_SEPARATOR) && (s[i] != SCSV_AMP) && (s[i] != SCSV_ESCAPE_END) && (s[i] != '\n')){
+            while ((i < s.size()) && (s[i] != SCSVConstants::SCSV_SEPARATOR) && (s[i] != SCSVConstants::SCSV_AMP) && (s[i] != SCSVConstants::SCSV_ESCAPE_END) && (s[i] != '\n')){
                 ++i;
                 ++escapeEnd;
             }
@@ -150,11 +150,11 @@ std::string SCSVParser::convertEscapeCodes(const std::string &s) const{
             }
             switch (s[i]){
                 //Can't have a separator within an escape sequence, throw
-                case SCSV_SEPARATOR:
+                case SCSVConstants::SCSV_SEPARATOR:
                     throw SCSVException(SCSV_MISSING_ESCAPE_CODE_END);
 
                 //Can't have an amp within an escape sequence, throw
-                case SCSV_AMP:
+                case SCSVConstants::SCSV_AMP:
                     throw SCSVException(SCSV_MISSING_ESCAPE_CODE_END);
 
                 //Can't have a new line within an escape sequence, throw
@@ -164,11 +164,11 @@ std::string SCSVParser::convertEscapeCodes(const std::string &s) const{
                 //Otherwise, convert escape code to a char
                 default:
                     std::string escapeCode = s.substr(escapeBegin, escapeEnd + 1);
-                    if (escapeCode == std::string(SCSV_SEPARATOR_REPLACE)){
-                        ss << SCSV_SEPARATOR;
+                    if (escapeCode == std::string(SCSVConstants::SCSV_SEPARATOR_REPLACE)){
+                        ss << SCSVConstants::SCSV_SEPARATOR;
                     }
-                    else if (escapeCode == std::string(SCSV_AMP_REPLACE)){
-                        ss << SCSV_AMP;
+                    else if (escapeCode == std::string(SCSVConstants::SCSV_AMP_REPLACE)){
+                        ss << SCSVConstants::SCSV_AMP;
                     }
                     else{
                         throw SCSVException(SCSV_INVALID_ESCAPE_CODE);

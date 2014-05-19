@@ -6,17 +6,23 @@
 
 #ifndef SCSVCONSTANTS_H_INCLUDED
 #define SCSVCONSTANTS_H_INCLUDED
+
+#include <string>
+
 namespace SCSV{
-#define SCSV_SEPARATOR ','
-#define SCSV_AMP '&'
 
-#define SCSV_ESCAPE_CHAR '&'
-#define SCSV_ESCAPE_END ';'
+struct SCSVConstants {
+    static const char SCSV_SEPARATOR = ',';
+    static const char SCSV_AMP = '&';
 
-#define SCSV_SEPARATOR_REPLACE "&comma;"
-#define SCSV_AMP_REPLACE "&amp;"
+    static const char SCSV_ESCAPE_CHAR = '&';
+    static const char SCSV_ESCAPE_END = ';';
 
-#define SCSV_DEFAULT_STRING ""
+	static const std::string SCSV_SEPARATOR_REPLACE;
+	static const std::string SCSV_AMP_REPLACE;
+
+	static const std::string SCSV_DEFAULT_STRING;
+};
 
 enum SCSVLoadErrors{
     SCSV_OKAY = 0,
