@@ -6,16 +6,17 @@
 
 #include "FilenameCheckerException.h"
 
-namespace Common{
-FilenameCheckerException::FilenameCheckerException(std::string what) :
+namespace Common {
+
+FilenameCheckerException::FilenameCheckerException(const std::string &what) :
     m_what(what)
 {
 }
 
-FilenameCheckerException::~FilenameCheckerException(){
+FilenameCheckerException::~FilenameCheckerException() {
 }
 
-const char* FilenameCheckerException::what() const throw(){
+const char* FilenameCheckerException::what() const throw() {
     return m_what.c_str();
 }
 
