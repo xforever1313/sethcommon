@@ -1,9 +1,9 @@
 before_install:
-    - sudo apt-get update -qq
-    - sudo apt-get install -qq doxygen cppcheck
+ - sudo apt-get update -qq
+ - sudo apt-get install -qq doxygen cppcheck
 
 language: c++
 compiler:
-    - clang
+ - clang
 script: cd build && python build.py nightly clang_build=1
 
