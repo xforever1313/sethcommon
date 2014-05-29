@@ -18,6 +18,11 @@ os.makedirs(logDir)
 if ('asmjs=1' in sys.argv):
     del targets['3DebugNew']
 
+if ('expand_logs=1' in sys.argv):
+    expandLogs = True
+else:
+    expandLogs = False
+
 args = ""
 
 for arg in sys.argv[1:]:
@@ -43,5 +48,11 @@ for target in sorted(targets.keys()):
     status = process.wait()
     if (status != 0):
         sys.stderr.write('** A compile error occured for target: ' + target[1:] + ".  Please refer to: " + logFile + " for more information **\n")
+        if (expandLogs):
+            print ("\nPrinting log:")
+            f = open(logFile, 'r')
+            for line in f:
+                print(line)
+            f.close()
         exit(5)
-    
+

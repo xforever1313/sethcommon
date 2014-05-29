@@ -5,5 +5,5 @@ before_install:
 language: cpp
 compiler:
  - clang
-script: cd build && python build.py nightly clang_build=1
+script: cd build && python build.py nightly clang_build=1 expand_logs=1
 
