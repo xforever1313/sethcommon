@@ -2,7 +2,7 @@ before_install:
  - sudo apt-get update -qq
  - sudo apt-get install -qq doxygen cppcheck
 
-language: c++
+language: cpp
 compiler:
  - clang
 script: cd build && python build.py nightly clang_build=1
