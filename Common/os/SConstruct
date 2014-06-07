@@ -96,7 +96,7 @@ releaseTarget = createStaticLib(releaseEnvironment, "SethOS", getCompiledObjects
 cppCheckTarget = createCppCheckTarget(releaseEnvironment, coverageFiles)
 
 otherIncludeFiles = [os.path.join(getCppUTestPath(baseDir), includeDir), os.path.join(getGMockPath(baseDir), includeDir)]
-(netBeansTarget, vsTarget) = createProjectTargets(envBase, testEnvironment['CPPPATH'] + otherIncludeFiles, "")
+(netBeansTarget, vsTarget, codeBlocksTarget) = createProjectTargets(envBase, testEnvironment['CPPPATH'] + otherIncludeFiles, "")
 
 doxygenTarget = createDoxygenTarget(envBase, otherIncludeFiles + testEnvironment['CPPPATH'], 'Abstracted out OS calls')
 
@@ -108,7 +108,7 @@ Alias(CPP_CHECK_ALIAS, cppCheckTarget)
 Alias(UNIT_TEST_ALIAS, unitTestTarget)
 Alias(RUN_TEST_ALIAS, [unitTestTarget, cppCheckTarget, runTestTarget])
 
-Alias (NIGHTLY_ALIAS, [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, runTestTarget, netBeansTarget, vsTarget])
+Alias (NIGHTLY_ALIAS, [debugTarget, releaseTarget, doxygenTarget, cppCheckTarget, runTestTarget, netBeansTarget, vsTarget, codeBlocksTarget])
 Alias (DELTA_ALIAS, [debugTarget, releaseTarget, cppCheckTarget, runTestTarget])
 
 Default([RUN_TEST_ALIAS])

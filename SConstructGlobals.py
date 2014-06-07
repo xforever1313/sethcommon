@@ -44,6 +44,7 @@ RUN_DEBUG_ALIAS = "run_debug"
 RUN_RELEASE_ALIAS = "run_release"
 NET_BEANS_ALIAS = "net_beans"
 VS_ALIAS = "vs_project"
+CODEBLOCKS_ALIAS = "codeblocks"
 
 DELTA_ALIAS = "delta"
 NIGHTLY_ALIAS = "nightly"
@@ -73,6 +74,7 @@ compilerTypeArgs = {}
 compilerTypeArgs[DEFAULT] = ""
 compilerTypeArgs[CLANG_BUILD_ARG] = "clang_"
 compilerTypeArgs[ASM_JS_ARG] = "asm_js_"
+compilerTypeArgs[PI_BUILD_ARG] = "pi_"
 
 def addPossibleTargets(env, targetFlags):
     if ((CREATE_LIB_TARGET & targetFlags) == CREATE_LIB_TARGET):
@@ -101,6 +103,7 @@ def addPossibleTargets(env, targetFlags):
     if ((PROJECT_TARGET & targetFlags) == PROJECT_TARGET):
         env['POSSIBLE_TARGETS'][NET_BEANS_ALIAS] = "Builds a netbeans project"
         env['POSSIBLE_TARGETS'][VS_ALIAS] = "Builds a visual studio project"
+        env['POSSIBLE_TARGETS'][CODEBLOCKS_ALIAS] = "Builds a Code::Blocks Project"
 
 ###
 # Environments
@@ -570,7 +573,10 @@ def createProjectTargets(env, includePath, exeName):
     vsTarget = generateVSFiles(env, includePath, exeName)
     Alias(VS_ALIAS, vsTarget)
 
-    return (netBeansTarget, vsTarget)
+    codeBlocksTarget = generateCodeBlocksFiles(env, includePath, exeName)
+    Alias(CODEBLOCKS_ALIAS, codeBlocksTarget)
+
+    return (netBeansTarget, vsTarget, codeBlocksTarget)
 
 ###
 # Visual Studio project generation
@@ -664,6 +670,7 @@ def getVSProjectXML(env, includeFiles, sourceFiles, testIncludeFiles, testSource
     targetKeys = env['POSSIBLE_TARGETS'].keys()
     targetKeys.remove(NET_BEANS_ALIAS)
     targetKeys.remove(VS_ALIAS)
+    targetKeys.remove(CODEBLOCKS_ALIAS)
 
     for compiler in sorted(compilerTypeArgs):
         for target in sorted(targetKeys):
@@ -871,6 +878,7 @@ def getConfigurationsXml(env):
     targetKeys = env['POSSIBLE_TARGETS'].keys()
     targetKeys.remove(NET_BEANS_ALIAS)
     targetKeys.remove(VS_ALIAS)
+    targetKeys.remove(CODEBLOCKS_ALIAS)
 
     for compiler in sorted(compilerTypeArgs):
         for target in sorted(targetKeys):    
@@ -898,11 +906,11 @@ def getConfigurationsXml(env):
             configureXML += '<cleanCommand>${MAKE} -f SConstruct '
             configureXML += targetCommand + ' --clean</cleanCommand>\n'
             if (target == DEBUG_ALIAS):
-                configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], DEBUG_ALIAS, env['EXE_NAME'] + '-d') + '</executablePath>\n'
+                configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], DEBUG_ALIAS, env['LIB_TYPE'], env['EXE_NAME'] + '-d') + '</executablePath>\n'
             elif(target == RELEASE_ALIAS):
-                configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], RELEASE_ALIAS, env['EXE_NAME']) + '</executablePath>\n'
+                configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], RELEASE_ALIAS, env['LIB_TYPE'], env['EXE_NAME']) + '</executablePath>\n'
             elif(target == UNIT_TEST_ALIAS):
-                configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], UNIT_TEST_ALIAS, 'unit_test') + '</executablePath>\n'
+                configureXML += '<executablePath>' + os.path.join('bin', env['SYSTEM'], UNIT_TEST_ALIAS, env['LIB_TYPE'], 'unit_test') + '</executablePath>\n'
             else:
                 configureXML += '<executablePath></executablePath>\n'
 
@@ -933,4 +941,127 @@ def generateNetBeansFilesBuilder(target, source, env):
     configureXML = open(str(target[1]), "w")
     configureXML.write(getConfigurationsXml(env))
     configureXML.close()
-    
+
+###
+# Codeblocks Project Generation
+###
+
+def generateCBPFile(env, files):
+    projectString = '''<?xml version = "1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+    <FileVersion major="1" minor="6" />
+    <Project>
+        <Option title = "''' + env['PROJECT_NAME'] + '''" />
+        <Option makefile="SConstruct" />
+        <Option makefile_is_custom = "1" />
+        <Option pch_mode = "2" />
+        <Option compiler = "gcc" />
+        <MakeCommands>
+            <Build command = "" />
+            <CompileFile command = "" />
+            <Clean command = "" />
+            <DistClean command = "" />
+            <AskRebuildNeeded command = "" />
+            <SilentBuild command = "" />
+        </MakeCommands>
+        <Build>\n'''
+
+    targetKeys = env['POSSIBLE_TARGETS'].keys()
+    targetKeys.remove(NET_BEANS_ALIAS)
+    targetKeys.remove(VS_ALIAS)
+    targetKeys.remove(CODEBLOCKS_ALIAS)
+
+    for compiler in sorted(compilerTypeArgs):
+        for target in sorted(targetKeys):
+            targetName = compilerTypeArgs[compiler] + target
+            targetCommand = target
+            if (compiler != ''):
+                targetCommand += ' ' + compiler + '=1'
+            if (env['SERVER_BUILD']):
+                targetCommand += ' server_build=1'
+
+            projectString += '<Target title = "' + targetName + '">\n'
+
+            # Setup Executable paths
+            if (target == DEBUG_ALIAS):
+                exeDir = os.path.join(binDir, env['SYSTEM'], DEBUG_ALIAS, env['LIB_TYPE'])
+                projectString += '    <Option output="' + os.path.join(exeDir, env['EXE_NAME'] + '-d') + '" prefix_auto="1" extension_auto="1" />\n'
+                projectString += '    <Option working_dir="' + exeDir + '" />\n'
+
+            elif (target == RELEASE_ALIAS):
+                exeDir = os.path.join(binDir, env['SYSTEM'], RELEASE_ALIAS, env['LIB_TYPE'])
+                projectString += '    <Option output="' + os.path.join(exeDir, env['EXE_NAME']) + '" prefix_auto="1" extension_auto="1" />\n'
+                projectString += '    <Option working_dir="' + exeDir + '" />\n'
+
+            elif (target == UNIT_TEST_ALIAS):
+                exeDir = os.path.join(binDir, env['SYSTEM'], UNIT_TEST_ALIAS, env['LIB_TYPE'])
+                projectString += '    <Option output="' + os.path.join(exeDir, 'unit_test') + '" prefix_auto="1" extension_auto="1" />\n'
+                projectString += '    <Option working_dir="' + exeDir + '" />\n'
+
+            else:
+                projectString += '    <Option output = "" />\n'
+                projectString += '    <Option working_dir = "" />\n'
+
+            # Other options
+            projectString += '    <Option object_output = "' + os.path.join(objectDir, env['SYSTEM'], target, env['LIB_TYPE']) + '" />\n'
+            projectString += '    <Option type="1" />\n'
+            projectString += '    <Option compiler="gcc" />\n'
+
+            # Makefile commands
+            projectString += '    <MakeCommands>\n'
+            projectString += '        <Build command = "scons ' + targetCommand + '" />\n'
+            projectString += '        <CompileFile command = "scons ' + targetCommand + ' $file" />\n'
+            projectString += '        <Clean command = "scons ' + targetCommand + ' --clean" />\n'
+            projectString += '        <DistClean command = "scons -f SConstruct distclean ' + targetCommand + '" />\n'
+            projectString += '        <AskRebuildNeeded command = "scons -q ' + targetCommand + '" />\n'
+            projectString += '        <SilentBuild command = "scons ' + targetCommand + ' &gt; $(CMD_NULL)" />\n'
+            projectString += '    </MakeCommands>\n'
+            projectString += '</Target>\n'
+
+    projectString += '</Build>\n'
+    # Add files
+    for f in files:
+        projectString += '<Unit filename="' + f + '" />\n'
+
+    projectString += '<Unit filename="SConstruct" />\n'
+
+    projectString += '<Extensions>\n'
+
+    #Add include paths
+    projectString += '<code_completion>\n'
+    for path in env['CPPPATH']:
+        projectString += '    <search_path add = "' + os.path.abspath(path) + '" />\n'
+    projectString += "</code_completion>\n"
+
+    projectString += '''
+    </Extensions>
+    </Project>
+</CodeBlocks_project_file>
+    '''
+
+    return projectString
+
+def generateCodeBlocksFilesBuilder(target, source, env):
+    files = []
+    files += getFilesInDirectory(includeDir)
+    files += getFilesInDirectory(srcDir)
+    files += getFilesInDirectory(testDir)
+
+    cbpFile = open(str(target[0]), "w")
+    cbpFile.write(generateCBPFile(env, files))
+    cbpFile.close()
+
+def generateCodeBlocksFiles(env, includePath, exeName):
+    CBEnv = env.Clone(CPPPATH = includePath,
+                      EXE_NAME = exeName)
+
+    b = Builder(action = generateCodeBlocksFilesBuilder)
+    CBEnv.Append(BUILDERS = {"cbproject" : b})
+
+    sources = ["SConstruct", os.path.join(env['COMMON_DIR'], 'SConstructGlobals.py')]
+    targets = [CBEnv['PROJECT_NAME'] + '.cbp']
+
+    ret = CBEnv.cbproject(target = targets, source = sources)
+
+    return ret
+
