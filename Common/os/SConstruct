@@ -50,14 +50,22 @@ Help(getHelpMessage(envBase))
 # Environment creation
 ###
 
+def addFlags(env):
+    if (env['SERVER_BUILD']):
+        # Removes this flag from Travis-CI builds.
+        env.Append(CCFLAGS = '-Wno-unused-result')
+
 #Debug Environment
 debugEnvironment = createDebugEnvironment(envBase, includePaths, libs, libPath)
+addFlags(debugEnvironment)
 
 #Release Environment
 releaseEnvironment = createReleaseEnvironment(envBase, includePaths, libs, libPath)
+addFlags(releaseEnvironment)
 
 #Unit test environment
 testEnvironment = createUnitTestEnvironment(envBase, includePaths + testIncludePaths, testLibs, libPath)
+addFlags(testEnvironment)
 
 #Remove debug_new from shared builds.  On windows this causes stuff
 #to crash for some reason.  To check for memory leaks, use static
