@@ -11,7 +11,8 @@
     #error "Emscripten does not support threading."
 #endif
 
-#include <list>
+#include <memory>
+#include <queue>
 
 #include "EventInterface.h"
 #include "EventExecutorInterface.h"
@@ -27,10 +28,16 @@ class EventExecutor : public OS::SThread, public EventExecutorInterface{
         virtual ~EventExecutor();
 
         /**
-        * \warning newEvent is deleted after being executed.
-        * It is recommended that you set whatever you pass in to NULL after calling this method, or letting the pointer go out of scope
-        */
-        void addEvent(EventInterface *newEvent);
+         * \param newEvent A shared pointer to the Event that needs to be added.
+         *                 It was decided a shared pointer should be used instead
+         *                 of a raw pointer since EventExecutor should not
+         *                 own an event, it just has a reference to them.
+         *                 Before, EventExecutor would delete an event once
+         *                 it was done executing it, but this was a bad idea
+         *                 since what if someone wanted to keep the event object
+         *                 after it executed?  Shared Pointers allow this.
+         */
+        void addEvent(const std::shared_ptr<EventInterface> &newEvent) override;
 
         #ifdef UNIT_TEST
         static bool startRightAway; ///<True to start right away (default)
@@ -41,7 +48,7 @@ class EventExecutor : public OS::SThread, public EventExecutorInterface{
         void run();
         bool isRunning();
 
-        std::list<EventInterface*> m_eventList;
+        std::queue<std::shared_ptr<EventInterface> > m_eventList;
         OS::SMutex m_eventListMutex;
         OS::SSemaphore m_eventSemaphore;
         OS::SSemaphore m_exitRunLoopSemaphore;
@@ -53,4 +60,3 @@ class EventExecutor : public OS::SThread, public EventExecutorInterface{
 }
 
 #endif // EVENT_EXECUTOR_H
-

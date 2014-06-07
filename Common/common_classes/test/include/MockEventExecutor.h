@@ -8,6 +8,7 @@
 #define MOCKEVENTEXECUTOR_H_INCLUDED
 
 #include <gmock/gmock.h>
+#include <memory>
 
 #include "EventInterface.h"
 #include "EventExecutorInterface.h"
@@ -15,7 +16,7 @@
 class MockEventExecutor : public Common::EventExecutorInterface{
     public:
         virtual ~MockEventExecutor(){}
-        MOCK_METHOD1(addEvent, void(Common::EventInterface *newEvent));
+        MOCK_METHOD1(addEvent, void(const std::shared_ptr<EventInterface> &newEvent);
 };
 
 #endif // MOCKEVENTEXECUTOR_H_INCLUDED

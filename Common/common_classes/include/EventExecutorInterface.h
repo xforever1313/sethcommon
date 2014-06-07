@@ -7,6 +7,8 @@
 #ifndef EVENTEXECUTORINTERFACE_H_INCLUDED
 #define EVENTEXECUTORINTERFACE_H_INCLUDED
 
+#include <memory>
+
 #include "EventInterface.h"
 
 namespace Common{
@@ -14,9 +16,9 @@ namespace Common{
 class EventExecutorInterface{
     public:
         virtual ~EventExecutorInterface(){}
-        virtual void addEvent(EventInterface *newEvent) = 0;
+        virtual void addEvent(const std::shared_ptr<EventInterface> &newEvent) = 0;
 };
 
 }
 
-#endif // EVENTEXECUTORINTERFACE_H_INCLUDED
+#endif

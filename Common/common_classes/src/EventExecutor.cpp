@@ -6,8 +6,8 @@
 
 #ifndef ASM_JS //Will not link do to threading
 
-#include <cstddef> //Needed for NULL
-#include <list>
+#include <memory>
+#include <queue>
 
 #include "EventExecutor.h"
 #include "EventInterface.h"
@@ -42,26 +42,23 @@ EventExecutor::~EventExecutor(){
     }
 }
 
-void EventExecutor::addEvent(EventInterface *newEvent){
+void EventExecutor::addEvent(const std::shared_ptr<EventInterface> &newEvent){
     m_eventListMutex.lock();
-    m_eventList.push_back(newEvent);
+    m_eventList.push(newEvent);
     m_eventSemaphore.post();
     m_eventListMutex.unlock();
 }
 
 void EventExecutor::executeEvent(){
-    EventInterface *eventToRun = NULL;
+    std::shared_ptr<EventInterface> eventToRun = nullptr;
     m_eventListMutex.lock();
     if (!m_eventList.empty()){
         eventToRun = m_eventList.front(); //Copy the pointer to a temp var
-        std::list<EventInterface*>::iterator it = m_eventList.begin();
-        (*it) = NULL; //Set the pointer to NULL so we can remove from the list
-        m_eventList.pop_front();
+        m_eventList.pop();
     }
     m_eventListMutex.unlock();
-    if (eventToRun != NULL){
+    if (eventToRun != nullptr){
         eventToRun->execute();
-        delete eventToRun;
     }
 }
 
@@ -82,4 +79,3 @@ bool EventExecutor::isRunning(){
 }
 
 #endif
-
