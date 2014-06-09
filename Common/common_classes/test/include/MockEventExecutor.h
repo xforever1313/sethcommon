@@ -16,7 +16,7 @@
 class MockEventExecutor : public Common::EventExecutorInterface{
     public:
         virtual ~MockEventExecutor(){}
-        MOCK_METHOD1(addEvent, void(const std::shared_ptr<EventInterface> &newEvent);
+        MOCK_METHOD1(addEvent, void(const std::shared_ptr<Common::EventInterface> &newEvent));
 };
 
-#endif // MOCKEVENTEXECUTOR_H_INCLUDED
+#endif
