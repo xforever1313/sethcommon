@@ -38,11 +38,14 @@ FileLogger::~FileLogger() {
 }
 
 void FileLogger::close() {
+    m_mutex.lock();
     if (m_isOpen) {
         m_fs.close();
         m_isOpen = false;
     }
+    m_mutex.unlock();
 }
 
 }
 }
+

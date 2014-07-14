@@ -65,6 +65,9 @@ class LoggerBase {
          */
         void writeLine(const std::string &s);
 
+    protected:
+        std::mutex m_mutex;
+
     private:
         LoggerBase() = delete;
 
@@ -75,7 +78,6 @@ class LoggerBase {
         LoggerBase &operator=(const LoggerBase&) = delete;
 
         std::ostream &m_os;
-        std::mutex m_mutex;
 };
 
 }
