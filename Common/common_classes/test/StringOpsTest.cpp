@@ -207,3 +207,82 @@ TEST(StringOps, toAlphabeticalOrderCopyListTest){
         CHECK(compareCollections<std::list<std::string> >(oldList, unorderedList));
     }
 }
+
+TEST(StringOps, splitTestNoSplits) {
+    std::string s = "TestString";
+
+    std::vector<std::string> splitString = Common::StringOps::split(s);
+
+    CHECK_EQUAL(splitString.size(), 1);
+    CHECK_EQUAL(splitString[0], s);
+}
+
+TEST(StringOps, splitTestNormal) {
+    std::string s = "Test,String,Thing";
+
+    std::vector<std::string> splitString = Common::StringOps::split(s, ',');
+
+    CHECK_EQUAL(splitString.size(), 3);
+    CHECK_EQUAL(splitString[0], "Test");
+    CHECK_EQUAL(splitString[1], "String");
+    CHECK_EQUAL(splitString[2], "Thing");
+}
+
+TEST(StringOps, splitEmptyString) {
+    std::string s = "";
+
+    std::vector<std::string> splitString = Common::StringOps::split(s, ',');
+
+    CHECK_EQUAL(splitString.size(), 1);
+    CHECK_EQUAL(splitString[0], "");
+}
+
+TEST(StringOps, splitTwoDelimitersInARow) {
+    std::string s = "Test,,String";
+
+    std::vector<std::string> splitString = Common::StringOps::split(s, ',');
+
+    CHECK_EQUAL(splitString.size(), 3);
+    CHECK_EQUAL(splitString[0], "Test");
+    CHECK_EQUAL(splitString[1], "");
+    CHECK_EQUAL(splitString[2], "String");
+}
+
+TEST(StringOps, splitDelimiterAtStart) {
+    std::string s = ",Test,String";
+
+    std::vector<std::string> splitString = Common::StringOps::split(s, ',');
+
+    CHECK_EQUAL(splitString.size(), 3);
+    CHECK_EQUAL(splitString[0], "");
+    CHECK_EQUAL(splitString[1], "Test");
+    CHECK_EQUAL(splitString[2], "String");
+}
+
+TEST(StringOps, splitDelimiterAtEnd) {
+    std::string s = "Test,String,";
+
+    std::vector<std::string> splitString = Common::StringOps::split(s, ',');
+
+    CHECK_EQUAL(splitString.size(), 3);
+    CHECK_EQUAL(splitString[0], "Test");
+    CHECK_EQUAL(splitString[1], "String");
+    CHECK_EQUAL(splitString[2], "");
+}
+
+TEST(StringOps, splitSuperTest) {
+    std::string s = ",,My Cool,Test,,,String,,";
+
+    std::vector<std::string> splitString = Common::StringOps::split(s, ',');
+
+    CHECK_EQUAL(splitString.size(), 9);
+    CHECK_EQUAL(splitString[0], "");
+    CHECK_EQUAL(splitString[1], "");
+    CHECK_EQUAL(splitString[2], "My Cool");
+    CHECK_EQUAL(splitString[3], "Test");
+    CHECK_EQUAL(splitString[4], "");
+    CHECK_EQUAL(splitString[5], "");
+    CHECK_EQUAL(splitString[6], "String");
+    CHECK_EQUAL(splitString[7], "");
+    CHECK_EQUAL(splitString[8], "");
+}

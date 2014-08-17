@@ -8,6 +8,7 @@
 #include <cctype>
 #include <deque>
 #include <list>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -120,6 +121,19 @@ bool StringOps::stringCompare(const std::string &s1, const std::string &s2){
         }
     }
     return lessThan;
+}
+
+std::vector<std::string> StringOps::split(const std::string &s, const char delimiter /*= ' ' */) {
+    std::vector <std::string> splitString;
+
+    std::stringstream ss(s);
+    while (!ss.eof()) {
+        std::string subString;
+        std::getline(ss, subString, delimiter);
+        splitString.push_back(subString);
+    }
+
+    return splitString;
 }
 
 }

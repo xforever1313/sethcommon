@@ -97,9 +97,19 @@ class StringOps
         */
         static std::list<std::string> toAlphabeticalOrderCopy(std::list<std::string> l);
 
+        /**
+         * \brief Splits the string based on the given delimiter.  The default delimiter is a space.
+         * \warning If there are multiple delimiters in a row, an empty string will be returned. So "My,,String" will
+         *          return { "My", "", "String" }
+         * \return a vector of each of the substrings between the delimiters.
+         */
+        static std::vector<std::string> split(const std::string &s, const char delimiter = ' ');
+
     private:
-        StringOps();
-        virtual ~StringOps();
+        StringOps() = delete;
+        ~StringOps();
+        StringOps(const StringOps &) = delete;
+
         static bool stringCompare(const std::string &s1, const std::string &s2);
 };
 
