@@ -5,11 +5,9 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #include <cfloat>
-#include <CppUTest/TestHarness.h>
 #include <sstream>
 
-#define private public
-#define protected public
+#include "UnitTest.h"
 
 #include "io/LoggerBase.h"
 
