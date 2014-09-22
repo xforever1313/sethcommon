@@ -8,6 +8,7 @@
 #include <ostream>
 #include <string>
 
+#include "Date.h"
 #include "io/LoggerBase.h"
 
 namespace Common {
@@ -33,6 +34,11 @@ void LoggerBase::writeLine(const std::string &s) {
     m_mutex.lock();
     m_os << s << std::endl;
     m_mutex.unlock();
+}
+
+void LoggerBase::writeLineWithTimeStamp(const std::string &s) {
+    OS::Date d;
+    writeLine("[" + d.getDateTimeFull24() + "]> " + s);
 }
 
 }

@@ -65,6 +65,11 @@ class LoggerBase {
          */
         void writeLine(const std::string &s);
 
+        /**
+         * \brief Writes to a log with the data in front of the message.
+         */
+        void writeLineWithTimeStamp(const std::string &s);
+
     protected:
         std::mutex m_mutex;
 

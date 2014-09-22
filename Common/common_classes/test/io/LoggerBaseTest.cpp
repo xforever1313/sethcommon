@@ -107,3 +107,12 @@ TEST(LoggerBaseTest, charArrayTest3) {
 
     CHECK_EQUAL(m_loggingSS->str(), m_expectedSS->str());
 }
+
+TEST(LoggerBaseTest, writeLineWithDateTest) {
+    std::string message = "message";
+
+    m_uut->writeLineWithTimeStamp(message);
+
+    CHECK(m_loggingSS->str().find(message) != std::string::npos);
+}
+
