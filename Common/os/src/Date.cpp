@@ -4,20 +4,35 @@
 //    (See accompanying file ../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
 
-#include "Date.h"
-
+#include <array>
+#include <ctime>
 #include <sstream>
+#include <string>
+
+#include "Date.h"
 
 namespace OS{
 
-const std::string Date::monthString [13] = {"Natecember", "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"};
+const std::array<std::string, 13> Date::monthString = {"Natecember",
+                                                       "January",
+                                                       "February",
+                                                       "March",
+                                                       "April",
+                                                       "May",
+                                                       "June",
+                                                       "July",
+                                                       "August",
+                                                       "September",
+                                                       "October",
+                                                       "November",
+                                                       "December"};
 
 Date::Date() :
-    month(0), 
-    day(0), 
-    year(0), 
-    hour(0), 
-    minute(0), 
+    month(0),
+    day(0),
+    year(0),
+    hour(0),
+    minute(0),
     second(0)
 {
 
@@ -165,7 +180,7 @@ std::string Date::getDateTimeFull24() const{
 
 #ifdef UNIT_TEST
     const std::string * Date::getMonthNames() const{
-        return monthString;
+        return monthString.data();
     }
 
     struct tm * Date::getTimeStruct() const{

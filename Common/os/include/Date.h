@@ -14,6 +14,7 @@
 #ifndef DATE_H
 #define DATE_H
 
+#include <array>
 #include <string>
 #include <ctime>
 
@@ -26,7 +27,7 @@ namespace OS{
  */
 class Date{
 
-    static const std::string monthString [13]; ///<A string that includes all 12 months, plus a dummy month
+    static const std::array<std::string, 13> monthString; ///<A string that includes all 12 months, plus a dummy month
 
     public:
 
