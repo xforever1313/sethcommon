@@ -1,7 +1,7 @@
 '''
 These compile flags are for MSVC compilers
 '''
-
+import os
 import sys
 
 from SCons.Script import *
@@ -10,9 +10,30 @@ from SCons.Builder import *
 
 from GlobalCompilerGlobals import *
 
+###
+# Change this if your path to the MSVC binaries is different!
+###
+msvcPath = '"C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\bin"'
+x86Path = msvcPath
+x64Path = os.path.join(msvcPath, 'x86_amd64')
+armPath = os.path.join(msvcPath, 'x86_arm')
+
 class MSVCCompilerGlobals(GlobalCompilerGlobals):
 
-    def __init__(self):
+    def __init__(self, target):
+        if (target == 'x86'):
+            self.compilerPath = x86Path
+        elif(target == 'x64'):
+            self.compilerPath = x64Path
+        elif (target == 'arm'):
+            self.compilerPath = armPath
+        else:
+            raise Exception('Invalid msvc target: ' + target)
+        self.target = target
+
+        #Strip the quotes from msvcPath
+        os.environ['PATH'] = msvcPath[1:-1] + ';' + os.environ['PATH']
+        
         #CppDefines
         self.globalDefines += ["WIN32", "_LIB", "_UNICODE", "UNICODE", '_USE_MATH_DEFINES', '_MT', '_MBCS', '_CRT_SECURE_NO_WARNINGS']
 
@@ -25,14 +46,22 @@ class MSVCCompilerGlobals(GlobalCompilerGlobals):
                              'C:\Program Files (x86)\Windows Kits\8.1\Include\um', \
                              'C:\Program Files (x86)\Windows Kits\8.1\Include\shared']
 
-        #TODO Remove /Gd from x64 builds.  Only works on x86
         self.globalCCFlags += ['/EHsc', '/WX', '/W3', '/nologo', '/FS', '/GS', '/sdl', '/fp:precise'] + \
-                              ['/Zc:wchar_t', '/Zc:forScope', '/Oy-', '/Gd']
-        self.globalCXXFlags += []
+                              ['/Zc:wchar_t', '/Zc:forScope', '/Oy-']
+        if (target == 'x86')or (target=='arm'):
+            self.globalCCFlags += ['/Gd']
 
-        self.globalCCDebugFlags += ['/Zc:wchar_t', '/ZI', '/Od', \
+        self.globalCXXFlags += []
+            
+        
+        self.globalCCDebugFlags += ['/Zc:wchar_t', '/Od', \
                                      '/RTC1', '/Gd', '/MDd', '/Gm']
 
+        if (target == 'x86'):
+            self.globalCCDebugFlags += ['/ZI']
+        elif ((target == 'x64') or (target=='arm')):
+            self.globalCCDebugFlags += ['/Zi']
+                                     
         self.globalCCReleaseFlags += ['/GL', '/O2', '/Oi', '/MD', '/Gm-', '/Gy']
         self.globalCCUnitTestFlags += [] + self.globalCCDebugFlags
 
@@ -40,9 +69,8 @@ class MSVCCompilerGlobals(GlobalCompilerGlobals):
         self.globalARFlags = ['/NOLOGO']
 
         #Linker Flags
-        #TODO Remove x86 when the time comes
-        self.globalLinkerFlags += ['/NXCOMPAT', '/INCREMENTAL', \
-                                   '/MACHINE:X86', '/NOLOGO', '/WX']
+        self.globalLinkerFlags += ['/NXCOMPAT', \
+                                   '/MACHINE:' + self.target.upper(), '/NOLOGO']
 
         self.globalDebugLinkerFlags += ['/DEBUG']
         self.globalReleaseLinkerFlags += ['/RELEASE', '/OPT:REF', '/OPT:ICF', '/SAFESEH']
@@ -58,27 +86,31 @@ class MSVCCompilerGlobals(GlobalCompilerGlobals):
         self.globalUnitTestLibs += ['debug_new']
 
         #LibPath
-        self.globalLibPaths = ['C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\x86',
-                              'C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\VC\\lib']
+        self.globalLibPaths = ['C:\\Program Files (x86)\\Windows Kits\\8.1\\Lib\\winv6.3\\um\\' + target]
+        if (target == 'x86'):
+            self.globalLibPaths += ['C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\VC\\lib']
+        elif (target == 'x64'):
+            self.globalLibPaths += ['C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\VC\\lib\\amd64']
+        elif (target == 'arm'):
+            self.globalLibPaths += ['C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\VC\\lib\\arm']
 
     def getBaseEnvironment(self, armBuild, serverBuild, mingwBuild):
 
-        print ("Building for MSVC-12 Win32")
+        print ("Building for MSVC-12 Win32 " + self.target)
 
         #Ensure this is the right path for your system:
-        compilerPath = '"C:\\Program Files (x86)\\Microsoft Visual Studio 12.0\\VC\\bin"'
         env = Environment(
-            CC = os.path.join(compilerPath, "cl.exe"),
-            CXX = os.path.join(compilerPath, "cl.exe"),
-            LINK = os.path.join(compilerPath, "link.exe"),
-            AR = os.path.join(compilerPath, "lib.exe"),
+            CC = os.path.join(self.compilerPath, 'cl.exe'),
+            CXX = os.path.join(self.compilerPath, 'cl.exe'),
+            LINK = os.path.join(self.compilerPath, 'link.exe'),
+            AR = os.path.join(self.compilerPath, 'lib.exe'),
             SERVER_BUILD = False,
             ARM_BUILD = False,
             CLANG_BUILD = False,
             ASM_JS_BUILD = False,
             MSVC_BUILD = True,
             MINGW_CROSS_BUILD = False,
-            SYSTEM = "msvc_12_win32"
+            SYSTEM = "msvc_12_" + self.target
         )
         self.globalDefines += ['MSVC']
             

@@ -77,7 +77,7 @@ TEST(FileLoggerTest, openFailure) {
         std::shared_ptr<Common::IO::FileLogger> uut = Common::IO::FileLogger::createFileLogger("this/dir/does/not/exist.txt");
         FAIL ("Did not expect to open file");
     }
-    catch (const std::runtime_error &e) {
+    catch (const std::runtime_error &) {
         //Pass
     }
 }

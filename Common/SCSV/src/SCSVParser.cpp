@@ -99,8 +99,8 @@ std::string SCSVParser::getLine(std::ifstream &inFile) const{
 std::vector<std::string> SCSVParser::parseCSVLine(const std::string &csvLine) const{
     std::vector<std::string> ret;
 
-    unsigned int firstIndex = 0;
-    unsigned int secondIndex = 0;
+    size_t firstIndex = 0;
+    size_t secondIndex = 0;
 
     if (csvLine.back() != '\n'){
         throw SCSVException(SCSV_ROW_MISSING_NEW_LINE);

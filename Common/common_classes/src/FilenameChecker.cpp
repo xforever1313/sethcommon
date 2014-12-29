@@ -68,7 +68,7 @@ std::string FilenameChecker::checkFilename(std::string filename){
         throw FilenameCheckerException(ss.str());
     }
 
-    for (unsigned int i = 0; i < filename.size(); ++i){
+    for (size_t i = 0; i < filename.size(); ++i){
         std::string replacementString = "";
         if (filename[i] == FilenameChecker::SPACE[0]){
             replacementString = FilenameChecker::SPACE_REPLACE;

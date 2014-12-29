@@ -155,7 +155,7 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
         envClass = ClangCompilerGlobals()
     elif (msvcTarget != None):
         from MSVCCompilerGlobals import MSVCCompilerGlobals
-        envClass = MSVCCompilerGlobals()
+        envClass = MSVCCompilerGlobals(msvcTarget)
     elif(piBuild):
         from ArmLinuxGnueabihfGlobals import ArmLinuxGnueabihfGlobals 
         envClass = ArmLinuxGnueabihfGlobals()

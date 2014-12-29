@@ -52,7 +52,7 @@ TEST(LoggerBaseTest, toStringTest) {
     int a = 13;
     long b = 0x14;
     long long c = 15;
-    unsigned int d = 16e3;
+    unsigned int d = 163;
     unsigned long e = 17;
     unsigned long long f = 18;
     float g = FLT_EPSILON;
