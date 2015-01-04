@@ -13,7 +13,7 @@
 
 namespace OS{
 
-const std::array<std::string, 13> Date::monthString = {"Natecember",
+const std::array<std::string, 13> Date::monthString = {{"Natecember",
                                                        "January",
                                                        "February",
                                                        "March",
@@ -25,7 +25,7 @@ const std::array<std::string, 13> Date::monthString = {"Natecember",
                                                        "September",
                                                        "October",
                                                        "November",
-                                                       "December"};
+                                                       "December"}};
 
 Date::Date() :
     month(0),
