@@ -1,5 +1,5 @@
 
-//          Copyright Seth Hendrick 2014.
+//          Copyright Seth Hendrick 2015.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file ../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -12,7 +12,7 @@
     //Undefined references are created
 #endif
 
-#include "SSemaphore.h"
+#include "SConditionVariable.h"
 #include "SMutex.h"
 
 /**
@@ -34,35 +34,49 @@ class SThread
             COMPLETED
         };
 
+        /**
+         * \brief the purpose of the impl is to hide any 
+         *        library or standard specific code
+         *        in the implementation.
+         */
 		struct SThreadImpl;
 		
         SThread();
 
 		#ifndef _MSC_VER
-        ///\brief forbid copy constructor (the standard does this)
+        /**
+         *\brief forbid copy constructor (the standard does this)
+         */
         SThread(const SThread &other) = delete;
-        ///\brief forbid copy constructor (the standard does this)
+
+        /**
+         * \brief forbid copy constructor (the standard does this)\
+         */
         SThread& operator=(const SThread &other) = delete;
 		#endif
 
-        ///\brief Move Constructor
-        SThread(SThread &&other);
-        ///\brief this may or may not be needed
-        //SThread &operator=(SThread &&other) noexcept;
-
-        ///\brief JOINS and deletes the thread
-        ///\note if the destructor has no way to cause the run method to exit, the thread will never exit, and the program will hang
+        /**
+         *\brief JOINS and deletes the thread
+         *\warning if the destructor has no way to cause the run method to exit, 
+         *         the thread will never exit, and the program will hang
+         */
         virtual ~SThread();
 
-        ///\brief starts the thread by calling the run method
-        ///\note no-op if thread is already started or completed
+        /**
+         * \brief starts the thread by calling the run method
+         * \note no-op if thread is already started or completed
+         */
         void start();
 
-        ///\note returns false if thread is not started.
+        /**
+         * \note returns false if thread is not started.
+         */
         bool joinable() const;
 
-        ///\brief wait for the thread to exit
-        ///\note returns if thread not started
+        /**
+         * \brief wait for the thread to exit
+         * \note returns if thread not started
+        */
         void join();
 
         ///\note returns if thread is not running
@@ -72,10 +86,15 @@ class SThread
 
         static void yield();
 
-        ///\brief causes the thread that CALLS THIS FUNCTION sleep for the given number of millisecs
+        /**
+         * \brief causes the thread that CALLS THIS FUNCTION to
+         * sleep for the given number of millisecs
+         */
         static void sleep(unsigned int millisecs);
 
-        ///\brief returns the status of the thread
+        /**
+         * \brief returns the status of the thread
+         */
         SThreadStatus getStatus();
 
     protected:
@@ -89,16 +108,20 @@ class SThread
         SThread& operator=(const SThread &other);
 		#endif
 
-		///\brief what the thread executes.
+		/** 
+         * \brief what the thread executes.
+         */
         void work();
 
-        SSemaphore m_start_semaphore;
+        SConditionVariable m_startCV;
         SThreadStatus m_status;
 
         SMutex m_status_mutex;
 
-        SThreadImpl *m_impl; ///<NULL if thread is not started
+        SThreadImpl *m_impl; ///<nullptr if thread is not started
 };
 
 }
-#endif 
+
+#endif
+

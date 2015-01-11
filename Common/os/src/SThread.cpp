@@ -1,5 +1,5 @@
 
-//          Copyright Seth Hendrick 2014.
+//          Copyright Seth Hendrick 2015.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file ../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -25,7 +25,8 @@ struct SThread::SThreadImpl{
         m_thread(std::move(other.m_thread))
     {
     }
-    virtual ~SThreadImpl(){
+    
+    ~SThreadImpl(){
     }
 
     std::thread m_thread;
@@ -34,13 +35,7 @@ struct SThread::SThreadImpl{
 
 SThread::SThread() :
     m_status(NOT_STARTED),
-    m_impl(NULL)
-{
-}
-
-SThread::SThread(SThread &&other) :
-    m_status(other.m_status),
-    m_impl(other.m_impl)
+    m_impl(nullptr)
 {
 }
 
@@ -49,29 +44,29 @@ SThread::~SThread(){
 }
 
 void SThread::start(){
-    if (m_impl == NULL){
+    if (m_impl == nullptr){
         auto runFunct = std::bind(&SThread::work, this);
         m_impl = new SThreadImpl(runFunct);
-        m_start_semaphore.wait(); //Wait for the thread to start
+        m_startCV.wait(); //Wait for the thread to start
     }
 }
 
 bool SThread::joinable() const{
     bool ret = false;
-    if (m_impl != NULL){
+    if (m_impl != nullptr){
         ret = m_impl->m_thread.joinable();
     }
     return ret;
 }
 
 void SThread::join(){
-    if ((m_impl != NULL) && joinable()){
+    if ((m_impl != nullptr) && joinable()){
         m_impl->m_thread.join();
     }
 }
 
 void SThread::detach(){
-    if (m_impl != NULL){
+    if (m_impl != nullptr){
         m_impl->m_thread.detach();
     }
 }
@@ -90,7 +85,7 @@ void SThread::sleep(unsigned int millisecs){
 }
 
 void SThread::work(){
-    m_start_semaphore.post(); //Thread created, start may return
+    m_startCV.shutdown(); //Thread created, start may return
     m_status_mutex.lock();
     m_status = RUNNING;
     m_status_mutex.unlock();
@@ -112,3 +107,4 @@ SThread::SThreadStatus SThread::getStatus(){
 }
 
 #endif
+
