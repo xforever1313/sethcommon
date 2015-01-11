@@ -1,5 +1,5 @@
 
-//          Copyright Seth Hendrick 2014.
+//          Copyright Seth Hendrick 2015.
 // Distributed under the Boost Software License, Version 1.0.
 //    (See accompanying file ../LICENSE_1_0.txt or copy at
 //          http://www.boost.org/LICENSE_1_0.txt)
@@ -14,18 +14,16 @@
 namespace OS{
 
 struct SMutex::MutexImpl{
-    MutexImpl() :
-        m_mutex(new std::mutex())
+    MutexImpl() 
     {
     }
 
-    virtual ~MutexImpl(){
-        delete m_mutex;
+    ~MutexImpl(){
     }
 
-    std::mutex *m_mutex;
-    private:
-        MutexImpl(const MutexImpl&);
+    std::mutex m_mutex;
+    
+    MutexImpl(const MutexImpl&) = delete;
 };
 
 SMutex::SMutex() :
@@ -38,11 +36,11 @@ SMutex::~SMutex(){
 }
 
 void SMutex::lock(){
-    m_impl->m_mutex->lock();
+    m_impl->m_mutex.lock();
 }
 
 void  SMutex::unlock(){
-    m_impl->m_mutex->unlock();
+    m_impl->m_mutex.unlock();
 }
 
 }
