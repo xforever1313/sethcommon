@@ -23,8 +23,8 @@ namespace OS{
 class SSemaphore : public SSemaphoreInterface{
     public:
 
-		struct SemaphoreImpl;
-	
+        struct SemaphoreImpl;
+
         /**
         * \brief default constructor, initial count is at zero
         */
@@ -36,7 +36,7 @@ class SSemaphore : public SSemaphoreInterface{
         */
         SSemaphore(unsigned int initialCount);
 
-        virtual ~SSemaphore();
+        ~SSemaphore();
 
         /**
         * \brief increments the semaphore count by one
@@ -84,13 +84,15 @@ class SSemaphore : public SSemaphoreInterface{
         unsigned int getSemaphoreCount();
 
     private:
-        //Not copyable (Boost does this)
-        SSemaphore(const SSemaphore&);
-        SSemaphore &operator=(const SSemaphore&);
+        //Not copyable
+        SSemaphore(const SSemaphore&) = delete;
+        SSemaphore &operator=(const SSemaphore&) = delete;
 
         SemaphoreImpl *m_impl;
         bool m_isShutDown;
 };
 
 }
+
 #endif
+
