@@ -17,20 +17,23 @@
 TEST_GROUP(Semaphore){
 };
 
-///\brief tests the wait method with an inital count set to zero
+/**
+ * \brief tests the wait method with an inital count set to zero
+ */
 TEST(Semaphore, waitTestDefaultConstructor){
-    OS::SSemaphore *uut = new OS::SSemaphore;
-    SemaphorePoster poster(uut);
-    CHECK_EQUAL(uut->getSemaphoreCount(), 0); //Zero by default
+    OS::SSemaphore uut;
+    SemaphorePoster poster(&uut);
+    CHECK_EQUAL(uut.getSemaphoreCount(), 0); //Zero by default
     poster.start();
-    uut->wait();
+    uut.wait();
     CHECK(poster.getPosted()); //If it gets here, the test was successful, as the program didn't hang
     poster.join(); //Wait for thread to exit
-    CHECK_EQUAL(uut->getSemaphoreCount(), 0); //Should stay at zero
-    delete uut;
+    CHECK_EQUAL(uut.getSemaphoreCount(), 0); //Should stay at zero
 }
 
-///\brief tests the wait method with an inital count not set to zero
+/**
+ * \brief tests the wait method with an inital count not set to zero
+ */
 TEST(Semaphore, waitTest){
     OS::SSemaphore uut(1);
     CHECK_EQUAL(uut.getSemaphoreCount(), 1);
@@ -39,7 +42,9 @@ TEST(Semaphore, waitTest){
     //If it gets here, the test was successful, as the program didn't hang (no blocking should happen when semahpore count greater than zero
 }
 
-///\brief tests the tryWait method
+/**
+ * \brief tests the tryWait method
+ */
 TEST(Semaphore, tryWaitTestGreaterThanZero){
     OS::SSemaphore uut(1);
     CHECK_EQUAL(uut.getSemaphoreCount(), 1);
@@ -48,7 +53,9 @@ TEST(Semaphore, tryWaitTestGreaterThanZero){
     //The program should NOT hang
 }
 
-///\brief tests the tryWait method with initial count at zero
+/**
+ * \brief tests the tryWait method with initial count at zero
+ */
 TEST(Semaphore, tryWaitTestAtZero){
     OS::SSemaphore uut;
     CHECK_EQUAL(uut.getSemaphoreCount(), 0);
@@ -57,61 +64,64 @@ TEST(Semaphore, tryWaitTestAtZero){
     //The program should NOT hang
 }
 
-///\brief tests the timedWait method not At zero
+/**
+ * \brief tests the timedWait method not At zero
+ */
 TEST(Semaphore, timedWaitTestNotAtZero){
-    OS::SSemaphore *uut = new OS::SSemaphore(1);
-    CHECK_EQUAL(uut->getSemaphoreCount(), 1);
-    CHECK(uut->timedWait(10));
-    CHECK_EQUAL(uut->getSemaphoreCount(), 0);
-    CHECK(!uut->timedWait(10));
-    CHECK_EQUAL(uut->getSemaphoreCount(), 0);
-    delete uut;
+    OS::SSemaphore uut(1);
+    CHECK_EQUAL(uut.getSemaphoreCount(), 1);
+    CHECK(uut.timedWait(10));
+    CHECK_EQUAL(uut.getSemaphoreCount(), 0);
+    CHECK(!uut.timedWait(10));
+    CHECK_EQUAL(uut.getSemaphoreCount(), 0);
 }
 
-///\brief tests the timedWait method
+/**
+ * \brief tests the timedWait method
+ */
 TEST(Semaphore, timedWaitTest){
-    OS::SSemaphore *uut = new OS::SSemaphore();
-    SemaphorePoster poster1(uut);
+    OS::SSemaphore uut;
+    SemaphorePoster poster1(&uut);
     poster1.start();
-    CHECK(!uut->timedWait(250)); //Timeout before the thing gets posted, should return false
+    CHECK(!uut.timedWait(250)); //Timeout before the thing gets posted, should return false
     CHECK(!poster1.getPosted());
     poster1.join();
 
-    SemaphorePoster poster2 (uut);
+    SemaphorePoster poster2 (&uut);
     poster2.start();
-    CHECK(uut->timedWait(600)); //Wait longer than the post time, should return true from getting posted
+    CHECK(uut.timedWait(600)); //Wait longer than the post time, should return true from getting posted
     poster2.join();
-
-    delete uut;
 }
 
-///\brief tests that all wait methods return after a shutdown
+/**
+ * \brief tests that all wait methods return after a shutdown
+ */
 TEST(Semaphore, shutdownTest){
-    OS::SSemaphore *uut1 = new OS::SSemaphore();
-    CHECK(!uut1->isShutdown());
-    uut1->shutdown();
-    CHECK(uut1->isShutdown());
-    uut1->wait(); //thread should not block
-    CHECK(uut1->tryWait());
-    CHECK(uut1->timedWait(10000));
-    delete uut1;
+
+    OS::SSemaphore uut1;
+    CHECK(!uut1.isShutdown());
+    uut1.shutdown();
+    CHECK(uut1.isShutdown());
+    uut1.wait(); //thread should not block
+    CHECK(uut1.tryWait());
+    CHECK(uut1.timedWait(10000));
 
     //Test the case where the semaphore is waiting,
-    OS::SSemaphore *uut2 = new OS::SSemaphore();
-    SemaphoreWaiter waiter1 (uut2);
+    OS::SSemaphore uut2;
+    SemaphoreWaiter waiter1 (&uut2);
     waiter1.start();
-    SemaphoreWaiter waiter2 (uut2);
+    SemaphoreWaiter waiter2 (&uut2);
     waiter2.start();
-    SemaphoreWaiter waiter3 (uut2);
+    SemaphoreWaiter waiter3 (&uut2);
     waiter3.start();
-    uut2->shutdown();
+    uut2.shutdown();
     waiter1.join();
     waiter2.join();
     waiter3.join();
-    //If the program doesn't hang, test successful!
-    CHECK(uut2->isShutdown());
 
-    delete uut2;
+    //If the program doesn't hang, test successful!
+    CHECK(uut2.isShutdown());
 }
 
 #endif
+
