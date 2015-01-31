@@ -11,17 +11,12 @@
 
 namespace SCSV{
 
-SCSVParser::SCSVParser() :
-    SCSVParser(SCSVConstants::SCSV_DEFAULT_STRING)
-{
-}
-
-SCSVParser::SCSVParser(const std::string &space_filler) :
+SCSVParser::SCSVParser(const std::string &space_filler /* = SCSVConstants::SCSV_DEFAULT_STRING*/) :
     m_space_filler(space_filler)
 {
-    #ifdef UNIT_TEST
-        m_corrupt_file = false;
-    #endif
+#ifdef UNIT_TEST
+    m_corrupt_file = false;
+#endif
 }
 
 SCSVParser::~SCSVParser(){

@@ -20,22 +20,25 @@ namespace SCSV{
 class SCSVParser{
 
     public:
-        ///\brief the status of parsing a file
+        /**
+         * \brief the status of parsing a file
+         */
         struct SCSVFileStatus_t{
             SCSVLoadErrors errorNumber;         ///<The error number (CSV_OKAY if no error)
             std::string errorMessage;      ///<The error message ("" if no error)
             std::vector<std::vector <std::string> >  CSVValues; ///<Empty if error
         };
 
-        ///\brief creates a SCSVParser with the default empty cell set at ""
-        SCSVParser();
-
-        ///\param - spaceFiller what to fill an empty cell with
-        SCSVParser(const std::string &spaceFiller);
+        /**
+         * \param - spaceFiller what to fill an empty cell with
+         */
+        SCSVParser(const std::string &spaceFiller = SCSVConstants::SCSV_DEFAULT_STRING);
 
         virtual ~SCSVParser();
 
-        ///\param csvFileLocation - path, relitive to exe file, to the csv file
+        /**
+         * \param csvFileLocation - path, relitive to exe file, to the csv file
+         */
         SCSVFileStatus_t parseCsvFile(const std::string &csvFileLocation) const;
 
 #ifndef UNIT_TEST //This is here since otherwise MSVC will not link properly
@@ -47,7 +50,9 @@ class SCSVParser{
 
         SCSVFileStatus_t generateErrorStatus(const SCSVLoadErrors &errorNum) const;
 
-        ///\brief converts any strings with &escapeCode; to the proper form
+        /**
+         *\brief converts any strings with &escapeCode; to the proper form
+         */
         std::string convertEscapeCodes(const std::string &s) const;
 
         std::string m_space_filler;
