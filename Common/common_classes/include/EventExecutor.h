@@ -24,9 +24,23 @@ namespace Common{
 
 class EventExecutor : public OS::SThread, public EventExecutorInterface{
     public:
+        /**
+         * \brief Constructor.  Note you need to call startExecutor()
+         *        before this executes events.
+         */
         EventExecutor();
-        virtual ~EventExecutor();
 
+        /** 
+         * \brief Destructor.  If startExecutor() was called, it will run
+         *        all the events that were added before destruction.
+         *        If start was not called, it will not.
+         */ 
+        ~EventExecutor();
+
+        /**
+         * \brief starts the executor.
+         */
+        void startExecutor() override;
         /**
          * \param newEvent A shared pointer to the Event that needs to be added.
          *                 It was decided a shared pointer should be used instead
@@ -39,12 +53,9 @@ class EventExecutor : public OS::SThread, public EventExecutorInterface{
          */
         void addEvent(const std::shared_ptr<EventInterface> &newEvent) override;
 
-        #ifdef UNIT_TEST
-        static bool startRightAway; ///<True to start right away (default)
-        #endif
-
     private:
         void executeEvent();
+        void start();
         void run();
         bool isRunning();
 

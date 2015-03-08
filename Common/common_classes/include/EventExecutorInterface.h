@@ -16,6 +16,7 @@ namespace Common{
 class EventExecutorInterface{
     public:
         virtual ~EventExecutorInterface(){}
+        virtual void startExecutor() = 0;
         virtual void addEvent(const std::shared_ptr<EventInterface> &newEvent) = 0;
 };
 

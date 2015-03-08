@@ -7,59 +7,75 @@
 #ifndef ASM_JS //Will not link do to threading
 
 #include <memory>
+#include <mutex>
 #include <queue>
 
 #include "EventExecutor.h"
 #include "EventInterface.h"
+#include "SMutex.h"
 
 namespace Common{
 
-#ifdef UNIT_TEST
-bool EventExecutor::startRightAway = true;
-#endif
-
 EventExecutor::EventExecutor() :
-    m_isRunning(true)
+    m_isRunning(false)
 {
-    #ifdef UNIT_TEST
-    if(EventExecutor::startRightAway){
-    #endif
-    start();
-    #ifdef UNIT_TEST
-    }
-    #endif
 }
 
 EventExecutor::~EventExecutor(){
-    m_isRunningMutex.lock();
-    m_isRunning = false;
-    m_eventSemaphore.shutdown(); //Allows run thread to exit
-    m_isRunningMutex.unlock();
+    bool wasRunning;
+    {
+        std::lock_guard<OS::SMutex> lock(m_isRunningMutex);
+
+        // See if we were running in the first place.
+        wasRunning = m_isRunning;
+
+        // Exit run loop.
+        m_isRunning = false;
+
+        // Allows run thread to exit.
+        m_eventSemaphore.shutdown();
+
+    } // Unlock Mutex
+
     join(); //wait for thread to exit
-    //Run all unexecuted events
-    while (!m_eventList.empty()){  //No need to put m_eventList in mutexes, as the run thread has exited.
-        executeEvent();
+
+    //Run all unexecuted events if only start was called
+
+    if (wasRunning) {
+        // No need to put m_eventList in mutexes,
+        // as the run thread has exited.
+        while (!m_eventList.empty()){
+            executeEvent();
+        }
     }
 }
 
 void EventExecutor::addEvent(const std::shared_ptr<EventInterface> &newEvent){
-    m_eventListMutex.lock();
+    std::lock_guard<OS::SMutex> lock(m_eventListMutex);
     m_eventList.push(newEvent);
     m_eventSemaphore.post();
-    m_eventListMutex.unlock();
 }
 
 void EventExecutor::executeEvent(){
     std::shared_ptr<EventInterface> eventToRun = nullptr;
-    m_eventListMutex.lock();
-    if (!m_eventList.empty()){
-        eventToRun = m_eventList.front(); //Copy the pointer to a temp var
-        m_eventList.pop();
-    }
-    m_eventListMutex.unlock();
+
+    {
+        std::lock_guard<OS::SMutex> lock(m_eventListMutex);
+        if (!m_eventList.empty()){
+            // Copy the pointer to a temp var
+            eventToRun = m_eventList.front();
+            m_eventList.pop();
+        }
+    } // Mutex unlocks
+
     if (eventToRun != nullptr){
         eventToRun->execute();
     }
+}
+
+void EventExecutor::startExecutor() {
+    m_isRunning = true;
+    OS::SThread::start();
 }
 
 void EventExecutor::run(){
@@ -70,10 +86,8 @@ void EventExecutor::run(){
 }
 
 bool EventExecutor::isRunning(){
-    m_isRunningMutex.lock();
-    bool ret = m_isRunning;
-    m_isRunningMutex.unlock();
-    return ret;
+    std::lock_guard<OS::SMutex> lock(m_isRunningMutex);
+    return m_isRunning;
 }
 
 }
