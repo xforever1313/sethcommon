@@ -22,7 +22,7 @@ struct SConditionVariable::ConditionVariableImpl {
     ~ConditionVariableImpl() {
 
     }
-    
+
     std::condition_variable m_conditionVariable;
     std::mutex m_lock;
 
@@ -73,13 +73,13 @@ bool SConditionVariable::timedWait(unsigned long millisecs) {
 }
 
 void SConditionVariable::shutdown() {
-    std::lock_guard<OS::SMutex> lock(m_isShutdownMutex);
+    std::lock_guard<std::mutex> lock(m_isShutdownMutex);
     m_isShutdown = true;
     notifyAll(); //Wake up ALL the threads
 }
 
 bool SConditionVariable::isShutdown() {
-    std::lock_guard<OS::SMutex> lock(m_isShutdownMutex);
+    std::lock_guard<std::mutex> lock(m_isShutdownMutex);
     return m_isShutdown;
 }
 

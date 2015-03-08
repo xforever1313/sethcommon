@@ -12,71 +12,95 @@
 #define private public
 
 #include "SThread.h"
-#include "ThreadImpl.h"
 
 TEST_GROUP(SThread){
+    TEST_SETUP() {
+        m_uut = new OS::SThread();
+        m_hasRun = false;
+        CHECK_EQUAL(m_uut->getStatus(), OS::SThread::NOT_STARTED);
+    }
+
+    TEST_TEARDOWN() {
+        delete m_uut;
+    }
+
+    void hasRun() {
+        m_hasRun = true;
+        OS::SThread::sleep(500);
+    }
+
+    bool m_hasRun;
+    OS::SThread *m_uut;
 };
 
-///\brief tests the make sure no-ops happen when the thread is not started
+/**
+ * \brief tests the make sure no-ops happen when the thread is not started
+ */
 TEST(SThread, noOpTest){
-    ThreadImpl *uut = new ThreadImpl;
-    CHECK(uut->m_impl == NULL);
     ///For the test to pass, no segfaults should happen
-    CHECK(!uut->joinable());
-    uut->join();
-    uut->detach();
-    delete uut;
+    CHECK(!m_uut->joinable());
+    m_uut->join();
+    m_uut->detach();
 }
 
-///\brief checks the thread status during various parts of the run method
+/**
+ * \brief checks the thread status during various parts of the run method
+ */
 TEST(SThread, statusTest){
-    ThreadImpl *uut = new ThreadImpl;
-    CHECK_EQUAL(uut->getStatus(),OS::SThread::NOT_STARTED);
-    CHECK_EQUAL(uut->m_numberOfRuns, 0);
-    uut->start();
-    OS::SThread::sleep(1000);
-    CHECK_EQUAL(uut->getStatus(),OS::SThread::RUNNING);
-    uut->join();
-    CHECK_EQUAL(uut->getStatus(),OS::SThread::COMPLETED);
-    CHECK_EQUAL(uut->m_numberOfRuns, 1);
-    delete uut;
+    CHECK_EQUAL(m_uut->getStatus(),OS::SThread::NOT_STARTED);
+    CHECK(!m_hasRun);
+
+    m_uut->start(std::bind(&CppUTestGroupSThread::hasRun, this));
+    CHECK_EQUAL(m_uut->getStatus(),OS::SThread::RUNNING);
+    m_uut->join();
+
+    CHECK_EQUAL(m_uut->getStatus(),OS::SThread::COMPLETED);
+    CHECK(m_hasRun);
 }
 
-///\brief checks the case where the thread is started twice
+/**
+ * \brief checks the case where the thread is started twice
+ */
 TEST(SThread, startedTwiceTest){
-    ThreadImpl uut;
-    CHECK_EQUAL(uut.getStatus(),OS::SThread::NOT_STARTED);
-    uut.start();
-    uut.start();
-    ///Wait 2 seconds for thread to start running
-    OS::SThread::sleep(1000);
-    CHECK_EQUAL(uut.getStatus(),OS::SThread::RUNNING);
-    uut.join();
-    CHECK_EQUAL(uut.getStatus(),OS::SThread::COMPLETED);
-    CHECK_EQUAL(uut.m_numberOfRuns, 1);
-    uut.start();
-    CHECK_EQUAL(uut.m_numberOfRuns, 1);
+    CHECK_EQUAL(m_uut->getStatus(),OS::SThread::NOT_STARTED);
+
+    m_uut->start(std::bind(&CppUTestGroupSThread::hasRun, this));
+    m_uut->start(std::bind(&CppUTestGroupSThread::hasRun, this));
+
+    CHECK_EQUAL(m_uut->getStatus(),OS::SThread::RUNNING);
+    m_uut->join();
+
+    CHECK_EQUAL(m_uut->getStatus(),OS::SThread::COMPLETED);
+    CHECK(m_hasRun);
+
+    // Ensure start doesn't restart the thread.
+    m_hasRun = false;
+    m_uut->start(std::bind(&CppUTestGroupSThread::hasRun, this));
+    CHECK(!m_hasRun);
 }
 
-///\brief test the case where a thread is deleted before beings started
+/**
+ * \brief test the case where a thread is deleted before beings started
+ */
 TEST(SThread, notStartedTest){
-    ThreadImpl *uut = new ThreadImpl;
-    delete uut;
     //If program doesn't segfault, success!
 }
 
-///\brief tests the see what happens is join is called twice
+/**
+ *\brief tests the see what happens is join is called twice
+ */
 TEST(SThread, doubleJoinTest){
-    ThreadImpl uut;
-    CHECK(!uut.joinable());
-    uut.start();
-    CHECK(uut.joinable());
-    uut.join();
-    uut.join(); //Program should not crash
-    CHECK(!uut.joinable());
+    CHECK(!m_uut->joinable());
+    m_uut->start(std::bind(&CppUTestGroupSThread::hasRun, this));
+    CHECK(m_uut->joinable());
+    m_uut->join();
+    m_uut->join(); //Program should not crash
+    CHECK(!m_uut->joinable());
 }
 
-///\brief mainly here for code coverage.  Ensures the number of threads is greater than zero
+/**
+ * \brief mainly here for code coverage.  Ensures the number of threads is greater than zero
+ */
 TEST(SThread, HardwareConcurrencyTest){
     CHECK(OS::SThread::hardware_concurrency() > 0);
     std::cout << "\nHardware Concurrency: " << OS::SThread::hardware_concurrency() << std::endl;

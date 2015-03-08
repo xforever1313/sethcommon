@@ -14,7 +14,7 @@
 * \class SemaphoreWaiter
 * \brief The only point of this class is to call Semaphore->wait() in the run method.  Used for testing purposes
 */
-class SemaphoreWaiter : public OS::SThread{
+class SemaphoreWaiter : public OS::Runnable<SemaphoreWaiter> {
     public:
         SemaphoreWaiter(OS::SSemaphore *semaphore);
         virtual ~SemaphoreWaiter();

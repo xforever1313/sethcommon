@@ -8,8 +8,10 @@
 
 #include "SemaphoreWaiter.h"
 #include "SSemaphore.h"
+#include "SThread.h"
 
 SemaphoreWaiter::SemaphoreWaiter(OS::SSemaphore *semaphore) :
+    OS::Runnable<SemaphoreWaiter>(this),
     m_semaphore(semaphore)
 {
 }

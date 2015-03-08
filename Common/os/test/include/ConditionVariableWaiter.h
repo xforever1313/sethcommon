@@ -17,7 +17,7 @@ namespace OS {
 * \brief The only point of this class is to call wait() on a condition variable
 *        in the run method.  Used for testing purposes
 */
-class ConditionVariableWaiter : public OS::SThread {
+class ConditionVariableWaiter : public OS::Runnable<ConditionVariableWaiter> {
     public:
         ConditionVariableWaiter(OS::SConditionVariable *cv);
         ~ConditionVariableWaiter();

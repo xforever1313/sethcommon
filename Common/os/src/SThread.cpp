@@ -8,66 +8,49 @@
 
 #include <functional>
 #include <iostream>
+#include <mutex>
 #include <thread>
 
 #include "SThread.h"
 
 namespace OS{
 
-struct SThread::SThreadImpl{
-
-    SThreadImpl(std::function<void(void)> runner) :
-        m_thread(std::thread(runner))
-    {
-    }
-
-    SThreadImpl(SThreadImpl &&other) :
-        m_thread(std::move(other.m_thread))
-    {
-    }
-    
-    ~SThreadImpl(){
-    }
-
-    std::thread m_thread;
-
-};
-
 SThread::SThread() :
-    m_status(NOT_STARTED),
-    m_impl(nullptr)
+    m_status(NOT_STARTED)
 {
 }
 
 SThread::~SThread(){
-    delete m_impl;
+    join();
 }
 
-void SThread::start(){
-    if (m_impl == nullptr){
-        auto runFunct = std::bind(&SThread::work, this);
-        m_impl = new SThreadImpl(runFunct);
+void SThread::start(const std::function<void()> &runFun) {
+
+    // Do nothing if thread has started.
+    if (getStatus() == SThreadStatus::NOT_STARTED) {
+        m_runFunc = runFun; // Set the run function
+
+        m_status = SThreadStatus::RUNNING; // We are now running
+
+        auto workFunct = std::bind(&SThread::work, this);
+        m_thread = std::thread(workFunct); // Start the thread
         m_startCV.wait(); //Wait for the thread to start
     }
 }
 
-bool SThread::joinable() const{
-    bool ret = false;
-    if (m_impl != nullptr){
-        ret = m_impl->m_thread.joinable();
-    }
-    return ret;
+bool SThread::joinable() {
+    return m_thread.joinable();
 }
 
 void SThread::join(){
-    if ((m_impl != nullptr) && joinable()){
-        m_impl->m_thread.join();
+    if (joinable()){
+        m_thread.join();
     }
 }
 
 void SThread::detach(){
-    if (m_impl != nullptr){
-        m_impl->m_thread.detach();
+    if (getStatus() == SThreadStatus::RUNNING){
+        m_thread.detach();
     }
 }
 
@@ -86,22 +69,17 @@ void SThread::sleep(unsigned int millisecs){
 
 void SThread::work(){
     m_startCV.shutdown(); //Thread created, start may return
-    m_status_mutex.lock();
-    m_status = RUNNING;
-    m_status_mutex.unlock();
 
-    run();
+    m_runFunc();
 
     m_status_mutex.lock();
     m_status = COMPLETED;
     m_status_mutex.unlock();
 }
 
-SThread::SThreadStatus SThread::getStatus(){
-    m_status_mutex.lock();
-    SThread::SThreadStatus status = m_status;
-    m_status_mutex.unlock();
-    return status;
+SThread::SThreadStatus SThread::getStatus() {
+    std::lock_guard<std::mutex> lock(m_status_mutex);
+    return m_status;
 }
 
 }

@@ -10,18 +10,18 @@
 /**
  * \class Condition Varaible Notifier
  * \brief The only purpose of this class is to notify the passed
- *        in condition variable when start is called after 
+ *        in condition variable when start is called after
  *        half a second for testing purposes.
  * \author Seth Hendrick
  */
 
+#include <mutex>
 #include "SConditionVariable.h"
-#include "SMutex.h"
 #include "SThread.h"
 
 namespace OS {
 
-class ConditionVariableNotifier : public OS::SThread {
+class ConditionVariableNotifier : public OS::Runnable<ConditionVariableNotifier> {
     public:
         /**
          * \param notifyAll pass in true to notify all,
@@ -40,7 +40,7 @@ class ConditionVariableNotifier : public OS::SThread {
         OS::SConditionVariable *m_cv;
         bool m_notified;
         bool m_notifyAll;
-        OS::SMutex m_notifiedMutex;
+        std::mutex m_notifiedMutex;
 };
 
 }

@@ -13,6 +13,7 @@
 namespace OS {
 
 ConditionVariableWaiter::ConditionVariableWaiter(OS::SConditionVariable *cv) :
+    OS::Runnable<ConditionVariableWaiter>(this),
     m_cv(cv)
 {
 

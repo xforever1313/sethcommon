@@ -13,22 +13,24 @@
 * \author Seth Hendrick
 */
 
+#include <mutex>
+
 #include "SSemaphore.h"
 #include "SThread.h"
 
-class SemaphorePoster : public OS::SThread
-{
+class SemaphorePoster : public OS::Runnable<SemaphorePoster> {
     public:
         SemaphorePoster(OS::SSemaphore *semaphore);
         virtual ~SemaphorePoster();
         void run();
         bool getPosted();
+
     private:
         SemaphorePoster();
 
         OS::SSemaphore *m_semaphore;
         bool m_posted; ///<Whether or not the thing was posted to
-        OS::SMutex m_posted_mutex;
+        std::mutex m_posted_mutex;
 };
 
 #endif // SEMAPHOREPOSTER_H

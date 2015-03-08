@@ -11,6 +11,8 @@
     #error "Threading is not supported with Emscripten"
 #endif
 
+#pragma message "SMutex is deprecated, please use std::mutex instead"
+
 #include "SMutexInterface.h"
 
 namespace OS{
@@ -18,7 +20,7 @@ namespace OS{
 class SMutex : public SMutexInterface{
     public:
         /**
-         * \brief the purpose of the impl is to hide any 
+         * \brief the purpose of the impl is to hide any
          *        library or standard specific code
          *        in the implementation.
          */
@@ -39,5 +41,5 @@ class SMutex : public SMutexInterface{
 
 }
 
-#endif 
+#endif
 

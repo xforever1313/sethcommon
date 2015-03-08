@@ -16,6 +16,7 @@ namespace OS {
 
 ConditionVariableNotifier::ConditionVariableNotifier(SConditionVariable *cv,
                                                      bool notifyAll) :
+    OS::Runnable<ConditionVariableNotifier>(this),
     m_cv(cv),
     m_notified(false),
     m_notifyAll(notifyAll)
@@ -23,12 +24,11 @@ ConditionVariableNotifier::ConditionVariableNotifier(SConditionVariable *cv,
 }
 
 ConditionVariableNotifier::~ConditionVariableNotifier() {
-
 }
 
 void ConditionVariableNotifier::run() {
     OS::SThread::sleep(500);
-    std::lock_guard<OS::SMutex> lock(m_notifiedMutex);
+    std::lock_guard<std::mutex> lock(m_notifiedMutex);
     if (m_notifyAll) {
         m_cv->notifyAll();
     }
@@ -39,7 +39,7 @@ void ConditionVariableNotifier::run() {
 }
 
 bool ConditionVariableNotifier::getNotified() {
-    std::lock_guard<OS::SMutex> lock(m_notifiedMutex);
+    std::lock_guard<std::mutex> lock(m_notifiedMutex);
     return m_notified;
 }
 

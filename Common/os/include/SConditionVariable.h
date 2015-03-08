@@ -10,7 +10,7 @@
     #error "Threading is not supported with Emscripten"
 #endif
 
-#include "SMutex.h"
+#include <mutex>
 
 namespace OS{
 
@@ -22,14 +22,14 @@ namespace OS{
 class SConditionVariable {
     public:
 
-        /** 
+        /**
          * \brief The purpose of the impl is so that anything
          *        platform or library specify (e.g. c++11 or boost)
          *        is hidden behind the implemenation and not in the
          *        header.
          */
 		struct ConditionVariableImpl;
-	
+
         /**
          * \brief default constructor, initial count is at zero
          */
@@ -88,7 +88,7 @@ class SConditionVariable {
 
         ConditionVariableImpl *m_impl;
         bool m_isShutdown;
-        SMutex m_isShutdownMutex;
+        std::mutex m_isShutdownMutex;
 };
 
 }

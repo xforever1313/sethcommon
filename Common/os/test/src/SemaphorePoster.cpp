@@ -7,8 +7,10 @@
 #ifndef ASM_JS //Not compatible with emscripten
 
 #include "SemaphorePoster.h"
+#include "SThread.h"
 
 SemaphorePoster::SemaphorePoster(OS::SSemaphore *semaphore) :
+    OS::Runnable<SemaphorePoster>(this),
     m_semaphore(semaphore),
     m_posted(false)
 {
