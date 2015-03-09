@@ -13,24 +13,7 @@
 
 namespace OS {
 
-// C++11 impl
-struct SConditionVariable::ConditionVariableImpl {
-    ConditionVariableImpl() {
-
-    }
-
-    ~ConditionVariableImpl() {
-
-    }
-
-    std::condition_variable m_conditionVariable;
-    std::mutex m_lock;
-
-    ConditionVariableImpl(const ConditionVariableImpl&) = delete;
-};
-
 SConditionVariable::SConditionVariable() :
-    m_impl(new ConditionVariableImpl),
     m_isShutdown(false)
 {
 
@@ -38,31 +21,30 @@ SConditionVariable::SConditionVariable() :
 
 SConditionVariable::~SConditionVariable() {
     shutdown();
-    delete m_impl;
 }
 
 void SConditionVariable::notifyOne() {
-    m_impl->m_conditionVariable.notify_one();
+    m_conditionVariable.notify_one();
 }
 
 void SConditionVariable::notifyAll() {
-    m_impl->m_conditionVariable.notify_all();
+    m_conditionVariable.notify_all();
 }
 
 
 void SConditionVariable::wait() {
     if (!isShutdown()) {
-        std::unique_lock<std::mutex> lock(m_impl->m_lock);
-        m_impl->m_conditionVariable.wait(lock);
+        std::unique_lock<std::mutex> lock(m_cvLock);
+        m_conditionVariable.wait(lock);
     }
 }
 
 bool SConditionVariable::timedWait(unsigned long millisecs) {
     bool ret = true;
     if (!isShutdown()) {
-        std::unique_lock<std::mutex> lock(m_impl->m_lock);
-        std::cv_status timeout = m_impl->m_conditionVariable.wait_for(lock,
-                                                                      std::chrono::milliseconds(millisecs));
+        std::unique_lock<std::mutex> lock(m_cvLock);
+        std::cv_status timeout = m_conditionVariable.wait_for(lock,
+                                                               std::chrono::milliseconds(millisecs));
 
         if (timeout == std::cv_status::timeout) {
             ret = false;

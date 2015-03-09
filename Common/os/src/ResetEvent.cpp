@@ -7,7 +7,6 @@
 
 #include "ResetEvent.h"
 #include "SConditionVariable.h"
-#include "SMutex.h"
 
 #ifndef ASM_JS //Will not compile for emscripten
 
@@ -23,13 +22,13 @@ ResetEvent::~ResetEvent() {
 }
 
 void ResetEvent::set() {
-    std::lock_guard<SMutex> lock(m_isSetMutex);
+    std::lock_guard<std::mutex> lock(m_isSetMutex);
     m_isSet = true;
     m_cv.notifyAll();
 }
 
 void ResetEvent::reset() {
-    std::lock_guard<SMutex> lock(m_isSetMutex);
+    std::lock_guard<std::mutex> lock(m_isSetMutex);
     m_isSet = false;
 }
 
@@ -50,7 +49,7 @@ bool ResetEvent::timedWait(unsigned long millisecs) {
 }
 
 bool ResetEvent::isSet() {
-    std::lock_guard<SMutex> lock(m_isSetMutex);
+    std::lock_guard<std::mutex> lock(m_isSetMutex);
     return m_isSet;
 }
 

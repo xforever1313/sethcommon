@@ -74,8 +74,10 @@ class SThread {
         bool joinable();
 
         /**
-         * \brief wait for the thread to exit
-         * \note returns if thread not started
+        * \brief wait for the thread to exit
+        * \note returns if thread not started
+        * \note Unlike std::thread, you do not need to check joinable()
+        *       before calling this.  This method takes care of that for you!
         */
         void join();
 
