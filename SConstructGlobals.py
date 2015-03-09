@@ -55,6 +55,7 @@ NIGHTLY_ALIAS = "nightly"
 DEFAULT = ""
 CLANG_BUILD_ARG = "clang_build"
 PI_BUILD_ARG = "pi_build"
+BONE_BUILD_ARG = "bbone_build"
 ARM_BUILD_ARG = "arm_build"
 ASM_JS_ARG = "asmjs"
 GDB_RUN_ARG = "gdb"
@@ -71,6 +72,7 @@ POSSIBLE_ARGS[VALGRIND_RUN_ARG] = "Runs valgrind with an executable (run_xxx and
 POSSIBLE_ARGS[MINGW_BUILD_ARG] = "Builds using x86_64-w64-mingw32 (Linux only)"
 POSSIBLE_ARGS[SHARED_ARG] = "Builds using shared libs instead of static"
 POSSIBLE_ARGS[PI_BUILD_ARG] = "Builds using the Raspberry Pi Compiler (Linux only)"
+POSSIBLE_ARGS[BONE_BUILD_ARG] = "Builds using the Raspberry Pi Compiler, but targets for the Beagle Bone Black (Linux Only)"
 
 compilerTypeArgs = {}
 compilerTypeArgs[DEFAULT] = ""
@@ -135,14 +137,16 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
     valgrindRun = (args.get(VALGRIND_RUN_ARG, '0') == '1')
     gdbRun = (args.get(GDB_RUN_ARG, '0') == '1')
     sharedBuild = (args.get(SHARED_ARG, '0') == '1')
-    
+
     if (sys.platform == "win32"):
         mingwBuild = False
         piBuild = False
+        bboneBuild = False
     else:
         mingwBuild = (args.get(MINGW_BUILD_ARG, '0') == '1')
         piBuild = (args.get(PI_BUILD_ARG, '0') == '1')
- 
+        bboneBuild = (args.get(BONE_BUILD_ARG, '0') == '1')
+
     if (gdbRun and valgrindRun):
         raise Exception("You can not have both gdb and valgrind set to 1")
     elif ((gdbRun or valgrindRun) and asmJSBuild):
@@ -161,7 +165,7 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
     elif (msvcTarget != None):
         from MSVCCompilerGlobals import MSVCCompilerGlobals
         envClass = MSVCCompilerGlobals(msvcTarget)
-    elif(piBuild):
+    elif(piBuild or bboneBuild):
         from ArmLinuxGnueabihfGlobals import ArmLinuxGnueabihfGlobals 
         envClass = ArmLinuxGnueabihfGlobals()
     else:
@@ -169,6 +173,12 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
         envClass = GCCCompilerGlobals()
 
     env = envClass.getBaseEnvironment(armBuild, serverBuild, mingwBuild)
+
+    if (piBuild):
+        env['SYSTEM'] = env['SYSTEM'] + "-pi"
+    elif(bboneBuild):
+        env['SYSTEM'] = env['SYSTEM'] + "-bbone"
+        env.Append(CCFLAGS = '-mcpu=cortex-a8')
 
     baseEnvironment = env.Clone(
         PROJECT_ROOT = os.path.abspath("."),
@@ -193,7 +203,7 @@ def createBaseEnvironment (rootDir, sethCommonPath, projectName, targetFlags, ar
     baseEnvironment['COMMON_DIR'] = os.path.abspath(sethCommonPath)
 
     return baseEnvironment
-    
+
 def createDebugEnvironment(envBase, includePaths, libs, libPath):
     debugEnvironment = envBase.Clone(
         CPPPATH = includePaths,
