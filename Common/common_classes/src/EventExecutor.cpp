@@ -12,11 +12,11 @@
 
 #include "EventExecutor.h"
 #include "EventInterface.h"
-#include "SMutex.h"
 
 namespace Common{
 
 EventExecutor::EventExecutor() :
+    OS::Runnable<EventExecutor>(this),
     m_isRunning(false)
 {
 }
@@ -24,7 +24,7 @@ EventExecutor::EventExecutor() :
 EventExecutor::~EventExecutor(){
     bool wasRunning;
     {
-        std::lock_guard<OS::SMutex> lock(m_isRunningMutex);
+        std::lock_guard<std::mutex> lock(m_isRunningMutex);
 
         // See if we were running in the first place.
         wasRunning = m_isRunning;
@@ -51,7 +51,7 @@ EventExecutor::~EventExecutor(){
 }
 
 void EventExecutor::addEvent(const std::shared_ptr<EventInterface> &newEvent){
-    std::lock_guard<OS::SMutex> lock(m_eventListMutex);
+    std::lock_guard<std::mutex> lock(m_eventListMutex);
     m_eventList.push(newEvent);
     m_eventSemaphore.post();
 }
@@ -60,7 +60,7 @@ void EventExecutor::executeEvent(){
     std::shared_ptr<EventInterface> eventToRun = nullptr;
 
     {
-        std::lock_guard<OS::SMutex> lock(m_eventListMutex);
+        std::lock_guard<std::mutex> lock(m_eventListMutex);
         if (!m_eventList.empty()){
             // Copy the pointer to a temp var
             eventToRun = m_eventList.front();
@@ -75,7 +75,7 @@ void EventExecutor::executeEvent(){
 
 void EventExecutor::startExecutor() {
     m_isRunning = true;
-    OS::SThread::start();
+    OS::Runnable<EventExecutor>::start();
 }
 
 void EventExecutor::run(){
@@ -86,7 +86,7 @@ void EventExecutor::run(){
 }
 
 bool EventExecutor::isRunning(){
-    std::lock_guard<OS::SMutex> lock(m_isRunningMutex);
+    std::lock_guard<std::mutex> lock(m_isRunningMutex);
     return m_isRunning;
 }
 

@@ -5,13 +5,13 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #ifndef ASM_JS //Only used in exectutor test, which is not usable with emscripten
+#include <mutex>
+
 #include "SThread.h"
-
-
 #include "DummyEvent.h"
 
 unsigned int DummyEvent::ranCount = 0;
-OS::SMutex DummyEvent::ranCountMutex;
+std::mutex DummyEvent::ranCountMutex;
 OS::SSemaphore DummyEvent::semaphore;
 DummyEvent::DummyEvent()
 {

@@ -7,8 +7,9 @@
 #ifndef DUMMYEVENT_H
 #define DUMMYEVENT_H
 
+#include <mutex>
+
 #include "EventInterface.h"
-#include "SMutex.h"
 #include "SSemaphore.h"
 
 class DummyEvent : public Common::EventInterface{
@@ -23,7 +24,7 @@ class DummyEvent : public Common::EventInterface{
         static unsigned int getRanCount();
 
         static unsigned int ranCount; //Number of times execute was run for all DummyEvents
-        static OS::SMutex ranCountMutex;
+        static std::mutex ranCountMutex;
         static OS::SSemaphore semaphore;
 };
 

@@ -127,7 +127,8 @@ class SThread {
  *       You will also need to make sure that myClass has a run function
  *       implemented.  In the Constructor for your class, do:
  *       myClass::myClass() :
- *          OS::Runnable<myClass>(this)
+ *          OS::Runnable<myClass>(this).
+ *       run() will also need to be public.
  */
 template <class T>
 class Runnable {

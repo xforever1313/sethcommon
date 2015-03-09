@@ -12,17 +12,17 @@
 #endif
 
 #include <memory>
+#include <mutex>
 #include <queue>
 
 #include "EventInterface.h"
 #include "EventExecutorInterface.h"
-#include "SMutex.h"
 #include "SSemaphore.h"
 #include "SThread.h"
 
 namespace Common{
 
-class EventExecutor : public OS::SThread, public EventExecutorInterface{
+class EventExecutor : public OS::Runnable<EventExecutor>, public EventExecutorInterface{
     public:
         /**
          * \brief Constructor.  Note you need to call startExecutor()
@@ -30,11 +30,11 @@ class EventExecutor : public OS::SThread, public EventExecutorInterface{
          */
         EventExecutor();
 
-        /** 
+        /**
          * \brief Destructor.  If startExecutor() was called, it will run
          *        all the events that were added before destruction.
          *        If start was not called, it will not.
-         */ 
+         */
         ~EventExecutor();
 
         /**
@@ -53,19 +53,20 @@ class EventExecutor : public OS::SThread, public EventExecutorInterface{
          */
         void addEvent(const std::shared_ptr<EventInterface> &newEvent) override;
 
+        void run();
+
     private:
         void executeEvent();
         void start();
-        void run();
         bool isRunning();
 
         std::queue<std::shared_ptr<EventInterface> > m_eventList;
-        OS::SMutex m_eventListMutex;
+        std::mutex m_eventListMutex;
         OS::SSemaphore m_eventSemaphore;
         OS::SSemaphore m_exitRunLoopSemaphore;
 
         bool m_isRunning;
-        OS::SMutex m_isRunningMutex;
+        std::mutex m_isRunningMutex;
 };
 
 }
