@@ -40,7 +40,7 @@ void SThread::start(const std::function<void()> &runFun) {
 
 bool SThread::joinable() {
     SThreadStatus status = getStatus();
-    if (status == SThreadStatus::NOT_STARTED) {
+    if ( ( status == SThreadStatus::NOT_STARTED) || (status == SThreadStatus::JOINED) ) {
         return false;
     }
     else{
@@ -51,6 +51,8 @@ bool SThread::joinable() {
 void SThread::join(){
     if (joinable()){
         m_thread.join();
+        std::lock_guard<std::mutex> lock(m_status_mutex);
+        m_status = SThreadStatus::JOINED;
     }
 }
 

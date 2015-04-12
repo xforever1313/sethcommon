@@ -33,7 +33,8 @@ class SThread {
         enum SThreadStatus{
             NOT_STARTED,
             RUNNING,
-            COMPLETED
+            COMPLETED,
+            JOINED
         };
 
         /**

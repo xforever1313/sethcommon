@@ -54,7 +54,7 @@ TEST(SThread, statusTest){
     CHECK_EQUAL(m_uut->getStatus(),OS::SThread::RUNNING);
     m_uut->join();
 
-    CHECK_EQUAL(m_uut->getStatus(),OS::SThread::COMPLETED);
+    CHECK_EQUAL(m_uut->getStatus(),OS::SThread::JOINED);
     CHECK(m_hasRun);
 }
 
@@ -70,7 +70,7 @@ TEST(SThread, startedTwiceTest){
     CHECK_EQUAL(m_uut->getStatus(),OS::SThread::RUNNING);
     m_uut->join();
 
-    CHECK_EQUAL(m_uut->getStatus(),OS::SThread::COMPLETED);
+    CHECK_EQUAL(m_uut->getStatus(),OS::SThread::JOINED);
     CHECK(m_hasRun);
 
     // Ensure start doesn't restart the thread.
