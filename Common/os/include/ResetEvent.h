@@ -10,9 +10,8 @@
     #error "Threading is not supported with Emscripten"
 #endif
 
+#include <condition_variable>
 #include <mutex>
-
-#include "SConditionVariable.h"
 
 namespace OS {
 
@@ -90,8 +89,10 @@ class ResetEvent {
 
     private:
         bool m_isSet;
+        bool m_isShutdown;
         std::mutex m_isSetMutex;
-        SConditionVariable m_cv;
+        std::mutex m_isShutdownMutex;
+        std::condition_variable m_cv;
 };
 
 }

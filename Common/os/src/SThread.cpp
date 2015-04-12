@@ -39,7 +39,13 @@ void SThread::start(const std::function<void()> &runFun) {
 }
 
 bool SThread::joinable() {
-    return m_thread.joinable();
+    SThreadStatus status = getStatus();
+    if (status == SThreadStatus::NOT_STARTED) {
+        return false;
+    }
+    else{
+        return m_thread.joinable();
+    }
 }
 
 void SThread::join(){
