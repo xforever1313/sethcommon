@@ -5,6 +5,9 @@
 //          http://www.boost.org/LICENSE_1_0.txt)
 
 #include <CppUTest/TestHarness.h>
+// Workaround for libstdc++ bug (put sstream here before #define)
+// http://permalink.gmane.org/gmane.comp.gcc.bugs/448031
+#include <sstream>
 #include <string>
 
 #define private public

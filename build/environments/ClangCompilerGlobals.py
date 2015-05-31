@@ -17,7 +17,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
         #CPPDefines
         self.globalDefines += ['__STRICT_ANSI__']
         self.globalUnitTestDefines += ['GTEST_USE_OWN_TR1_TUPLE=1']
-        
+
         #Compile Flags
         self.globalCCFlags += []
         if (sys.platform == "darwin"):
@@ -25,24 +25,24 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
             self.globalCCFlags += ['stdlib=libc++']
         elif (sys.platform != "win32"):
             self.globalCCFlags += ['-stdlib=libc++']
-        
+
         self.globalCCDebugFlags += ['-O0']
         self.globalCCReleaseFlags += ['-O3']
-        self.globalCCUnitTestFlags += ['-O0']
-        
+        self.globalCCUnitTestFlags += ['-O0', '-Wno-keyword-macro']
+
         self.globalCCFlags += ['-Wno-return-type-c-linkage']
-        
-        
+
+
         #Link Flags
         self.globalLinkerFlags += []
         self.globalDebugLinkerFlags += []
         self.globalReleaseLinkerFlags += []
         self.globalUnitTestLinkerFlags += []
-        
+
         #Arm Flags for IPhone
         self.globalArmCCFlags = ['-arch', 'armv7s', '-miphoneos-version-min=7.0', '-isysroot', \
                                  '/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk'] 
-        
+
         self.globalArmLinkFlags = ['-arch', 'armv7s', '-miphoneos-version-min=7.0', '-isysroot', \
                                    '/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS7.0.sdk']
 
@@ -52,7 +52,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
         self.globalDebugLibs += []
         self.globalReleaseLibs += []
         self.globalUnitTestLibs += []
-            
+
     def getBaseEnvironment(self, armBuild, serverBuild, mingwBuild):
         if (armBuild):
             print ("Building for clang arm")
@@ -66,7 +66,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
                 ASM_JS_BUILD = False,
                 MSVC_BUILD = False,
                 MINGW_CROSS_BUILD = False,
-                SYSTEM = "clangArm"    
+                SYSTEM = "clangArm"
             )
         else:
             print ("Building for clang x86")
@@ -83,9 +83,9 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
                 SYSTEM = "clangx86"
             )
         self.globalDefines += ['CLANG']
-    
+
         return env
-    
+
     def extendDebugEnvironment(self, envBase, libs, libPath):
         envBase.Append(CPPDEFINES = self.globalDefines + self.globalDebugDefines)
         envBase.Append(CXXFLAGS = self.globalCXXFlags)
@@ -93,11 +93,11 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
         envBase.Append(LINKFLAGS = self.globalLinkerFlags + self.globalDebugLinkerFlags)
         envBase.Append(LIBS = libs + self.globalDebugLibs + self.globalLibs)
         envBase.Append(LIBPATH = libPath)
-    
+
         if (envBase['ARM_BUILD']):
             envBase.Append(CCFLAGS = self.globalArmCCFlags)
             envBase.Append(LINKFLAGS = self.globalArmLinkFlags)
-    
+
     def extendReleaseEnvironment(self, envBase, libs, libPath):
         envBase.Append(CPPDEFINES = self.globalDefines + self.globalReleaseDefines)
         envBase.Append(CXXFLAGS = self.globalCXXFlags)
@@ -105,11 +105,11 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
         envBase.Append(LINKFLAGS = self.globalLinkerFlags + self.globalReleaseLinkerFlags)
         envBase.Append(LIBS = libs + self.globalReleaseLibs + self.globalLibs)
         envBase.Append(LIBPATH = libPath)
-    
+
         if (envBase['ARM_BUILD']):
             envBase.Append(CCFLAGS = self.globalArmCCFlags)
             envBase.Append(LINKFLAGS = self.globalArmLinkFlags)
-    
+
     def extendUnitTestEnvironment(self, envBase, libs, libPath):
         envBase.Append(CPPDEFINES = self.globalDefines + self.globalUnitTestDefines)
         envBase.Append(CXXFLAGS = self.globalCXXFlags)
@@ -117,7 +117,7 @@ class ClangCompilerGlobals(GnuCompilerGlobals):
         envBase.Append(LINKFLAGS = self.globalLinkerFlags + self.globalUnitTestLinkerFlags)
         envBase.Append(LIBS = libs + self.globalUnitTestLibs + self.globalLibs)
         envBase.Append(LIBPATH = libPath)
-    
+
         if (envBase['ARM_BUILD']):
             envBase.Append(CCFLAGS = self.globalArmCCFlags)
             envBase.Append(LINKFLAGS = self.globalArmLinkFlags)

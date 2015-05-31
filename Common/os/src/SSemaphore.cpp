@@ -15,7 +15,7 @@
 namespace OS{
 
 struct SSemaphore::SemaphoreImpl{
-    SemaphoreImpl(unsigned int count) :
+    explicit SemaphoreImpl(unsigned int count) :
         m_semaphoreCount(count)
     {
     }
@@ -24,7 +24,7 @@ struct SSemaphore::SemaphoreImpl{
     unsigned int m_semaphoreCount;
     std::mutex m_semaphoreCountMutex;
     std::mutex m_shutdownMutex;
-	
+
     SemaphoreImpl(const SemaphoreImpl&) = delete;
 };
 

@@ -16,7 +16,7 @@ namespace SCSV{
 
 class SCSVException : public std::exception{
     public:
-		SCSVException(const SCSVLoadErrors &e);
+		explicit SCSVException(const SCSVLoadErrors &e);
 
 		virtual ~SCSVException();
 

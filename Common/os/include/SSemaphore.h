@@ -34,7 +34,7 @@ class SSemaphore : public SSemaphoreInterface{
         * \brief constructor
         * \param startCount - the inital count to set the semaphore at
         */
-        SSemaphore(unsigned int initialCount);
+        explicit SSemaphore(unsigned int initialCount);
 
         ~SSemaphore();
 

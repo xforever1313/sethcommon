@@ -32,7 +32,7 @@ class SCSVParser{
         /**
          * \param - spaceFiller what to fill an empty cell with
          */
-        SCSVParser(const std::string &spaceFiller = SCSVConstants::SCSV_DEFAULT_STRING);
+        explicit SCSVParser(const std::string &spaceFiller = SCSVConstants::SCSV_DEFAULT_STRING);
 
         virtual ~SCSVParser();
 

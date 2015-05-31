@@ -134,7 +134,7 @@ class SThread {
 template <class T>
 class Runnable {
     public:
-        Runnable(T *base) :
+        explicit Runnable(T *base) :
             m_base(base)
         {
         };

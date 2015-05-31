@@ -6,12 +6,12 @@
 
 #include <CppUTest/TestHarness.h>
 
-#define private public
-#define protected public
-
 #include <sstream>
 #include <string>
 #include <vector>
+
+#define private public
+#define protected public
 
 #include "FilenameChecker.h"
 #include "FilenameCheckerException.h"

@@ -27,7 +27,7 @@ class ResetEvent {
          * \brief Constructor
          * \param whether or not the reset is already set or not.
          */
-        ResetEvent(bool isSet = false);
+        explicit ResetEvent(bool isSet = false);
 
         /**
          * \brief Shuts down this reset event. All threads

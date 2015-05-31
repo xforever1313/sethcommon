@@ -13,8 +13,8 @@
 namespace Common{
 class FilenameCheckerException : public std::exception {
     public:
-        FilenameCheckerException(const std::string &what);
-        virtual ~FilenameCheckerException();
+        explicit FilenameCheckerException(const std::string &what);
+        ~FilenameCheckerException();
         const char* what() const throw();
 
     private:

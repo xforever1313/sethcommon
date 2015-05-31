@@ -51,7 +51,7 @@ class LoggerBase {
          *          get deleted or go out of scrope while its corresponding
          *          LoggerBase object exists.
          */
-        LoggerBase (std::ostream &os);
+        explicit LoggerBase (std::ostream &os);
 
         virtual ~LoggerBase();
 
